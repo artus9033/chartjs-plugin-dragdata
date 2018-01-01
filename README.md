@@ -15,16 +15,16 @@ Additionally, individual event listeners can be specified as follows:
 ```javascript
 {
     ...
-		dragData: true,
-		onDragStart: function (event, element) {
+	dragData: true,
+	onDragStart: function (event, element) {
 
-		},
-		onDrag: function (event, datasetIndex, index, value) {
+	},
+	onDrag: function (event, datasetIndex, index, value) {
 
-		},
-		onDragEnd: function (event, datasetIndex, index, value) {
+	},
+	onDragEnd: function (event, datasetIndex, index, value) {
 
-		}
+	}
 }
 ```
 
