@@ -1,0 +1,36 @@
+{
+  "name": "chartjs-plugin-dragData",
+  "version": "0.0.1",
+  "description": "Draggable data points for Chart.js",
+  "main": "dist/chartjs-plugin-dragData.js",
+  "scripts": {
+    "compile": "webpack"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chrispahm/chartjs-plugin-dragData.git"
+  },
+  "keywords": [
+    "chartjs",
+    "plugin",
+    "drag",
+    "draggable",
+    "data"
+  ],
+  "author": "Christoph Pahmeyer <christoph.pahmeyer@ilr.uni-bonn.de>",
+  "license": "MIT",
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.14.0",
+    "babel-loader": "^6.2.5",
+    "babel-preset-es2015": "^6.14.0",
+    "webpack": "^1.13.2",
+    "webpack-node-externals": "^1.5.4"
+  },
+  "dependencies": {
+    "babel-preset-env": "^1.6.1",
+    "chart.js": "^2.4.0",
+    "d3-drag": "^1.0.1",
+    "d3-selection": "^1.0.2"
+  }
+}
