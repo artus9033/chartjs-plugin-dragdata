@@ -33,7 +33,7 @@ Additionally, individual event listeners can be specified as follows:
 To install via npm:
 
 ```
-npm install chartjs-plugin-dragData --save
+npm install chartjs-plugin-dragdata --save
 ```
 
 Or, download a release archive file from the dist folder.
