@@ -76,7 +76,7 @@
 			if (_d3Selection.event) {
 				var e = _d3Selection.event.sourceEvent;
 				element = chartInstance.getElementAtEvent(e)[0];
-				if (typeof callback === 'function' && element) callback(e);
+				if (typeof callback === 'function' && element) callback(e, element);
 			}
 		};
 	}

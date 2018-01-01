@@ -9,7 +9,7 @@ function getElement (chartInstance, callback) {
 		if (event) {
 			const e = event.sourceEvent
 			element = chartInstance.getElementAtEvent(e)[0]
-			if (typeof callback === 'function' && element) callback(e)
+			if (typeof callback === 'function' && element) callback(e,element)
 		}
 	}
 }
