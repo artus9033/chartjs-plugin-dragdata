@@ -3,7 +3,7 @@
 A plugin for Chart.js >= 2.4.0
 
 Makes data points draggable.
-
+![Drag Data Animation](https://chrispahm.github.io/chartjs-plugin-dragData/assets/chartjs-plugin-dragData.gif)
 [Online demo](https://chrispahm.github.io/chartjs-plugin-dragData/).
 ## Configuration
 
