@@ -2,14 +2,17 @@ import Chart from 'chart.js'
 import { drag } from 'd3-drag'
 import { select, event } from 'd3-selection'
 
-let element
+let element, scale
 
 function getElement (chartInstance, callback) {
 	return () => {
 		if (event) {
 			const e = event.sourceEvent
 			element = chartInstance.getElementAtEvent(e)[0]
-			if (typeof callback === 'function' && element) callback(e,element)
+			if (element) {
+				scale = element['_yScale'].id
+				if (typeof callback === 'function' && element) callback(e,element)
+			}
 		}
 	}
 }
@@ -20,7 +23,7 @@ function updateData (chartInstance, callback) {
 			const e = event.sourceEvent
 			const datasetIndex = element['_datasetIndex']
 			const index = element['_index']
-			const value = chartInstance.scales['y-axis-0'].getValueForPixel(e.clientY)
+			const value = chartInstance.scales[scale].getValueForPixel(e.clientY)
 			chartInstance.data.datasets[datasetIndex].data[index] = value
 			chartInstance.update(0)
 			if (typeof callback === 'function') callback(e,datasetIndex,index,value)

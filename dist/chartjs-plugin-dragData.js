@@ -69,14 +69,18 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var element = void 0;
+	var element = void 0,
+	    scale = void 0;
 
 	function getElement(chartInstance, callback) {
 		return function () {
 			if (_d3Selection.event) {
 				var e = _d3Selection.event.sourceEvent;
 				element = chartInstance.getElementAtEvent(e)[0];
-				if (typeof callback === 'function' && element) callback(e, element);
+				if (element) {
+					scale = element['_yScale'].id;
+					if (typeof callback === 'function' && element) callback(e, element);
+				}
 			}
 		};
 	}
@@ -87,7 +91,7 @@
 				var e = _d3Selection.event.sourceEvent;
 				var datasetIndex = element['_datasetIndex'];
 				var index = element['_index'];
-				var value = chartInstance.scales['y-axis-0'].getValueForPixel(e.clientY);
+				var value = chartInstance.scales[scale].getValueForPixel(e.clientY);
 				chartInstance.data.datasets[datasetIndex].data[index] = value;
 				chartInstance.update(0);
 				if (typeof callback === 'function') callback(e, datasetIndex, index, value);
