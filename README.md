@@ -14,7 +14,7 @@ Additionally, individual event listeners can be specified as follows:
 
 ```javascript
 {
-    ...
+	...
 	dragData: true,
 	onDragStart: function (event, element) {
 
@@ -44,4 +44,4 @@ Please feel free to submit an issue or a pull request!
 
 ## License
 
-chartjs-plugin-dragData.js is available under the [MIT license](http://opensource.org/licenses/MIT).
+chartjs-plugin-dragdata.js is available under the [MIT license](http://opensource.org/licenses/MIT).
