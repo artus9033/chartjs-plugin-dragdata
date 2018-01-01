@@ -6,7 +6,7 @@ Makes data points draggable.
 
 ![Drag Data Animation](https://chrispahm.github.io/chartjs-plugin-dragData/assets/chartjs-plugin-dragData.gif)
 
-[Online demo](https://chrispahm.github.io/chartjs-plugin-dragData/).
+[Online demo single Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/), [dual Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/dualAxis.html).
 ## Configuration
 
 To make (line chart) data points draggable, simply add ```dragData: true``` to the config section of the chart instance.
