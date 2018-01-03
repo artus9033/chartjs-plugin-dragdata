@@ -27,6 +27,21 @@ Additionally, individual event listeners can be specified as follows:
 	}
 }
 ```
+When dragging data points towards the outer boundaries of the y-axis, one may experience unexptected (fast) changes to the y-axis scale.
+Therefore, depending on the use case, it may be recommended to fix the y-scale using similar options as follows (especially on small charts):
+
+```javascript
+options: {
+	scales: {
+		yAxes: [{
+				ticks: {
+						max: 25,
+						min: 0
+				}
+		}]
+	},
+	...
+```
 
 ## Installation
 
