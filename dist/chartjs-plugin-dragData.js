@@ -92,7 +92,13 @@
 				var datasetIndex = element['_datasetIndex'];
 				var index = element['_index'];
 				var value = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top);
-				chartInstance.data.datasets[datasetIndex].data[index] = value;
+
+				if (chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) {
+					chartInstance.data.datasets[datasetIndex].data[index].y = value;
+				} else {
+					chartInstance.data.datasets[datasetIndex].data[index] = value;
+				}
+
 				chartInstance.update(0);
 				if (typeof callback === 'function') callback(e, datasetIndex, index, value);
 			}
