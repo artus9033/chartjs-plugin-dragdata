@@ -24,7 +24,8 @@ function updateData (chartInstance, callback) {
 			const datasetIndex = element['_datasetIndex']
 			const index = element['_index']
 			const value = chartInstance.scales[scale].getValueForPixel(e.clientY-chartInstance.canvas.getBoundingClientRect().top)
-			chartInstance.data.datasets[datasetIndex].data[index] = value
+            chartInstance.data.datasets[datasetIndex].data[index] = value
+            console.log('chartjs-plugin-dragData', value)
 			chartInstance.update(0)
 			if (typeof callback === 'function') callback(e,datasetIndex,index,value)
 		}
