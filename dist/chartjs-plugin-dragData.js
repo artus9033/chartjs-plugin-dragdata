@@ -70,7 +70,8 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var element = void 0,
-	    scale = void 0;
+	    scale = void 0,
+	    scaleX = void 0;
 
 	function getElement(chartInstance, callback) {
 		return function () {
@@ -79,6 +80,7 @@
 				element = chartInstance.getElementAtEvent(e)[0];
 				if (element) {
 					scale = element['_yScale'].id;
+					scaleX = element['_xScale'].id;
 					if (typeof callback === 'function' && element) callback(e, element);
 				}
 			}
@@ -91,16 +93,40 @@
 				var e = _d3Selection.event.sourceEvent;
 				var datasetIndex = element['_datasetIndex'];
 				var index = element['_index'];
-				var value = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top);
+				var x = chartInstance.scales[scaleX].getValueForPixel(e.clientX - chartInstance.canvas.getBoundingClientRect().left);
+				var y = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top);
+
+				// console.log(
+				//     x, y,
+				//     chartInstance,
+				//     chartInstance.scales[scale],
+				//     e.clientX,
+				//     e.clientY,
+				//     e.clientY - chartInstance.canvas.getBoundingClientRect().top
+				// );
+
+				x = x > chartInstance.scales[scaleX].max ? chartInstance.scales[scaleX].max : x;
+				x = x < chartInstance.scales[scaleX].min ? chartInstance.scales[scaleX].min : x;
+
+				y = y > chartInstance.scales[scale].max ? chartInstance.scales[scale].max : y;
+				y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y;
+
+				if (chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
+					console.log(chartInstance.options.dragX, 'dragging x');
+					chartInstance.data.datasets[datasetIndex].data[index].x = x;
+				}
 
 				if (chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) {
-					chartInstance.data.datasets[datasetIndex].data[index].y = value;
+					chartInstance.data.datasets[datasetIndex].data[index].y = y;
 				} else {
-					chartInstance.data.datasets[datasetIndex].data[index] = value;
+					chartInstance.data.datasets[datasetIndex].data[index] = y;
 				}
 
 				chartInstance.update(0);
-				if (typeof callback === 'function') callback(e, datasetIndex, index, value);
+
+				if (typeof callback === 'function') {
+					callback(e, datasetIndex, index, chartInstance.data.datasets[datasetIndex].data[index]);
+				}
 			}
 		};
 	}
