@@ -48,7 +48,8 @@ function updateData (chartInstance, callback) {
 
             if(chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) { 
                 chartInstance.data.datasets[datasetIndex].data[index].y = y;
-            } else {
+            }
+            else {
                 chartInstance.data.datasets[datasetIndex].data[index] = y;
             }
 

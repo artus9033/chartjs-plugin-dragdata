@@ -112,7 +112,6 @@
 				y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y;
 
 				if (chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
-					console.log(chartInstance.options.dragX, 'dragging x');
 					chartInstance.data.datasets[datasetIndex].data[index].x = x;
 				}
 
