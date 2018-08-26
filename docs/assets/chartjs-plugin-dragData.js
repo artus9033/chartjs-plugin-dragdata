@@ -1,7 +1,7 @@
 /*!
  * chartjs-plugin-dragData.js
  * http://chartjs.org/
- * Version: 0.0.2
+ * Version: 0.0.3
  * 
  * Copyright 2017 Christoph Pahmeyer
  * Released under the MIT license
@@ -56,7 +56,7 @@
 	'use strict';
 
 	Object.defineProperty(exports, "__esModule", {
-		value: true
+	  value: true
 	});
 
 	var _chart = __webpack_require__(1);
@@ -70,52 +70,83 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var element = void 0,
-	    scale = void 0;
+	    scale = void 0,
+	    scaleX = void 0;
 
 	function getElement(chartInstance, callback) {
-		return function () {
-			if (_d3Selection.event) {
-				var e = _d3Selection.event.sourceEvent;
-				element = chartInstance.getElementAtEvent(e)[0];
-				if (element) {
-					scale = element['_yScale'].id;
-					if (typeof callback === 'function' && element) callback(e, element);
-				}
-			}
-		};
+	  return function () {
+	    if (_d3Selection.event) {
+	      var e = _d3Selection.event.sourceEvent;
+	      element = chartInstance.getElementAtEvent(e)[0];
+	      if (element) {
+	        scale = element['_yScale'].id;
+	        scaleX = element['_xScale'].id;
+	        if (typeof callback === 'function' && element) callback(e, element);
+	      }
+	    }
+	  };
 	}
 
 	function updateData(chartInstance, callback) {
-		return function () {
-			if (element && _d3Selection.event) {
-				var e = _d3Selection.event.sourceEvent;
-				var datasetIndex = element['_datasetIndex'];
-				var index = element['_index'];
-				var value = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top);
-				chartInstance.data.datasets[datasetIndex].data[index] = value;
-				chartInstance.update(0);
-				if (typeof callback === 'function') callback(e, datasetIndex, index, value);
-			}
-		};
+	  return function () {
+	    if (element && _d3Selection.event) {
+	      var e = _d3Selection.event.sourceEvent;
+	      var datasetIndex = element['_datasetIndex'];
+	      var index = element['_index'];
+
+	      var x = void 0;
+	      var y = void 0;
+
+	      if (e.touches) {
+	        x = chartInstance.scales[scaleX].getValueForPixel(e.touches[0].clientX - chartInstance.canvas.getBoundingClientRect().left);
+	        y = chartInstance.scales[scale].getValueForPixel(e.touches[0].clientY - chartInstance.canvas.getBoundingClientRect().top);
+	      } else {
+	        x = chartInstance.scales[scaleX].getValueForPixel(e.clientX - chartInstance.canvas.getBoundingClientRect().left);
+	        y = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top);
+	      }
+
+	      x = x > chartInstance.scales[scaleX].max ? chartInstance.scales[scaleX].max : x;
+	      x = x < chartInstance.scales[scaleX].min ? chartInstance.scales[scaleX].min : x;
+
+	      y = y > chartInstance.scales[scale].max ? chartInstance.scales[scale].max : y;
+	      y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y;
+
+	      if (chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
+	        chartInstance.data.datasets[datasetIndex].data[index].x = x;
+	      }
+
+	      if (chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) {
+	        chartInstance.data.datasets[datasetIndex].data[index].y = y;
+	      } else {
+	        chartInstance.data.datasets[datasetIndex].data[index] = y;
+	      }
+
+	      chartInstance.update(0);
+
+	      if (typeof callback === 'function') {
+	        callback(e, datasetIndex, index, chartInstance.data.datasets[datasetIndex].data[index]);
+	      }
+	    }
+	  };
 	}
 
 	function dragEndCallback(chartInstance, callback) {
-		return function () {
-			if (typeof callback === 'function' && element) {
-				var e = _d3Selection.event.sourceEvent;
-				var datasetIndex = element['_datasetIndex'];
-				var index = element['_index'];
-				var value = chartInstance.data.datasets[datasetIndex].data[index];
-				return callback(e, datasetIndex, index, value);
-			}
-		};
+	  return function () {
+	    if (typeof callback === 'function' && element) {
+	      var e = _d3Selection.event.sourceEvent;
+	      var datasetIndex = element['_datasetIndex'];
+	      var index = element['_index'];
+	      var value = chartInstance.data.datasets[datasetIndex].data[index];
+	      return callback(e, datasetIndex, index, value);
+	    }
+	  };
 	}
 	var ChartJSdragDataPlugin = {
-		afterInit: function afterInit(chartInstance) {
-			if (chartInstance.options.dragData) {
-				(0, _d3Selection.select)(chartInstance.chart.canvas).call((0, _d3Drag.drag)().container(chartInstance.chart.canvas).on('start', getElement(chartInstance, chartInstance.options.onDragStart)).on('drag', updateData(chartInstance, chartInstance.options.onDrag)).on('end', dragEndCallback(chartInstance, chartInstance.options.onDragEnd)));
-			}
-		}
+	  afterInit: function afterInit(chartInstance) {
+	    if (chartInstance.options.dragData) {
+	      (0, _d3Selection.select)(chartInstance.chart.canvas).call((0, _d3Drag.drag)().container(chartInstance.chart.canvas).on('start', getElement(chartInstance, chartInstance.options.onDragStart)).on('drag', updateData(chartInstance, chartInstance.options.onDrag)).on('end', dragEndCallback(chartInstance, chartInstance.options.onDragEnd)));
+	    }
+	  }
 	};
 
 	_chart2.default.pluginService.register(ChartJSdragDataPlugin);
