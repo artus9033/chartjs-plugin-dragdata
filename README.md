@@ -14,17 +14,17 @@ Additionally, individual event listeners can be specified as follows:
 
 ```javascript
 {
-	...
-	dragData: true,
-	onDragStart: function (event, element) {
+  ...
+  dragData: true,
+  onDragStart: function (event, element) {
 
-	},
-	onDrag: function (event, datasetIndex, index, value) {
+  },
+  onDrag: function (event, datasetIndex, index, value) {
 
-	},
-	onDragEnd: function (event, datasetIndex, index, value) {
+  },
+  onDragEnd: function (event, datasetIndex, index, value) {
 
-	}
+  }
 }
 ```
 When dragging data points towards the outer boundaries of the y-axis, one may experience unexptected (fast) changes to the y-axis scale.
@@ -32,15 +32,15 @@ Therefore, depending on the use case, it may be recommended to fix the y-scale u
 
 ```javascript
 options: {
-	scales: {
-		yAxes: [{
-				ticks: {
-						max: 25,
-						min: 0
-				}
-		}]
-	},
-	...
+  scales: {
+    yAxes: [{
+      ticks: {
+        max: 25,
+        min: 0
+      }
+    }]
+  },
+  ...
 ```
 
 ## Installation
