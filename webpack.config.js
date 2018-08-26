@@ -11,15 +11,7 @@ const banner = 'chartjs-plugin-dragData.js\n' +
              'Released under the MIT license\n' +
              'https://github.com/chrispahm/chartjs-plugin-dragData/blob/master/LICENSE.md'
 
-module.exports = {
-  entry: {
-    'chartjs-plugin-dragData': './src/index.js',
-    'chartjs-plugin-dragData.min': './src/index.js'
-  },
-  output: {
-    path: './dist',
-    filename: '[name].js'
-  },
+const config = {
   resolveLoader: {
     root: path.join(__dirname, 'node_modules')
   },
@@ -50,3 +42,29 @@ module.exports = {
     })
   ]
 }
+
+const dist = Object.assign({}, config, {
+  entry: {
+    'chartjs-plugin-dragData': './src/index.js',
+    'chartjs-plugin-dragData.min': './src/index.js'
+  },
+  output: {
+    path: './dist',
+    filename: '[name].js'
+  }
+})
+
+const assets = Object.assign({}, config, {
+  entry: {
+    'chartjs-plugin-dragData': './src/index.js',
+    'chartjs-plugin-dragData.min': './src/index.js'
+  },
+  output: {
+    path: './docs/assets',
+    filename: '[name].js'
+  }
+})
+
+module.exports = [
+  dist, assets
+]
