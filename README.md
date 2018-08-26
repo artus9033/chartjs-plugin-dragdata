@@ -6,16 +6,18 @@ Makes data points draggable.
 
 ![Drag Data Animation](https://chrispahm.github.io/chartjs-plugin-dragData/assets/chartjs-plugin-dragData.gif)
 
-[Online demo single Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/), [dual Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/dualAxis.html).
+[Online demo single Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/), [dual Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/dualAxis.html),[small chart](https://chrispahm.github.io/chartjs-plugin-dragData/smallChart.html),[bubble chart](https://chrispahm.github.io/chartjs-plugin-dragData/bubble.html).
 ## Configuration
 
-To make (line chart) data points draggable, simply add ```dragData: true``` to the config section of the chart instance.
-Additionally, individual event listeners can be specified as follows:
+To make (line and bubble chart) data points draggable, simply add ```dragData: true``` to the config section of the chart instance. If you (additionally to the y-axis) would like to drag data along the x-axis, you may also add ```dragX: true```.
+
+Individual event listeners can be specified as follows:
 
 ```javascript
 {
   ...
   dragData: true,
+  dragX: false,
   onDragStart: function (event, element) {
 
   },
