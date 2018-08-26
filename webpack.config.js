@@ -1,15 +1,15 @@
-var webpack = require('webpack');
-var webpackNodeExternals = require('webpack-node-externals');
-var path = require('path');
+const webpack = require('webpack')
+const webpackNodeExternals = require('webpack-node-externals')
+const path = require('path')
 
-var version = require('./package.json').version;
+const version = require('./package.json').version
 
-var banner = "chartjs-plugin-dragData.js\n" +
-             "http://chartjs.org/\n" +
-             "Version: " + version + "\n\n" +
-             "Copyright 2017 Christoph Pahmeyer\n" +
-             "Released under the MIT license\n" +
-             "https://github.com/chrispahm/chartjs-plugin-dragData/blob/master/LICENSE.md";
+const banner = 'chartjs-plugin-dragData.js\n' +
+             'http://chartjs.org/\n' +
+             'Version: ' + version + '\n\n' +
+             'Copyright 2017 Christoph Pahmeyer\n' +
+             'Released under the MIT license\n' +
+             'https://github.com/chrispahm/chartjs-plugin-dragData/blob/master/LICENSE.md'
 
 module.exports = {
 	entry: {
@@ -27,15 +27,15 @@ module.exports = {
 		'chart.js': 'Chart'
 	},
 	module: {
-	    loaders: [{
-	      test: /\.js$/,
-	      exclude: /node_modules/,
-	      loader: 'babel',
-	      query: {
-	        presets: ['es2015'],
-	      }
-	    }]
-	  },
+		loaders: [{
+			test: /\.js$/,
+			exclude: /node_modules/,
+			loader: 'babel',
+			query: {
+				presets: ['es2015'],
+			}
+		}]
+	},
 	plugins: [
 		new webpack.BannerPlugin(banner),
 		new webpack.ProvidePlugin({
@@ -49,4 +49,4 @@ module.exports = {
 			}
 		})
 	]
-};
+}
