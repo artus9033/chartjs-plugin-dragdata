@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Chart.js Drag Data Points Plugin</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+		<script src="assets/chartjs-plugin-dragData.js"></script>
+		<style>
+		html,body{
+			margin: 0;
+			padding: 0;
+    	height:100%;
+		}
+		canvas {
+			background-color : #eee;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+		}
+		</style>
+	</head>
+	<body>
+		<canvas id="chartJSContainer" style="height: 400px; width: 600px;"></canvas>
+		<script>
+			var options = {
+			  type: 'bubble',
+			  data: {
+			    labels: ["Red"],
+			    datasets: [
+				    {
+				      label: 'Bubble',
+				      data: [{
+                x: 10,
+                y: 15,
+                r: 30
+              }],
+			      	borderWidth: 1,
+              backgroundColor: 'rgb(189, 80, 105, 1)'
+			    	}
+					]
+			  },
+			  options: {
+			  	scales: {
+			    	yAxes: [{
+                ticks: {
+                    max: 25,
+										min: 0
+                }
+            }],
+            xAxes: [{
+              ticks: {
+                max: 11,
+                min: 9
+              }
+            }]
+			    },
+					responsive: false,
+					dragData: true,
+          dragX: true,
+
+					onDragStart: function (e) {
+            // do something
+					},
+					onDrag: function (e, datasetIndex, index, value) {
+						// do something
+					},
+					onDragEnd: function (e, datasetIndex, index, value) {
+						// do something
+					}
+			  }
+			}
+
+			var ctx = document.getElementById('chartJSContainer').getContext('2d');
+			window.test = new Chart(ctx, options);
+		</script>
+	</body>
+</html>
