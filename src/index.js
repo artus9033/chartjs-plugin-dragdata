@@ -24,40 +24,31 @@ function updateData (chartInstance, callback) {
 			const e = event.sourceEvent
 			const datasetIndex = element['_datasetIndex']
 			const index = element['_index']
-            let x = chartInstance.scales[scaleX].getValueForPixel(e.clientX - chartInstance.canvas.getBoundingClientRect().left)
-            let y = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top)
+			let x = chartInstance.scales[scaleX].getValueForPixel(e.clientX - chartInstance.canvas.getBoundingClientRect().left)
+			let y = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top)
 
-            // console.log(
-            //     x, y,
-            //     chartInstance,
-            //     chartInstance.scales[scale],
-            //     e.clientX,
-            //     e.clientY,
-            //     e.clientY - chartInstance.canvas.getBoundingClientRect().top
-            // );
+			x = x > chartInstance.scales[scaleX].max ? chartInstance.scales[scaleX].max : x
+			x = x < chartInstance.scales[scaleX].min ? chartInstance.scales[scaleX].min : x
 
-            x = x > chartInstance.scales[scaleX].max ? chartInstance.scales[scaleX].max : x;
-            x = x < chartInstance.scales[scaleX].min ? chartInstance.scales[scaleX].min : x;
+			y = y > chartInstance.scales[scale].max ? chartInstance.scales[scale].max : y
+			y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y
 
-            y = y > chartInstance.scales[scale].max ? chartInstance.scales[scale].max : y;
-            y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y;
+			if(chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
+				chartInstance.data.datasets[datasetIndex].data[index].x = x
+			}
 
-            if(chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
-                chartInstance.data.datasets[datasetIndex].data[index].x = x;
-            }
+			if(chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) {
+				chartInstance.data.datasets[datasetIndex].data[index].y = y
+			}
+			else {
+				chartInstance.data.datasets[datasetIndex].data[index] = y
+			}
 
-            if(chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) { 
-                chartInstance.data.datasets[datasetIndex].data[index].y = y;
-            }
-            else {
-                chartInstance.data.datasets[datasetIndex].data[index] = y;
-            }
+			chartInstance.update(0)
 
-            chartInstance.update(0)
-            
-            if (typeof callback === 'function') {
-                callback(e, datasetIndex, index, chartInstance.data.datasets[datasetIndex].data[index]);
-            }
+			if (typeof callback === 'function') {
+				callback(e, datasetIndex, index, chartInstance.data.datasets[datasetIndex].data[index])
+			}
 		}
 	}
 }
