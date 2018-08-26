@@ -2,7 +2,7 @@ import Chart from 'chart.js'
 import { drag } from 'd3-drag'
 import { select, event } from 'd3-selection'
 
-let element, scale
+let element, scale, scaleX
 
 function getElement (chartInstance, callback) {
   return () => {
@@ -11,6 +11,7 @@ function getElement (chartInstance, callback) {
       element = chartInstance.getElementAtEvent(e)[0]
       if (element) {
         scale = element['_yScale'].id
+        scaleX = element['_xScale'].id
         if (typeof callback === 'function' && element) callback(e,element)
       }
     }
@@ -23,10 +24,40 @@ function updateData (chartInstance, callback) {
       const e = event.sourceEvent
       const datasetIndex = element['_datasetIndex']
       const index = element['_index']
-      const value = chartInstance.scales[scale].getValueForPixel(e.clientY-chartInstance.canvas.getBoundingClientRect().top)
-      chartInstance.data.datasets[datasetIndex].data[index] = value
+
+      let x
+      let y
+
+      if (e.touches) {
+        x = chartInstance.scales[scaleX].getValueForPixel(e.touches[0].clientX-chartInstance.canvas.getBoundingClientRect().left)
+        y = chartInstance.scales[scale].getValueForPixel(e.touches[0].clientY-chartInstance.canvas.getBoundingClientRect().top)
+      } else {
+        x = chartInstance.scales[scaleX].getValueForPixel(e.clientX - chartInstance.canvas.getBoundingClientRect().left)
+        y = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top)
+      }
+
+      x = x > chartInstance.scales[scaleX].max ? chartInstance.scales[scaleX].max : x
+      x = x < chartInstance.scales[scaleX].min ? chartInstance.scales[scaleX].min : x
+
+      y = y > chartInstance.scales[scale].max ? chartInstance.scales[scale].max : y
+      y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y
+
+      if(chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
+        chartInstance.data.datasets[datasetIndex].data[index].x = x
+      }
+
+      if(chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) {
+        chartInstance.data.datasets[datasetIndex].data[index].y = y
+      }
+      else {
+        chartInstance.data.datasets[datasetIndex].data[index] = y
+      }
+
       chartInstance.update(0)
-      if (typeof callback === 'function') callback(e,datasetIndex,index,value)
+
+      if (typeof callback === 'function') {
+        callback(e, datasetIndex, index, chartInstance.data.datasets[datasetIndex].data[index])
+      }
     }
   }
 }
