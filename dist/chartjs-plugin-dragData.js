@@ -78,11 +78,13 @@
 	    if (_d3Selection.event) {
 	      var e = _d3Selection.event.sourceEvent;
 	      element = chartInstance.getElementAtEvent(e)[0];
-	      if (element) {
+	      if (element && element['_yScale']) {
 	        scale = element['_yScale'].id;
 	        scaleX = element['_xScale'].id;
-	        if (typeof callback === 'function' && element) callback(e, element);
+	      } else if (element && element['_scale']) {
+	        scale = scaleX = 'y-axis-0';
 	      }
+	      if (typeof callback === 'function' && element) callback(e, element);
 	    }
 	  };
 	}
@@ -101,6 +103,7 @@
 	        x = chartInstance.scales[scaleX].getValueForPixel(e.touches[0].clientX - chartInstance.canvas.getBoundingClientRect().left);
 	        y = chartInstance.scales[scale].getValueForPixel(e.touches[0].clientY - chartInstance.canvas.getBoundingClientRect().top);
 	      } else {
+	        console.log(chartInstance);
 	        x = chartInstance.scales[scaleX].getValueForPixel(e.clientX - chartInstance.canvas.getBoundingClientRect().left);
 	        y = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top);
 	      }
