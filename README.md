@@ -55,6 +55,38 @@ options: {
   },
   ...
 ```
+
+To avoid dragging specific datasets, you can set dragData to false within the dataset options.
+
+```javascript
+const data = {
+  datasets: [
+    {
+      label: "Data Label",
+      fill: false,
+      data: dataPoints,
+      yAxisID: 'B',
+      dragData: false
+    }, {
+  ...
+```
+
+To avoid dragging specific scalse, you can set dragData to false within the axis scale options.
+
+```javascript
+options: {
+  scales: {
+    yAxes: [{
+      ticks: {
+        max: 25,
+        min: 0
+      },
+      dragData: false
+    }]
+  },
+  ...
+```
+
 ## Gotchas
 When working with a module bundler (e.g. Webpack) and a framework (e.g. Vue.js/React/Angular), you still need to import the plugin library after installing. 
 Here's a small example for a Vue.js component
