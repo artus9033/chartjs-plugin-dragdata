@@ -71,7 +71,7 @@ const data = {
   ...
 ```
 
-To avoid dragging specific scalse, you can set dragData to false within the axis scale options.
+To avoid dragging specific scales, you can set dragData to false within the axis scale options.
 
 ```javascript
 options: {
