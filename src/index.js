@@ -9,7 +9,13 @@ function getElement (chartInstance, callback) {
     if (event) {
       const e = event.sourceEvent
       element = chartInstance.getElementAtEvent(e)[0]
+
       if (element) {
+        if (chartInstance.data.datasets[element['_datasetIndex']].dragData === false || element['_yScale'].options.dragData === false) {
+          element = null;
+          return;
+        }
+
         scale = element['_yScale'].id
         scaleX = element['_xScale'].id
         if (typeof callback === 'function' && element) callback(e,element)
