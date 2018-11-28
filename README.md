@@ -87,6 +87,8 @@ options: {
   ...
 ```
 
+To avoid dragging specific data points inside a draggable dataset, you can return `false` to function `onDragStart`.
+
 ## Gotchas
 When working with a module bundler (e.g. Webpack) and a framework (e.g. Vue.js/React/Angular), you still need to import the plugin library after installing. 
 Here's a small example for a Vue.js component
