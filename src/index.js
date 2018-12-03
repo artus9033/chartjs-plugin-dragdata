@@ -19,7 +19,7 @@ function getElement (chartInstance, callback) {
         scale = element['_yScale'].id
         scaleX = element['_xScale'].id
         if (typeof callback === 'function' && element) {
-          if ( !callback(e, element)) {
+          if ( callback(e, element) === false) {
             element = null
           }
         }
