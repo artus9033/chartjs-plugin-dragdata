@@ -1,7 +1,7 @@
 /*!
  * chartjs-plugin-dragData.js
  * http://chartjs.org/
- * Version: 0.0.3
+ * Version: 0.2.0
  * 
  * Copyright 2017 Christoph Pahmeyer
  * Released under the MIT license
@@ -87,7 +87,11 @@
 
 	        scale = element['_yScale'].id;
 	        scaleX = element['_xScale'].id;
-	        if (typeof callback === 'function' && element) callback(e, element);
+	        if (typeof callback === 'function' && element) {
+	          if (callback(e, element) === false) {
+	            element = null;
+	          }
+	        }
 	      }
 	    }
 	  };
