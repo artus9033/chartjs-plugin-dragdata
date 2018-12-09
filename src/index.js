@@ -12,8 +12,8 @@ function getElement (chartInstance, callback) {
 
       if (element) {
         if (chartInstance.data.datasets[element['_datasetIndex']].dragData === false || element['_yScale'].options.dragData === false) {
-          element = null;
-          return;
+          element = null
+          return
         }
 
         scale = element['_yScale'].id
