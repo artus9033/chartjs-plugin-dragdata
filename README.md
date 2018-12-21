@@ -26,7 +26,12 @@ Or, download a release archive file from the dist folder.
 
 ## Configuration
 
-To make (line and bubble chart) data points draggable, simply add ```dragData: true``` to the config section of the chart instance. If you (additionally to the y-axis) would like to drag data along the x-axis, you may also add ```dragX: true```.
+To make (line, bubble and radar chart) data points draggable, simply add ```dragData: true``` to the config section of the chart instance. If you (additionally to the y-axis) would like to drag data along the x-axis, you may also add ```dragX: true```.
+
+To round the values dragged to, simply add ```dragDataRound: 0``` to the config section of the chart instance.
+ * `0` will round to `..., -2, -1, 0, 1, 2, ...`
+ * `1` will round to `..., -0.2, -0.1, 0.0, 0.1, 0.2, ...`
+ * `-1` will round to `..., -20, -10, 0, 10, 20, ...`
 
 Individual event listeners can be specified as follows:
 
@@ -35,6 +40,7 @@ Individual event listeners can be specified as follows:
   ...
   dragData: true,
   dragX: false,
+  dragDataRound: 0,
   onDragStart: function (event, element) {},
   onDrag: function (event, datasetIndex, index, value) {},
   onDragEnd: function (event, datasetIndex, index, value) {}
@@ -88,6 +94,8 @@ options: {
 ```
 
 To avoid dragging specific data points inside a draggable dataset, you can return `false` to function `onDragStart`.
+
+To disable the automatic update of the data, you can return `false` to function `onDrag`. Nothing will happen to the points without you changing the `data` attribute somewhere else. This is use full for frameworks like emberjs who us the data down action up paradigm.
 
 ## Gotchas
 When working with a module bundler (e.g. Webpack) and a framework (e.g. Vue.js/React/Angular), you still need to import the plugin library after installing. 
