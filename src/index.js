@@ -106,6 +106,9 @@ function updateData (chartInstance, callback) {
           chartInstance.data.datasets[datasetIndex].data[index] = data
           chartInstance.update(0)
         }
+      } else {
+        chartInstance.data.datasets[datasetIndex].data[index] = data
+        chartInstance.update(0)
       }
     }
   }
