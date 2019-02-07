@@ -138,7 +138,12 @@
 	        } else {
 	          v = rScale.min + d / scalingFactor;
 	        }
+
 	        v = roundValue(v, chartInstance.options.dragDataRound);
+
+	        v = v > chartInstance.scale.max ? chartInstance.scale.max : v;
+	        v = v < chartInstance.scale.min ? chartInstance.scale.min : v;
+
 	        data = v;
 	      } else {
 	        if (e.touches) {
@@ -149,14 +154,14 @@
 	          y = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top);
 	        }
 
+	        x = roundValue(x, chartInstance.options.dragDataRound);
+	        y = roundValue(y, chartInstance.options.dragDataRound);
+
 	        x = x > chartInstance.scales[scaleX].max ? chartInstance.scales[scaleX].max : x;
 	        x = x < chartInstance.scales[scaleX].min ? chartInstance.scales[scaleX].min : x;
 
 	        y = y > chartInstance.scales[scale].max ? chartInstance.scales[scale].max : y;
 	        y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y;
-
-	        x = roundValue(x, chartInstance.options.dragDataRound);
-	        y = roundValue(y, chartInstance.options.dragDataRound);
 
 	        if (chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
 	          data.x = x;

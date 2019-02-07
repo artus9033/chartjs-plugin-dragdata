@@ -33,12 +33,14 @@
 				    {
 				      label: '# of Votes',
 				      data: [12, 19, 3, 5, 2, 3],
-			      	borderWidth: 1
+			      	borderWidth: 1,
+              pointHitRadius: 25
 			    	},
 						{
 							label: '# of Points',
 							data: [7, 11, 5, 8, 3, 7],
-							borderWidth: 1
+							borderWidth: 1,
+              pointHitRadius: 25
 						}
 					]
 			  },
@@ -54,14 +56,14 @@
 					responsive: false,
 					dragData: true,
 					onDragStart: function (e) {
-						console.log(e.clientY)
-						console.log(test.scales["y-axis-0"].getValueForPixel(e.clientY))
+						//console.log(e.clientY)
+						//console.log(test.scales["y-axis-0"].getValueForPixel(e.clientY))
 					},
 					onDrag: function (e, datasetIndex, index, value) {
-						console.log(e.clientY)
+						//console.log(e.clientY)
 					},
 					onDragEnd: function (e, datasetIndex, index, value) {
-						// console.log(datasetIndex, index, value)
+						console.log(datasetIndex, index, value)
 					}
 			  }
 			}

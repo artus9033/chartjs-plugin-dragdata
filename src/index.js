@@ -40,7 +40,7 @@ function updateData (chartInstance, callback) {
       const datasetIndex = element['_datasetIndex']
       const index = element['_index']
 
-      const roundValue = function(value, pos){
+      const roundValue = function(value, pos) {
         if (!isNaN(pos)) {
           return Math.round(value * Math.pow(10, pos))/Math.pow(10, pos)
         }
@@ -63,12 +63,17 @@ function updateData (chartInstance, callback) {
         let rScale = chartInstance.scales[scale]
         let d = Math.sqrt(Math.pow(x-rScale.xCenter, 2) + Math.pow(y-rScale.yCenter, 2))
         let scalingFactor = rScale.drawingArea / (rScale.max - rScale.min)
-			  if (rScale.options.ticks.reverse) {
-				  v = rScale.max - (d / scalingFactor)
-			  } else {
+        if (rScale.options.ticks.reverse) {
+          v = rScale.max - (d / scalingFactor)
+        } else {
           v = rScale.min + (d / scalingFactor)
         }
+        
         v = roundValue(v, chartInstance.options.dragDataRound)
+
+        v = v > chartInstance.scale.max ? chartInstance.scale.max : v
+        v = v < chartInstance.scale.min ? chartInstance.scale.min : v
+
         data = v
       }
       else {
@@ -80,14 +85,14 @@ function updateData (chartInstance, callback) {
           y = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top)
         }
 
+        x = roundValue(x, chartInstance.options.dragDataRound)
+        y = roundValue(y, chartInstance.options.dragDataRound)
+        
         x = x > chartInstance.scales[scaleX].max ? chartInstance.scales[scaleX].max : x
         x = x < chartInstance.scales[scaleX].min ? chartInstance.scales[scaleX].min : x
 
         y = y > chartInstance.scales[scale].max ? chartInstance.scales[scale].max : y
         y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y
-
-        x = roundValue(x, chartInstance.options.dragDataRound)
-        y = roundValue(y, chartInstance.options.dragDataRound)
 
         if(chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
           data.x = x

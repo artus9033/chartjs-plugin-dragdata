@@ -46,8 +46,8 @@ Individual event listeners can be specified as follows:
   onDragEnd: function (event, datasetIndex, index, value) {}
 }
 ```
-When dragging data points towards the outer boundaries of the y-axis, one may experience unexptected (fast) changes to the y-axis scale.
-Therefore, depending on the use case, it may be recommended to fix the y-scale using similar options as follows (especially on small charts):
+
+Minimum and maximum allowed data values can be specified through the `min` and `max` ticks settings in the scales options. By setting these values accordingly, unexptected (fast) changes to the scales, that may occur when dragging data points towards the outer boundaries of the y-axis, can be prohibited.
 
 ```javascript
 options: {
