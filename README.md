@@ -19,7 +19,7 @@ npm install chartjs-plugin-dragdata --save
 ### CDN
 In browsers, you may use the following script tag:
 ```
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@0.1.0/dist/chartjs-plugin-dragData.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@0.3.0/dist/chartjs-plugin-dragData.min.js"></script>
 ```
 
 Or, download a release archive file from the dist folder.
