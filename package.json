@@ -1,6 +1,6 @@
 {
   "name": "chartjs-plugin-dragdata",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Draggable data points for Chart.js",
   "main": "dist/chartjs-plugin-dragData.js",
   "scripts": {
