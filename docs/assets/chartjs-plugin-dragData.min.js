@@ -1,7 +1,7 @@
 /*!
  * chartjs-plugin-dragData.js
  * http://chartjs.org/
- * Version: 0.2.1
+ * Version: 0.3.0
  * 
  * Copyright 2017 Christoph Pahmeyer
  * Released under the MIT license
