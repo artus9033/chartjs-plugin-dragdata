@@ -1,6 +1,6 @@
 {
   "name": "chartjs-plugin-dragdata",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Draggable data points for Chart.js",
   "main": "dist/chartjs-plugin-dragData.js",
   "scripts": {
@@ -28,7 +28,7 @@
     "webpack-node-externals": "^1.5.4"
   },
   "dependencies": {
-    "babel-preset-env": "^1.6.1",
+    "babel-preset-env": "^1.7.0",
     "chart.js": "^2.4.0",
     "d3-drag": "^1.0.1",
     "d3-selection": "^1.0.2"
