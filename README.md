@@ -97,6 +97,9 @@ To avoid dragging specific data points inside a draggable dataset, you can retur
 
 To disable the automatic update of the data, you can return `false` to function `onDrag`. Nothing will happen to the points without you changing the `data` attribute somewhere else. This is use full for frameworks like emberjs who us the data down action up paradigm.
 
+## Touch devices
+In order to support touch events, the [`pointHitRadius`](https://www.chartjs.org/docs/latest/charts/line.html#point-styling) option should be set to a value greater than `25`. You can find working example configurations in the `docs.*.html` files. Also note, that mobile devices (and thus touch events) can be simulated with the [device mode in the Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/device-mode/).
+
 ## Gotchas
 When working with a module bundler (e.g. Webpack) and a framework (e.g. Vue.js/React/Angular), you still need to import the plugin library after installing. 
 Here's a small example for a Vue.js component
