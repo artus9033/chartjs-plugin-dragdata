@@ -11,7 +11,6 @@ function getElement (chartInstance, callback) {
       element = chartInstance.getElementAtEvent(e)[0]
       radar = chartInstance.config.type == 'radar'
       let scaleName = radar ? '_scale' : '_yScale'
-
       if (element) {
         if (chartInstance.data.datasets[element['_datasetIndex']].dragData === false || element[scaleName].options.dragData === false) {
           element = null
@@ -22,7 +21,7 @@ function getElement (chartInstance, callback) {
         if (element['_xScale']) {
           scaleX = element['_xScale'].id
         }
-        
+
         if (typeof callback === 'function' && element) {
           if ( callback(e, element) === false) {
             element = null
@@ -68,7 +67,7 @@ function updateData (chartInstance, callback) {
         } else {
           v = rScale.min + (d / scalingFactor)
         }
-        
+
         v = roundValue(v, chartInstance.options.dragDataRound)
 
         v = v > chartInstance.scale.max ? chartInstance.scale.max : v
@@ -87,7 +86,7 @@ function updateData (chartInstance, callback) {
 
         x = roundValue(x, chartInstance.options.dragDataRound)
         y = roundValue(y, chartInstance.options.dragDataRound)
-        
+
         x = x > chartInstance.scales[scaleX].max ? chartInstance.scales[scaleX].max : x
         x = x < chartInstance.scales[scaleX].min ? chartInstance.scales[scaleX].min : x
 
@@ -102,7 +101,11 @@ function updateData (chartInstance, callback) {
           data.y = y
         }
         else {
-          data = y
+          if (chartInstance.config.type === 'horizontalBar') {
+            data = x
+          } else {
+            data = y
+          }
         }
       }
 
