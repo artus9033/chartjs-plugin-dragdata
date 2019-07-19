@@ -9,7 +9,6 @@
 		html,body{
 			margin: 0;
 			padding: 0;
-    	height:100%;
 		}
 		canvas {
 			background-color : #eee;
@@ -23,7 +22,7 @@
 		</style>
 	</head>
 	<body>
-		<canvas id="chartJSContainer" style="height: 400px; width: 600px;"></canvas>
+		<canvas id="chartJSContainer" style="height: 90%; width: 90%;"></canvas>
 		<script>
 			var options = {
 			  type: 'bubble',
@@ -64,12 +63,15 @@
 
 					onDragStart: function (e) {
             // do something
+						console.log('start',e);
 					},
 					onDrag: function (e, datasetIndex, index, value) {
 						// do something
+						console.log('drag',e,datasetIndex, index, value);
 					},
 					onDragEnd: function (e, datasetIndex, index, value) {
 						// do something
+						console.log('dragEnd',e,datasetIndex, index, value);
 					}
 			  }
 			}

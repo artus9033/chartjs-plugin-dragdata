@@ -6,27 +6,28 @@ Makes data points draggable. Supports touch events.
 
 ![Drag Data Animation](https://chrispahm.github.io/chartjs-plugin-dragData/assets/chartjs-plugin-dragData.gif)
 
-[Online demo single Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/), [dual Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/dualAxis.html),[small chart](https://chrispahm.github.io/chartjs-plugin-dragData/smallChart.html),[bubble chart](https://chrispahm.github.io/chartjs-plugin-dragData/bubble.html),[radar chart](https://chrispahm.github.io/chartjs-plugin-dragData/radar.html),[react fiddle](https://jsfiddle.net/rts082hj/)
+Online demos:  
+[Single Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/), [Dual Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/dualAxis.html),[Small Chart](https://chrispahm.github.io/chartjs-plugin-dragData/smallChart.html),[Bubble Chart](https://chrispahm.github.io/chartjs-plugin-dragData/bubble.html),[Radar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/radar.html),[Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/bar.html),[Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/horizontalBar.html),[Stacked Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/stackedBar.html), [Stacked Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/stackedHorizontalBar.html),[React Fiddle](https://jsfiddle.net/rts082hj/)
 
 ## Installation
 
 ### npm
 
 ```
-npm install chartjs-plugin-dragdata --save
+npm install chartjs-plugin-dragdata
 ```
 
 ### CDN
 In browsers, you may use the following script tag:
 ```
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@0.3.0/dist/chartjs-plugin-dragData.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@0.4.0/dist/chartjs-plugin-dragData.min.js"></script>
 ```
 
 Or, download a release archive file from the dist folder.
 
 ## Configuration
 
-To make (line, bubble and radar chart) data points draggable, simply add ```dragData: true``` to the config section of the chart instance. If you (additionally to the y-axis) would like to drag data along the x-axis, you may also add ```dragX: true```.
+To make (line, bubble, bar and radar chart) data points draggable, simply add ```dragData: true``` to the config section of the chart instance. If you (additionally to the y-axis) would like to drag data along the x-axis, you may also add ```dragX: true```.
 
 To round the values dragged to, simply add ```dragDataRound: 0``` to the config section of the chart instance.
  * `0` will round to `..., -2, -1, 0, 1, 2, ...`
@@ -95,10 +96,10 @@ options: {
 
 To avoid dragging specific data points inside a draggable dataset, you can return `false` to function `onDragStart`.
 
-To disable the automatic update of the data, you can return `false` to function `onDrag`. Nothing will happen to the points without you changing the `data` attribute somewhere else. This is use full for frameworks like emberjs who us the data down action up paradigm.
+To disable the automatic update of the data, you can return `false` to function `onDrag`. Nothing will happen to the points without you changing the `data` attribute somewhere else. This is useful for frameworks like emberjs who us the data down action up paradigm.
 
 ## Touch devices
-In order to support touch events, the [`pointHitRadius`](https://www.chartjs.org/docs/latest/charts/line.html#point-styling) option should be set to a value greater than `25`. You can find working example configurations in the `docs.*.html` files. Also note, that mobile devices (and thus touch events) can be simulated with the [device mode in the Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/device-mode/).
+In order to support touch events, the [`pointHitRadius`](https://www.chartjs.org/docs/latest/charts/line.html#point-styling) option should be set to a value greater than `25`. You can find working example configurations in the `docs/*.html` files. Also note, that mobile devices (and thus touch events) can be simulated with the [device mode in the Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/device-mode/).
 
 ## Gotchas
 When working with a module bundler (e.g. Webpack) and a framework (e.g. Vue.js/React/Angular), you still need to import the plugin library after installing. 
@@ -144,6 +145,8 @@ export default {
 ## Contributing
 
 Please feel free to submit an issue or a pull request!
+If you make changes to the src/index.js file, don't forget to `npm run build` and
+manually test your changes against all demos in the docs folder.
 
 ## License
 
