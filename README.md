@@ -37,61 +37,89 @@ To round the values dragged to, simply add ```dragDataRound: 0``` to the config 
 Individual event listeners can be specified as follows:
 
 ```javascript
-{
-  ...
-  dragData: true,
-  dragX: false,
-  dragDataRound: 0,
-  onDragStart: function (event, element) {},
-  onDrag: function (event, datasetIndex, index, value) {},
-  onDragEnd: function (event, datasetIndex, index, value) {}
+const myChartOptions = {
+  type: 'line', // or radar, bar, horizontalBar, bubble
+  data: {...}, 
+  options: {
+    ... // the rest of your chart options, e.g. axis configuration
+    dragData: true,
+    dragX: false,
+    dragDataRound: 0,
+    onDragStart: function (e, element) {
+      // where e = event
+    },
+    onDrag: function (e, datasetIndex, index, value) {
+      // where e = event
+    },
+    onDragEnd: function (e, datasetIndex, index, value) {
+      // where e = event
+    }
+  }
 }
 ```
 
 Minimum and maximum allowed data values can be specified through the `min` and `max` ticks settings in the scales options. By setting these values accordingly, unexpected (fast) changes to the scales, that may occur when dragging data points towards the outer boundaries of the y-axis, can be prohibited.
 
 ```javascript
-options: {
-  scales: {
-    yAxes: [{
-      ticks: {
-        max: 25,
-        min: 0
-      }
-    }]
-  },
-  ...
+const myChartOptions = {
+  type: 'line', // or radar, bar, horizontalBar, bubble
+  data: {...}, 
+  options: {
+    dragData: true,
+    scales: {
+      yAxes: [{
+        ticks: {
+          max: 25,
+          min: 0
+        }
+      }]
+    },
+    ... // the remainder of your chart options, e.g. dragData: true etc.
+}
 ```
 
 To avoid dragging specific datasets, you can set dragData to false within the dataset options.
 
 ```javascript
-const data = {
-  datasets: [
-    {
-      label: "Data Label",
-      fill: false,
-      data: dataPoints,
-      yAxisID: 'B',
-      dragData: false
-    }, {
-  ...
+const myChartOptions = {
+  type: 'line', // or radar, bar, horizontalBar, bubble
+  data: {
+    datasets: [
+      {
+        label: "Data Label",
+        fill: false,
+        data: dataPoints,
+        yAxisID: 'B',
+        dragData: false
+      }, {
+    ...
+  },
+  options: {
+    dragData: true,
+    ... // the remainder of your chart options
+  }
+}
 ```
 
 To avoid dragging specific scales, you can set dragData to false within the axis scale options.
 
 ```javascript
-options: {
-  scales: {
-    yAxes: [{
-      ticks: {
-        max: 25,
-        min: 0
-      },
-      dragData: false
-    }]
-  },
-  ...
+const myChartOptions = {
+  type: 'line', // or radar, bar, horizontalBar, bubble
+  data: {...}, 
+  options: {
+    dragData: true,
+    scales: {
+      yAxes: [{
+        ticks: {
+          max: 25,
+          min: 0
+        },
+        dragData: false
+      }]
+    },
+    ... // the remainder of your chart options, e.g. dragData: true etc.
+}
 ```
 
 To avoid dragging specific data points inside a draggable dataset, you can return `false` to function `onDragStart`.
