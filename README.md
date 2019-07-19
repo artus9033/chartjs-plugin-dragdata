@@ -4,7 +4,7 @@ A plugin for Chart.js >= 2.4.0
 
 Makes data points draggable. Supports touch events.
 
-![Drag Data Animation](https://chrispahm.github.io/chartjs-plugin-dragData/assets/chartjs-plugin-dragData.gif)
+![Drag Data Animation](https://user-images.githubusercontent.com/20703207/61458811-ab2da180-a96b-11e9-90ae-7fc3dbec444e.gif)
 
 Online demos:  
 [Single Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/), [Dual Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/dualAxis.html),[Small Chart](https://chrispahm.github.io/chartjs-plugin-dragData/smallChart.html),[Bubble Chart](https://chrispahm.github.io/chartjs-plugin-dragData/bubble.html),[Radar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/radar.html),[Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/bar.html),[Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/horizontalBar.html),[Stacked Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/stackedBar.html), [Stacked Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/stackedHorizontalBar.html),[React Fiddle](https://jsfiddle.net/rts082hj/)
