@@ -111,10 +111,6 @@ const myChartOptions = {
     dragData: true,
     scales: {
       yAxes: [{
-        ticks: {
-          max: 25,
-          min: 0
-        },
         dragData: false
       }]
     },
