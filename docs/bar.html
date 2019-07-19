@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>Chart.js Drag Data Points Plugin</title>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+		<script src="assets/chartjs-plugin-dragData.min.js"></script>
+		<style>
+		html,body{
+			margin: 0;
+			padding: 0;
+    	height:100%;
+		}
+		canvas {
+			background-color : #eee;
+			position: absolute;
+			margin: auto;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
+		}
+		</style>
+	</head>
+	<body>
+		<canvas id="chartJSContainer" style="height: 90%; width: 90%;"></canvas>
+		<script>
+			var options = {
+		      type: 'bar',
+		      data: {
+		        labels: ["Africa", "Asia", "Europe", "Latin America", "North America"],
+		        datasets: [
+		          {
+		            label: "Population (millions)",
+		            backgroundColor: ["#3e95cd", "#8e5ea2","#3cba9f","#e8c3b9","#c45850"],
+		            data: [2478,5267,734,784,433]
+		          }
+		        ]
+		      },
+					options: {
+						responsive: false,
+						dragData: true,
+						onDragStart: function (e) {
+							//console.log("test");
+							//console.log(e.clientY)
+							//console.log(test.scales["y-axis-0"].getValueForPixel(e.clientY))
+						},
+						onDrag: function (e, datasetIndex, index, value) {
+							//console.log(e.clientY)
+						},
+						onDragEnd: function (e, datasetIndex, index, value) {
+							// console.log(datasetIndex, index, value)
+						}
+					}
+			  }
+
+			var ctx = document.getElementById('chartJSContainer').getContext('2d');
+			window.test = new Chart(ctx, options);
+		</script>
+	</body>
+</html>
