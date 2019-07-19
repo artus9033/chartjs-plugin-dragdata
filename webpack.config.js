@@ -1,4 +1,5 @@
 const path = require('path')
+const webpack = require('webpack')
 
 const config = {
   entry: './src/index.js',
@@ -16,7 +17,15 @@ const config = {
         }
       }
     ]
-  }
+  },
+  externals: {
+    'chart.js': 'Chart'
+  },
+  plugins: [
+    new webpack.ProvidePlugin({
+      Chart: 'chart.js'
+    })
+  ]
 }
 
 const dist = Object.assign({},config,{
