@@ -3,7 +3,6 @@ const webpack = require('webpack')
 
 const config = {
   entry: './src/index.js',
-  mode: 'production',
   module: {
     rules: [
       {
@@ -29,6 +28,15 @@ const config = {
 }
 
 const dist = Object.assign({},config,{
+  mode: 'development',
+  output: {
+    path: path.resolve(__dirname, 'dist'),
+    filename: 'chartjs-plugin-dragData.js'
+  }
+})
+
+const prod = Object.assign({},config,{
+  mode: 'production',
   output: {
     path: path.resolve(__dirname, 'dist'),
     filename: 'chartjs-plugin-dragData.min.js'
@@ -36,6 +44,7 @@ const dist = Object.assign({},config,{
 })
 
 const assets = Object.assign({},config,{
+  mode: 'production',
   output: {
     path: path.resolve(__dirname, 'docs/assets'),
     filename: 'chartjs-plugin-dragData.min.js'
@@ -43,5 +52,5 @@ const assets = Object.assign({},config,{
 })
 
 module.exports = [
-  dist, assets
+  dist, prod, assets
 ]
