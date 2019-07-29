@@ -1,4 +1,4 @@
-# chartjs-plugin-dragData.js
+# chartjs-plugin-dragdata.js
 
 A plugin for Chart.js >= 2.4.0
 
@@ -7,7 +7,7 @@ Makes data points draggable. Supports touch events.
 ![Drag Data Animation](https://user-images.githubusercontent.com/20703207/61458811-ab2da180-a96b-11e9-90ae-7fc3dbec444e.gif)
 
 Online demos:  
-[Single Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/), [Dual Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragData/dualAxis.html),[Small Chart](https://chrispahm.github.io/chartjs-plugin-dragData/smallChart.html),[Bubble Chart](https://chrispahm.github.io/chartjs-plugin-dragData/bubble.html),[Radar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/radar.html),[Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/bar.html),[Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/horizontalBar.html),[Stacked Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/stackedBar.html), [Stacked Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragData/stackedHorizontalBar.html),[React Fiddle](https://jsfiddle.net/rts082hj/)
+[Single Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragdata/), [Dual Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragdata/dualAxis.html),[Small Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/smallChart.html),[Bubble Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/bubble.html),[Radar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/radar.html),[Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/bar.html),[Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/horizontalBar.html),[Stacked Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedBar.html), [Stacked Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedHorizontalBar.html),[React Fiddle](https://jsfiddle.net/rts082hj/)
 
 ## Installation
 
@@ -20,7 +20,7 @@ npm install chartjs-plugin-dragdata
 ### CDN
 In browsers, you may use the following script tag:
 ```
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@0.4.2/dist/chartjs-plugin-dragData.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@0.4.2/dist/chartjs-plugin-dragdata.min.js"></script>
 ```
 
 Or, download a release archive file from the dist folder.

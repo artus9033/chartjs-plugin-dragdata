@@ -2,13 +2,13 @@
   "name": "chartjs-plugin-dragdata",
   "version": "0.4.2",
   "description": "Draggable data points for Chart.js",
-  "main": "dist/chartjs-plugin-dragData.js",
+  "main": "dist/chartjs-plugin-dragdata.js",
   "scripts": {
     "build": "webpack"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/chrispahm/chartjs-plugin-dragData.git"
+    "url": "https://github.com/chrispahm/chartjs-plugin-dragdata.git"
   },
   "keywords": [
     "chartjs",

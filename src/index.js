@@ -24,10 +24,10 @@ function getElement (chartInstance, callback) {
         
         if (type === 'bar' || type === 'horizontalBar') {
           stacked = chartInstance.config.options.scales.xAxes[0].stacked
-          let x,y
+          let data
           let datasetIndex = element._datasetIndex
           let index = element._index
-          let newPos = calcPosition(e,chartInstance,datasetIndex,index,x,y)
+          let newPos = calcPosition(e,chartInstance,datasetIndex,index,data)
           let curValue = chartInstance.data.datasets[datasetIndex].data[index]
           initValue = newPos - curValue
         }
@@ -154,6 +154,7 @@ function dragEndCallback (chartInstance, callback) {
 }
 
 const ChartJSdragDataPlugin = {
+  id: 'dragdata',
   afterInit: function(chartInstance) {
     if (chartInstance.options.dragData) {
       select(chartInstance.chart.canvas).call(
