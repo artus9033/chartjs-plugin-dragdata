@@ -24,7 +24,7 @@ function getElement (chartInstance, callback) {
         
         if (type === 'bar' || type === 'horizontalBar') {
           stacked = chartInstance.config.options.scales.xAxes[0].stacked
-          let data
+          let data = {}
           let datasetIndex = element._datasetIndex
           let index = element._index
           let newPos = calcPosition(e,chartInstance,datasetIndex,index,data)
