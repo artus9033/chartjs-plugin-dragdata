@@ -94,11 +94,11 @@ function calcPosition(e,chartInstance,datasetIndex,index,data) {
   y = y > chartInstance.scales[scale].max ? chartInstance.scales[scale].max : y
   y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y
 
-  if(chartInstance.data.datasets[datasetIndex].data[index].x && chartInstance.options.dragX) {
+  if(chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
     data.x = x
   }
 
-  if(chartInstance.data.datasets[datasetIndex].data[index].y) {
+  if(chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) {
     data.y = y
     return data
   } else {
