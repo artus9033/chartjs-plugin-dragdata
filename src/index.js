@@ -160,7 +160,7 @@ const ChartJSdragDataPlugin = {
       select(chartInstance.chart.canvas).call(
         drag().container(chartInstance.chart.canvas)
           .on('start', getElement(chartInstance, chartInstance.options.onDragStart))
-          .on('drag', updateData(chartInstance, chartInstance.options.onDrag))
+          .on('drag.touchable', updateData(chartInstance, chartInstance.options.onDrag))
           .on('end', dragEndCallback(chartInstance,chartInstance.options.onDragEnd))
       )
     }
