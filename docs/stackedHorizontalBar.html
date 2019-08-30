@@ -2,90 +2,90 @@
 <html>
 
 <head>
-	<meta charset="utf-8">
-	<title>Chart.js Drag Data Points Plugin</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
-	<script src="assets/chartjs-plugin-dragdata.min.js"></script>
-	<style>
-		html,
-		body {
-			margin: 0px;
-			padding: 0px;
-		}
+  <meta charset="utf-8">
+  <title>Chart.js Drag Data Points Plugin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+  <script src="assets/chartjs-plugin-dragdata.min.js"></script>
+  <style>
+    html,
+    body {
+      margin: 0px;
+      padding: 0px;
+    }
 
-		canvas {
-			background-color: #eee;
-			position: absolute;
-			margin: auto;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
-		}
-	</style>
+    canvas {
+      background-color: #eee;
+      position: absolute;
+      margin: auto;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+    }
+  </style>
 </head>
 
 <body>
-	<canvas id="chartJSContainer" style="height: 90%; width: 90%;"></canvas>
-	<script>
-		var options = {
-			type: 'horizontalBar',
-			data: {
-				labels: ['Risk Level'],
-				datasets: [{
-						label: 'Low',
-						data: [67.8],
-						backgroundColor: '#D6E9C6',
-					},
-					{
-						label: 'Moderate',
-						data: [20.7],
-						backgroundColor: '#FAEBCC',
-					},
-					{
-						label: 'High',
-						data: [11.4],
-						backgroundColor: '#EBCCD1',
-					}
-				]
-			},
-			options: {
-				responsive: false,
-				dragData: true,
-				onDragStart: function(e) {
-					//console.log("test");
-					//console.log(e.clientY)
-					//console.log(test.scales["y-axis-0"].getValueForPixel(e.clientY))
-				},
-				onDrag: function(e, datasetIndex, index, value) {
-					//console.log(e.clientY)
-				},
-				onDragEnd: function(e, datasetIndex, index, value) {
-					// console.log(datasetIndex, index, value)
-				},
-				scales: {
-					xAxes: [{
-						stacked: true,
-						ticks: {
-							max: 100,
-							min: 0
-						}
-					}],
-					yAxes: [{
-						stacked: true,
-						ticks: {
-							max: 100,
-							min: 0
-						}
-					}]
-				}
-			}
-		}
+  <canvas id="chartJSContainer" style="height: 90%; width: 90%;"></canvas>
+  <script>
+    var options = {
+      type: 'horizontalBar',
+      data: {
+        labels: ['Risk Level'],
+        datasets: [{
+            label: 'Low',
+            data: [67.8],
+            backgroundColor: '#D6E9C6',
+          },
+          {
+            label: 'Moderate',
+            data: [20.7],
+            backgroundColor: '#FAEBCC',
+          },
+          {
+            label: 'High',
+            data: [11.4],
+            backgroundColor: '#EBCCD1',
+          }
+        ]
+      },
+      options: {
+        responsive: false,
+        dragData: true,
+        onDragStart: function(e) {
+          //console.log("test");
+          //console.log(e.clientY)
+          //console.log(test.scales["y-axis-0"].getValueForPixel(e.clientY))
+        },
+        onDrag: function(e, datasetIndex, index, value) {
+          //console.log(e.clientY)
+        },
+        onDragEnd: function(e, datasetIndex, index, value) {
+          // console.log(datasetIndex, index, value)
+        },
+        scales: {
+          xAxes: [{
+            stacked: true,
+            ticks: {
+              max: 100,
+              min: 0
+            }
+          }],
+          yAxes: [{
+            stacked: true,
+            ticks: {
+              max: 100,
+              min: 0
+            }
+          }]
+        }
+      }
+    }
 
-		var ctx = document.getElementById('chartJSContainer').getContext('2d');
-		window.test = new Chart(ctx, options);
-	</script>
+    var ctx = document.getElementById('chartJSContainer').getContext('2d');
+    window.test = new Chart(ctx, options);
+  </script>
 </body>
 
 </html>

@@ -6,8 +6,19 @@ Makes data points draggable. Supports touch events.
 
 ![Drag Data Animation](https://user-images.githubusercontent.com/20703207/61458811-ab2da180-a96b-11e9-90ae-7fc3dbec444e.gif)
 
-Online demos:  
-[Single Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragdata/), [Dual Y-Axis](https://chrispahm.github.io/chartjs-plugin-dragdata/dualAxis.html),[Small Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/smallChart.html),[Bubble Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/bubble.html),[Radar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/radar.html),[Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/bar.html),[Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/horizontalBar.html),[Stacked Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedBar.html), [Stacked Horizontal Bar Chart](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedHorizontalBar.html),[React Fiddle](https://jsfiddle.net/3v9kexbh/)
+### Online demos
+| Chart Type                                             | Demo                                                                                  | Source                                                                                                              |
+|:-------------------------------------------------------|:--------------------------------------------------------------------------------------|:--------------------------------------------------------------------------------------------------------------------|
+| Line - Single Y-Axis                                   | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/)                          | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/index.html)                |
+| Line - Dual Y-Axis                                     | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/dualAxis.html)             | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/dualAxis.html)             |
+| Line - Small                                           | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/smallChart.html)           | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/smallChart.html)           |
+| Line - React Fiddle                                    | [demo](https://jsfiddle.net/3v9kexbh/)                                                | [source](https://jsfiddle.net/3v9kexbh/)                                                                            |
+| Bubble - Simple Bubble                                 | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/bubble.html)               | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/bubble.html)               |
+| Radar - Simple Radar                                   | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/radar.html)                | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/radar.html)                |
+| Bar - Simple Bar                                       | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/bar.html)                  | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/bar.html)                  |
+| Horizontal Bar - Simple Horizontal Bar                 | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/horizontalBar.html)        | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/horizontalBar.html)        |
+| Stacked Bar - Simple Stacked Bar                       | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedBar.html)           | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/stackedBar.html)           |
+| Stacked Horizontal Bar - Simple Stacked Horizontal Bar | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedHorizontalBar.html) | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/stackedHorizontalBar.html) |
 
 ## Installation
 
