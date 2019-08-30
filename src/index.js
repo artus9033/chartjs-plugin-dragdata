@@ -123,7 +123,7 @@ function updateData (chartInstance, callback) {
         data = calcRadar(e,chartInstance)
       } else if (stacked) {
         let cursorPos = calcPosition(e,chartInstance,datasetIndex,index,data)
-        data = cursorPos - initValue
+        data = roundValue(cursorPos - initValue,chartInstance.options.dragDataRound) 
       } else {
         data = calcPosition(e,chartInstance,datasetIndex,index,data)
       }
