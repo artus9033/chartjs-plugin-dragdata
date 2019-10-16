@@ -99,7 +99,8 @@ function calcPosition(e,chartInstance,datasetIndex,index,data) {
   }
 
   if(chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) {
-    data.y = y
+    if ((!('dragY' in chartInstance.options) || chartInstance.options.dragY=== true))
+      data.y = y
     return data
   } else {
     if (type === 'horizontalBar') {
