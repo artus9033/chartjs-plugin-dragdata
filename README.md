@@ -56,6 +56,11 @@ const myChartOptions = {
     dragData: true,
     dragX: false,
     dragDataRound: 0,
+    dragOptions: {
+      magnet: {
+        to: Math.round
+      }
+    },
     onDragStart: function (e, element) {
       // where e = event
     },
@@ -132,6 +137,30 @@ const myChartOptions = {
 To avoid dragging specific data points inside a draggable dataset, you can return `false` to function `onDragStart`.
 
 To disable the automatic update of the data, you can return `false` to function `onDrag`. Nothing will happen to the points without you changing the `data` attribute somewhere else. This is useful for frameworks like emberjs who us the data down action up paradigm.
+
+### Apply magnet
+
+When you drag your points maybe you would stop to the closest value or to the rounded value or whatever.  
+Specifying `magnet` options you can easily do it:
+
+```javascript
+dragOptions: {
+	magnet: {
+   		to: Math.round
+   }
+},
+```
+
+You can customize your final "anchor point" in this way:
+
+```javascript
+dragOptions: {
+	magnet: {
+   		to: (value) => value + 5
+   }
+},
+```
+
 
 ## Touch devices
 In order to support touch events, the [`pointHitRadius`](https://www.chartjs.org/docs/latest/charts/line.html#point-styling) option should be set to a value greater than `25`. You can find working example configurations in the `docs/*.html` files. Also note, that mobile devices (and thus touch events) can be simulated with the [device mode in the Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/device-mode/).
