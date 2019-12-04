@@ -130,7 +130,7 @@ const myChartOptions = {
         dragData: false
       }]
     },
-    ... // the remainder of your chart options, e.g. dragData: true etc.
+    ... // the remainder of your chart options
 }
 ```
 
@@ -140,24 +140,20 @@ To disable the automatic update of the data, you can return `false` to function 
 
 ### Apply magnet
 
-When you drag your points maybe you would stop to the closest value or to the rounded value or whatever.  
-Specifying `magnet` options you can easily do it:
+When you drag a point you might want to stop dragging at the closest (rounded) value, or at a fixed value.
+In order to do that, specify `magnet` options you can easily do it:
 
 ```javascript
-dragOptions: {
-	magnet: {
-   		to: Math.round
-   }
-},
-```
-
-You can customize your final "anchor point" in this way:
-
-```javascript
-dragOptions: {
-	magnet: {
-   		to: (value) => value + 5
-   }
+const myChartOptions = {
+  type: 'line', // or radar, bar, horizontalBar, bubble
+  data: {...}, 
+  options: {
+    dragOptions: {
+	     magnet: {
+   		    to: Math.round // to: (value) => value + 5
+       }
+    },
+    ... // the remainder of your chart options
 },
 ```
 
