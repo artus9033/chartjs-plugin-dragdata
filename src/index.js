@@ -153,6 +153,8 @@ function applyMagnet(chartInstance, i, j) {
       chartInstance.update(0)
       return data
     }
+  } else {
+    return chartInstance.data.datasets[i].data[j]
   }
 }
 
@@ -162,8 +164,7 @@ function dragEndCallback(chartInstance, callback) {
       const e = event.sourceEvent
       const datasetIndex = element._datasetIndex
       const index = element._index
-      let value = chartInstance.data.datasets[datasetIndex].data[index]
-      value = applyMagnet(chartInstance, datasetIndex, index)
+      let value = applyMagnet(chartInstance, datasetIndex, index)
       return callback(e, datasetIndex, index, value)
     }
   }
