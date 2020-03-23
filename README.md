@@ -4,7 +4,7 @@ A plugin for Chart.js >= 2.4.0
 
 Makes data points draggable. Supports touch events.
 
-![Drag Data Animation](https://user-images.githubusercontent.com/20703207/61458811-ab2da180-a96b-11e9-90ae-7fc3dbec444e.gif)
+![Drag Data Animation](https://user-images.githubusercontent.com/20703207/77322131-8a47f800-6d13-11ea-9ca8-b9fc7f820e85.gif)
 
 ### Online demos
 | Chart Type                                             | Demo                                                                                  | Source                                                                                                              |
