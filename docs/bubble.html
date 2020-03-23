@@ -58,21 +58,30 @@
               }
             }]
           },
+          dragDataRound: 2,
+          dragOptions: {
+            showTooltip: true
+          },
           responsive: false,
           dragData: true,
           dragX: true,
-
-          onDragStart: function (e) {
-            // do something
-            console.log('start',e);
+          onDragStart: function(e) {
+            // console.log(e)
           },
-          onDrag: function (e, datasetIndex, index, value) {
-            // do something
-            console.log('drag',e,datasetIndex, index, value);
+          onDrag: function(e, datasetIndex, index, value) {
+            e.target.style.cursor = 'grabbing'
+            // console.log(datasetIndex, index, value)
           },
-          onDragEnd: function (e, datasetIndex, index, value) {
-            // do something
-            console.log('dragEnd',e,datasetIndex, index, value);
+          onDragEnd: function(e, datasetIndex, index, value) {
+            e.target.style.cursor = 'default' 
+            // console.log(datasetIndex, index, value)
+          },
+          hover: {
+            onHover: function(e) {
+              const point = this.getElementAtEvent(e)
+              if (point.length) e.target.style.cursor = 'grab'
+              else e.target.style.cursor = 'default'
+            }
           }
         }
       }

@@ -54,16 +54,27 @@
       options: {
         responsive: false,
         dragData: true,
+        dragDataRound: 1,
+        dragOptions: {
+          showTooltip: true
+        },
         onDragStart: function(e) {
-          //console.log("test");
-          //console.log(e.clientY)
-          //console.log(test.scales["y-axis-0"].getValueForPixel(e.clientY))
+          // console.log(e)
         },
         onDrag: function(e, datasetIndex, index, value) {
-          //console.log(e.clientY)
+          e.target.style.cursor = 'grabbing'
+          // console.log(datasetIndex, index, value)
         },
         onDragEnd: function(e, datasetIndex, index, value) {
+          e.target.style.cursor = 'default' 
           // console.log(datasetIndex, index, value)
+        },
+        hover: {
+          onHover: function(e) {
+            const point = this.getElementAtEvent(e)
+            if (point.length) e.target.style.cursor = 'grab'
+            else e.target.style.cursor = 'default'
+          }
         },
         scales: {
           xAxes: [{

@@ -45,7 +45,7 @@ To round the values dragged to, simply add ```dragDataRound: 0``` to the config 
  * `1` will round to `..., -0.2, -0.1, 0.0, 0.1, 0.2, ...`
  * `-1` will round to `..., -20, -10, 0, 10, 20, ...`
 
-Individual event listeners can be specified as follows:
+The following example configuration shows how individual event listeners (callbacks) can be configured.
 
 ```javascript
 const myChartOptions = {
@@ -55,20 +55,34 @@ const myChartOptions = {
     ... // the rest of your chart options, e.g. axis configuration
     dragData: true,
     dragX: false,
-    dragDataRound: 0,
+    dragDataRound: 0, // round to full integers (0 decimals)
     dragOptions: {
-      magnet: {
-        to: Math.round
-      }
+      // magnet: { // enable to stop dragging after a certain value
+      //   to: Math.round
+      // },
+      showTooltip: true // Recommended. This will show the tooltip while the user 
+      // drags the datapoint
     },
     onDragStart: function (e, element) {
       // where e = event
     },
     onDrag: function (e, datasetIndex, index, value) {
+      // change cursor style to grabbing during drag action
+      e.target.style.cursor = 'grabbing'
       // where e = event
     },
     onDragEnd: function (e, datasetIndex, index, value) {
+      // restore default cursor style upon drag release
+      e.target.style.cursor = 'default'
       // where e = event
+    },
+    hover: {
+      onHover: function(e) {
+        // indicate that a datapoint is draggable by showing the 'grab' cursor when hovered
+        const point = this.getElementAtEvent(e)
+        if (point.length) e.target.style.cursor = 'grab'
+        else e.target.style.cursor = 'default'
+      }
     }
   }
 }

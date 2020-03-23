@@ -2,7 +2,7 @@ import Chart from 'chart.js'
 import {drag} from 'd3-drag'
 import {select, event} from 'd3-selection'
 
-let element, scale, scaleX, type, stacked, initValue
+let element, scale, scaleX, type, stacked, initValue, curDatasetIndex, curIndex
 
 function getElement(chartInstance, callback) {
   return () => {
@@ -99,7 +99,9 @@ function calcPosition(e, chartInstance, datasetIndex, index, data) {
   }
 
   if (chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) {
-    data.y = y
+    if (chartInstance.options.dragY !== false) {
+      data.y = y
+    }  
     return data
   } else {
     if (type === 'horizontalBar') {
@@ -114,27 +116,27 @@ function updateData(chartInstance, callback) {
   return () => {
     if (element && event) {
       const e = event.sourceEvent
-      const datasetIndex = element._datasetIndex
-      const index = element._index
+      curDatasetIndex = element._datasetIndex
+      curIndex = element._index
 
-      let data = chartInstance.data.datasets[datasetIndex].data[index]
+      let data = chartInstance.data.datasets[curDatasetIndex].data[curIndex]
 
       if (type === 'radar') {
         data = calcRadar(e, chartInstance)
       } else if (stacked) {
-        let cursorPos = calcPosition(e, chartInstance, datasetIndex, index, data)
+        let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex, data)
         data = roundValue(cursorPos - initValue, chartInstance.options.dragDataRound)
       } else {
-        data = calcPosition(e, chartInstance, datasetIndex, index, data)
+        data = calcPosition(e, chartInstance, curDatasetIndex, curIndex, data)
       }
 
       if (typeof callback === 'function') {
-        if (callback(e, datasetIndex, index, data) !== false) {
-          chartInstance.data.datasets[datasetIndex].data[index] = data
+        if (callback(e, curDatasetIndex, curIndex, data) !== false) {
+          chartInstance.data.datasets[curDatasetIndex].data[curIndex] = data
           chartInstance.update(0)
         }
       } else {
-        chartInstance.data.datasets[datasetIndex].data[index] = data
+        chartInstance.data.datasets[curDatasetIndex].data[curIndex] = data
         chartInstance.update(0)
       }
     }
@@ -160,6 +162,7 @@ function applyMagnet(chartInstance, i, j) {
 
 function dragEndCallback(chartInstance, callback) {
   return () => {
+    curDatasetIndex, curIndex = undefined
     if (typeof callback === 'function' && element) {
       const e = event.sourceEvent
       const datasetIndex = element._datasetIndex
@@ -180,6 +183,55 @@ const ChartJSdragDataPlugin = {
           .on('drag', updateData(chartInstance, chartInstance.options.onDrag))
           .on('end', dragEndCallback(chartInstance, chartInstance.options.onDragEnd))
       )
+    }
+  },
+  beforeRender: function (chart) {
+    const dragOptions = chart.config.options.dragOptions
+    if (dragOptions && dragOptions.showTooltip) {
+      // create an array of tooltips
+      // we can't use the chart tooltip because there is only one tooltip per chart
+      chart.pluginTooltips = []
+      chart.config.data.datasets.forEach(function (dataset, i) {
+        chart.getDatasetMeta(i).data.forEach(function (sector, j) {
+          if (curDatasetIndex === i && curIndex === j) {
+            chart.pluginTooltips.push(new Chart.Tooltip({
+              _chart: chart.chart,
+              _chartInstance: chart,
+              _data: chart.data,
+              _options: chart.options.tooltips,
+              _active: [sector]
+            }, chart))
+          }
+        })
+      })
+            
+      // turn off normal tooltips
+      // chart.options.tooltips.enabled = false;
+    }
+  },
+  afterDraw: function (chart, easing) {
+    const dragOptions = chart.config.options.dragOptions
+    if (dragOptions && dragOptions.showTooltip) {
+      // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
+      if (!chart.allTooltipsOnce) {
+        if (easing !== 1)
+          return
+        chart.allTooltipsOnce = true
+      }
+
+      // turn on tooltips
+      chart.options.tooltips.enabled = true
+      Chart.helpers.each(chart.pluginTooltips, function (tooltip) {
+        // This line checks if the item is visible to display the tooltip
+        if(!tooltip._active[0].hidden){
+          tooltip.initialize()
+          tooltip.update()
+          // we don't actually need this since we are not animating tooltips
+          tooltip.pivot()
+          tooltip.transition(easing).draw()
+        }
+      })
+      chart.options.tooltips.enabled = true
     }
   }
 }
