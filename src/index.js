@@ -130,6 +130,14 @@ function updateData(chartInstance, callback) {
         data = calcPosition(e, chartInstance, curDatasetIndex, curIndex, data)
       }
 
+      const dragOptions = chartInstance.options.dragOptions
+      if (dragOptions && dragOptions.magnet) {
+        const magnet = dragOptions.magnet
+        if (magnet.applyDuringDrag === true && magnet.to && typeof magnet.to === 'function') {
+            data = magnet.to(data)
+        }
+      }
+
       if (typeof callback === 'function') {
         if (callback(e, curDatasetIndex, curIndex, data) !== false) {
           chartInstance.data.datasets[curDatasetIndex].data[curIndex] = data
