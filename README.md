@@ -24,6 +24,8 @@ Makes data points draggable. Supports touch events.
 | Stacked Bar - Simple Stacked Bar                                                                                               | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedBar.html)           | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/stackedBar.html)           |
 | Stacked Horizontal Bar - Simple Stacked Horizontal Bar                                                                         | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedHorizontalBar.html) | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/stackedHorizontalBar.html) |
 
+Click here to learn [how to use this plugin in an Observable](https://observablehq.com/@chrispahm/draggable-data-charts).
+
 ## Installation
 
 ### npm
