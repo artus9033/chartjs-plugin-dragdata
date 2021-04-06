@@ -1,7 +1,7 @@
 # chartjs-plugin-dragdata.js
 
 **Now compatible with Chart.js v3 🎉**  
-**Looking for a version compatible to Chart.js < 2.9.x? Then visit the v2 branch!**
+**Looking for a version compatible to Chart.js < 2.9.x? Then visit the [v2 branch](https://github.com/chrispahm/chartjs-plugin-dragdata/tree/v2)!**
 
 A plugin for Chart.js >= 2.4.0  
 Makes data points draggable. Supports touch events.
