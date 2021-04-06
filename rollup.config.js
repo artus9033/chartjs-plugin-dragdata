@@ -25,16 +25,16 @@ function buildOutput (file,format,terse) {
         browser: true
       }),
       commonjs(),
-      // terse ? terser() : undefined
+      terse ? terser() : undefined
     ]
   }
 }
 
 export default [
   // main outputs to dist folder
-  // buildOutput(pkg.main,'umd',false),
-  // buildOutput(pkg.browser,'umd',true),
-  // buildOutput(pkg.module,'es',true),
+  buildOutput(pkg.main,'umd',false),
+  buildOutput(pkg.browser,'umd',true),
+  buildOutput(pkg.module,'es',true),
   // as well as the docs/assets one
   buildOutput('docs/assets/chartjs-plugin-dragdata.min.js','umd',true),
 ]
