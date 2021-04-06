@@ -38,9 +38,7 @@ const getElement = (e, chartInstance, callback) => {
       stacked = chartInstance.config.options.scales[xAxisID].stacked
       let data = {}
       let newPos = calcPosition(e, chartInstance, datasetIndex, index, data)
-      initValue = newPos - curValue
-      console.log(dataset,index,curValue,newPos)
-      
+      initValue = newPos - curValue      
     }
 
     if (typeof callback === 'function' && element) {
