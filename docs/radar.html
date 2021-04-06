@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <title>Chart.js Drag Data Points Plugin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.0.1/chart.min.js"></script>
   <script src="assets/chartjs-plugin-dragdata.min.js"></script>
   <style>
     html,
@@ -35,31 +35,31 @@
         }]
       },
       options: {
-        dragData: true,
-        dragDataRound: 0,
-        dragOptions: {
-          showTooltip: true
+        responsive: false,
+        onHover: function(e) {
+          const point = e.chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false)
+          if (point.length) e.native.target.style.cursor = 'grab'
+          else e.native.target.style.cursor = 'default'
         },
-        onDragStart: function(e) {
-          // console.log(e)
-        },
-        onDrag: function(e, datasetIndex, index, value) {
-          e.target.style.cursor = 'grabbing'
-          // console.log(datasetIndex, index, value)
-        },
-        onDragEnd: function(e, datasetIndex, index, value) {
-          e.target.style.cursor = 'default' 
-          // console.log(datasetIndex, index, value)
-        },
-        hover: {
-          onHover: function(e) {
-            const point = this.getElementAtEvent(e)
-            if (point.length) e.target.style.cursor = 'grab'
-            else e.target.style.cursor = 'default'
+        plugins: {
+          dragData: {
+            round: 1,
+            showTooltip: true,
+            onDragStart: function(e) {
+              // console.log(e)
+            },
+            onDrag: function(e, datasetIndex, index, value) {              
+              e.target.style.cursor = 'grabbing'
+              // console.log(e, datasetIndex, index, value)
+            },
+            onDragEnd: function(e, datasetIndex, index, value) {
+              e.target.style.cursor = 'default' 
+              // console.log(datasetIndex, index, value)
+            },
           }
         },
-        scale: {
-          ticks: {
+        scales: {
+          r: {
             max: 20,
             min: 0,
             stepSize: 1
