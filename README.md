@@ -1,5 +1,7 @@
 # chartjs-plugin-dragdata.js
 
+**This branch hosts a version of the `dragdata` plugin compatible to Chart.js v2.x.x**
+
 A plugin for Chart.js >= 2.4.0
 
 Makes data points draggable. Supports touch events.
@@ -31,13 +33,13 @@ Click here to learn [how to use this plugin in an Observable](https://observable
 ### npm
 
 ```
-npm install chartjs-plugin-dragdata
+npm install chartjs-plugin-dragdata@1.1.3
 ```
 
 ### CDN
 In browsers, you may use the following script tag:
 ```
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@latest/dist/chartjs-plugin-dragdata.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@1.1.3/dist/chartjs-plugin-dragdata.min.js"></script>
 ```
 
 Or, download a release archive file from the dist folder.
