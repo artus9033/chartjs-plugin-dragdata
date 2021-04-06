@@ -1,42 +1,51 @@
-import Chart from 'chart.js'
+import {Chart} from 'chart.js'
 import {drag} from 'd3-drag'
-import {select, event} from 'd3-selection'
+import {select} from 'd3-selection'
 
-let element, scale, scaleX, type, stacked, initValue, curDatasetIndex, curIndex
+let element, yAxisID, xAxisID, rAxisID, type, stacked, initValue, curDatasetIndex, curIndex, eventSettings
+let isDragging = false
 
-function getElement(chartInstance, callback) {
-  return () => {
-    if (event) {
-      const e = event.sourceEvent
-      element = chartInstance.getElementAtEvent(e)[0]
-      type = chartInstance.config.type
-      let scaleName = type === 'radar' ? '_scale' : '_yScale'
-      if (element) {
-        if (chartInstance.data.datasets[element._datasetIndex].dragData === false || element[scaleName].options.dragData === false) {
-          element = null
-          return
-        }
+const getElement = (e, chartInstance, callback) => {  
+  element = chartInstance.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false)[0]
+  type = chartInstance.config.type
 
-        scale = element[scaleName].id
-        if (element._xScale) {
-          scaleX = element._xScale.id
-        }
+  if (element) {    
+    let datasetIndex = element.datasetIndex
+    let index = element.index
+    // save element settings
+    // eventSettings = chartInstance.config.options.animation
+    // chartInstance.config.options.animation = false  
+    const dataset = chartInstance.data.datasets[datasetIndex]
+    const datasetMeta = chartInstance.getDatasetMeta(datasetIndex)
+    let curValue = dataset.data[index]
+    // get the id of the datasets scale
+    xAxisID = datasetMeta.xAxisID
+    yAxisID = datasetMeta.yAxisID
+    rAxisID = datasetMeta.rAxisID
+    
+    // check if dragging the dataset or datapoint is prohibited
+    if (dataset.dragData === false || 
+      chartInstance.config.options.scales[xAxisID].dragData === false ||
+      chartInstance.config.options.scales[yAxisID].dragData === false ||
+      chartInstance.config.options.scales[yAxisID].rAxisID === false ||
+      dataset.data[element.index].dragData === false
+    ) {
+      element = null
+      return
+    }
 
-        if (type === 'bar' || type === 'horizontalBar') {
-          stacked = chartInstance.config.options.scales.xAxes[0].stacked
-          let data = {}
-          let datasetIndex = element._datasetIndex
-          let index = element._index
-          let newPos = calcPosition(e, chartInstance, datasetIndex, index, data)
-          let curValue = chartInstance.data.datasets[datasetIndex].data[index]
-          initValue = newPos - curValue
-        }
+    if (type === 'bar') {
+      stacked = chartInstance.config.options.scales[xAxisID].stacked
+      let data = {}
+      let newPos = calcPosition(e, chartInstance, datasetIndex, index, data)
+      initValue = newPos - curValue
+      console.log(dataset,index,curValue,newPos)
+      
+    }
 
-        if (typeof callback === 'function' && element) {
-          if (callback(e, element) === false) {
-            element = null
-          }
-        }
+    if (typeof callback === 'function' && element) {
+      if (callback(e, datasetIndex, index, curValue) === false) {
+        element = null
       }
     }
   }
@@ -58,7 +67,7 @@ function calcRadar(e, chartInstance) {
     x = e.clientX - chartInstance.canvas.getBoundingClientRect().left
     y = e.clientY - chartInstance.canvas.getBoundingClientRect().top
   }
-  let rScale = chartInstance.scales[scale]
+  let rScale = chartInstance.scales[rAxisID]
   let d = Math.sqrt(Math.pow(x - rScale.xCenter, 2) + Math.pow(y - rScale.yCenter, 2))
   let scalingFactor = rScale.drawingArea / (rScale.max - rScale.min)
   if (rScale.options.ticks.reverse) {
@@ -67,44 +76,47 @@ function calcRadar(e, chartInstance) {
     v = rScale.min + (d / scalingFactor)
   }
 
-  v = roundValue(v, chartInstance.options.dragDataRound)
+  v = roundValue(v, chartInstance.config.options.plugins.dragData.round)
 
-  v = v > chartInstance.scale.max ? chartInstance.scale.max : v
-  v = v < chartInstance.scale.min ? chartInstance.scale.min : v
+  v = v > chartInstance.scales[rAxisID].max ? chartInstance.scales[rAxisID].max : v
+  v = v < chartInstance.scales[rAxisID].min ? chartInstance.scales[rAxisID].min : v
 
   return v
 }
 
 function calcPosition(e, chartInstance, datasetIndex, index, data) {
   let x, y
+  const dataPoint = chartInstance.data.datasets[datasetIndex].data[index]
+  
   if (e.touches) {
-    x = chartInstance.scales[scaleX].getValueForPixel(e.touches[0].clientX - chartInstance.canvas.getBoundingClientRect().left)
-    y = chartInstance.scales[scale].getValueForPixel(e.touches[0].clientY - chartInstance.canvas.getBoundingClientRect().top)
+    x = chartInstance.scales[xAxisID].getValueForPixel(e.touches[0].clientX - chartInstance.canvas.getBoundingClientRect().left)
+    y = chartInstance.scales[yAxisID].getValueForPixel(e.touches[0].clientY - chartInstance.canvas.getBoundingClientRect().top)
   } else {
-    x = chartInstance.scales[scaleX].getValueForPixel(e.clientX - chartInstance.canvas.getBoundingClientRect().left)
-    y = chartInstance.scales[scale].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top)
+    x = chartInstance.scales[xAxisID].getValueForPixel(e.clientX - chartInstance.canvas.getBoundingClientRect().left)
+    y = chartInstance.scales[yAxisID].getValueForPixel(e.clientY - chartInstance.canvas.getBoundingClientRect().top)
   }
+  
+  x = roundValue(x, chartInstance.config.options.plugins.dragData.round)
+  y = roundValue(y, chartInstance.config.options.plugins.dragData.round)
+  
+  x = x > chartInstance.scales[xAxisID].max ? chartInstance.scales[xAxisID].max : x
+  x = x < chartInstance.scales[xAxisID].min ? chartInstance.scales[xAxisID].min : x
 
-  x = roundValue(x, chartInstance.options.dragDataRound)
-  y = roundValue(y, chartInstance.options.dragDataRound)
+  y = y > chartInstance.scales[yAxisID].max ? chartInstance.scales[yAxisID].max : y
+  y = y < chartInstance.scales[yAxisID].min ? chartInstance.scales[yAxisID].min : y
 
-  x = x > chartInstance.scales[scaleX].max ? chartInstance.scales[scaleX].max : x
-  x = x < chartInstance.scales[scaleX].min ? chartInstance.scales[scaleX].min : x
-
-  y = y > chartInstance.scales[scale].max ? chartInstance.scales[scale].max : y
-  y = y < chartInstance.scales[scale].min ? chartInstance.scales[scale].min : y
-
-  if (chartInstance.data.datasets[datasetIndex].data[index].x !== undefined && chartInstance.options.dragX) {
-    data.x = x
+  
+  if (dataPoint.x !== undefined && chartInstance.config.options.plugins.dragData.dragX) {
+    dataPoint.x = x
   }
-
-  if (chartInstance.data.datasets[datasetIndex].data[index].y !== undefined) {
-    if (chartInstance.options.dragY !== false) {
-      data.y = y
+  
+  if (dataPoint.y !== undefined) {
+    if (chartInstance.config.options.plugins.dragData.dragY !== false) {
+      dataPoint.y = y
     }  
-    return data
+    return dataPoint
   } else {
-    if (type === 'horizontalBar') {
+    if (chartInstance.config.options.indexAxis === 'y') {
       return x
     } else {
       return y
@@ -112,47 +124,49 @@ function calcPosition(e, chartInstance, datasetIndex, index, data) {
   }
 }
 
-function updateData(chartInstance, callback) {
-  return () => {
-    if (element && event) {
-      const e = event.sourceEvent
-      curDatasetIndex = element._datasetIndex
-      curIndex = element._index
+const updateData = (e, chartInstance, pluginOptions, callback) => {
+  if (element) {
+    curDatasetIndex = element.datasetIndex
+    curIndex = element.index
+    
+    isDragging = true
+    
+    let dataPoint = chartInstance.data.datasets[curDatasetIndex].data[curIndex]
 
-      let data = chartInstance.data.datasets[curDatasetIndex].data[curIndex]
-
-      if (type === 'radar') {
-        data = calcRadar(e, chartInstance)
-      } else if (stacked) {
-        let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex, data)
-        data = roundValue(cursorPos - initValue, chartInstance.options.dragDataRound)
-      } else {
-        data = calcPosition(e, chartInstance, curDatasetIndex, curIndex, data)
-      }
-
-      if (typeof callback === 'function') {
-        if (callback(e, curDatasetIndex, curIndex, data) !== false) {
-          chartInstance.data.datasets[curDatasetIndex].data[curIndex] = data
-          chartInstance.update(0)
-        }
-      } else {
-        chartInstance.data.datasets[curDatasetIndex].data[curIndex] = data
-        chartInstance.update(0)
-      }
+    if (type === 'radar') {
+      dataPoint = calcRadar(e, chartInstance)
+    } else if (stacked) {
+      let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
+      dataPoint = roundValue(cursorPos - initValue, pluginOptions.round)
+    } else {
+      dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
+    }
+    
+    
+    if (pluginOptions.showTooltip === undefined || pluginOptions.showTooltip) {
+      chartInstance.tooltip.setActiveElements([element],{
+        x: element.element.x,
+        y: element.element.y
+      })
+    }
+        
+    if (!callback || (typeof callback === 'function' && callback(e, curDatasetIndex, curIndex, dataPoint) !== false)) {
+      chartInstance.data.datasets[curDatasetIndex].data[curIndex] = dataPoint
+      chartInstance.update('none')
     }
   }
 }
 
 // Update values to the nearest values
 function applyMagnet(chartInstance, i, j) {
-  const dragOptions = chartInstance.options.dragOptions
-  if (dragOptions && dragOptions.magnet) {
-    const magnet = dragOptions.magnet
+  const pluginOptions = chartInstance.config.options.plugins.dragData
+  if (pluginOptions.magnet) {
+    const magnet = pluginOptions.magnet
     if (magnet.to && typeof magnet.to === 'function') {
       let data = chartInstance.data.datasets[i].data[j]
       data = magnet.to(data)
       chartInstance.data.datasets[i].data[j] = data
-      chartInstance.update(0)
+      chartInstance.update('none')
       return data
     }
   } else {
@@ -160,82 +174,43 @@ function applyMagnet(chartInstance, i, j) {
   }
 }
 
-function dragEndCallback(chartInstance, callback) {
-  return () => {
-    curDatasetIndex, curIndex = undefined
-    if (typeof callback === 'function' && element) {
-      const e = event.sourceEvent
-      const datasetIndex = element._datasetIndex
-      const index = element._index
-      let value = applyMagnet(chartInstance, datasetIndex, index)
-      return callback(e, datasetIndex, index, value)
-    }
+const dragEndCallback = (e, chartInstance, callback) => {
+  curDatasetIndex, curIndex = undefined
+  isDragging = false
+  // chartInstance.config.options.animation = eventSettings
+  // chartInstance.update('none')
+  if (typeof callback === 'function' && element) {
+    const datasetIndex = element.datasetIndex
+    const index = element.index
+    let value = applyMagnet(chartInstance, datasetIndex, index)
+    return callback(e, datasetIndex, index, value)
   }
 }
 
 const ChartJSdragDataPlugin = {
   id: 'dragdata',
-  afterInit: function (chartInstance) {
-    if (chartInstance.options.dragData) {
-      select(chartInstance.chart.canvas).call(
-        drag().container(chartInstance.chart.canvas)
-          .on('start', getElement(chartInstance, chartInstance.options.onDragStart))
-          .on('drag', updateData(chartInstance, chartInstance.options.onDrag))
-          .on('end', dragEndCallback(chartInstance, chartInstance.options.onDragEnd))
+  afterInit: function (chartInstance) {    
+    if (chartInstance.config.options.plugins && chartInstance.config.options.plugins.dragData) {
+      const pluginOptions = chartInstance.config.options.plugins.dragData
+      select(chartInstance.canvas).call(
+        drag().container(chartInstance.canvas)
+          .on('start', e => getElement(e.sourceEvent, chartInstance, pluginOptions.onDragStart))
+          .on('drag', e => updateData(e.sourceEvent, chartInstance, pluginOptions, pluginOptions.onDrag))
+          .on('end', e => dragEndCallback(e.sourceEvent, chartInstance, pluginOptions.onDragEnd))
       )
     }
   },
-  beforeRender: function (chart) {
-    const dragOptions = chart.config.options.dragOptions
-    if (dragOptions && dragOptions.showTooltip) {
-      // create an array of tooltips
-      // we can't use the chart tooltip because there is only one tooltip per chart
-      chart.pluginTooltips = []
-      chart.config.data.datasets.forEach(function (dataset, i) {
-        chart.getDatasetMeta(i).data.forEach(function (sector, j) {
-          if (curDatasetIndex === i && curIndex === j) {
-            chart.pluginTooltips.push(new Chart.Tooltip({
-              _chart: chart.chart,
-              _chartInstance: chart,
-              _data: chart.data,
-              _options: chart.options.tooltips,
-              _active: [sector]
-            }, chart))
-          }
-        })
-      })
-            
-      // turn off normal tooltips
-      // chart.options.tooltips.enabled = false;
-    }
-  },
-  afterDraw: function (chart, easing) {
-    const dragOptions = chart.config.options.dragOptions
-    if (dragOptions && dragOptions.showTooltip) {
-      // we don't want the permanent tooltips to animate, so don't do anything till the animation runs atleast once
-      if (!chart.allTooltipsOnce) {
-        if (easing !== 1)
-          return
-        chart.allTooltipsOnce = true
-      }
-
-      // turn on tooltips
-      chart.options.tooltips.enabled = true
-      Chart.helpers.each(chart.pluginTooltips, function (tooltip) {
-        // This line checks if the item is visible to display the tooltip
-        if(!tooltip._active[0].hidden){
-          tooltip.initialize()
-          tooltip.update()
-          // we don't actually need this since we are not animating tooltips
-          tooltip.pivot()
-          tooltip.transition(easing).draw()
-        }
-      })
-      chart.options.tooltips.enabled = true
+  beforeEvent: function (chart) {
+    if (chart.config.options.plugins && 
+      chart.config.options.plugins.dragData && 
+      chart.config.options.plugins.dragData.showTooltip &&
+      isDragging
+    ) {
+      return false
     }
   }
 }
 
-Chart.pluginService.register(ChartJSdragDataPlugin)
+Chart.register(ChartJSdragDataPlugin)
 
 export default ChartJSdragDataPlugin
