@@ -1,7 +1,9 @@
 # chartjs-plugin-dragdata.js
 
-A plugin for Chart.js >= 2.4.0
+**Now compatible with Chart.js v3 🎉**  
+**Looking for a version compatible to Chart.js < 2.9.x? Then visit the v2 branch!**
 
+A plugin for Chart.js >= 2.4.0  
 Makes data points draggable. Supports touch events.
 
 ![Drag Data Animation](https://user-images.githubusercontent.com/20703207/77322131-8a47f800-6d13-11ea-9ca8-b9fc7f820e85.gif)
@@ -17,14 +19,15 @@ Makes data points draggable. Supports touch events.
 | Line - Drag multiple points                                                                                                    | [demo](https://jsfiddle.net/45nurh9L/3/)                                              | [source](https://jsfiddle.net/45nurh9L/3/)                                                                          |
 | Line - Small                                                                                                                   | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/smallChart.html)           | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/smallChart.html)           |
 | Line - React Fiddle                                                                                                            | [demo](https://jsfiddle.net/3v9kexbh/)                                                | [source](https://jsfiddle.net/3v9kexbh/)                                                                            |
-| Line - Drag x-, and y-axis (scatter chart)                                                                                     | [demo](https://jsfiddle.net/rqbcs6ep/1/)                                              | [source](https://jsfiddle.net/rqbcs6ep/1/)                                                                          |
+| Line - Drag x-, and y-axis (scatter chart)                                                                                     | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/scatter.html)              | [source](https://chrispahm.github.io/chartjs-plugin-dragdata/scatter.html)                                          |
 | Line - Zoom, Pan, and drag data points (combination with [chartjs-plugin-zoom](https://github.com/chartjs/chartjs-plugin-zoom) | [demo](https://jsfiddle.net/s6xn3q9f/1/)                                              | [source](https://jsfiddle.net/s6xn3q9f/1/)                                                                          |
 | Mixed - Bar, Bubble, and line Chart                                                                                            | [demo](https://jsfiddle.net/rqbcs6ep/3/)                                              | [source](https://jsfiddle.net/rqbcs6ep/3/)                                                                          |
 | Radar - Simple Radar                                                                                                           | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/radar.html)                | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/radar.html)                |
+| Polar - Simple Polar                                                                                                           | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/polar.html)                | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/polar.html)                |
 | Stacked Bar - Simple Stacked Bar                                                                                               | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedBar.html)           | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/stackedBar.html)           |
 | Stacked Horizontal Bar - Simple Stacked Horizontal Bar                                                                         | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedHorizontalBar.html) | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/stackedHorizontalBar.html) |
 
-Click here to learn [how to use this plugin in an Observable](https://observablehq.com/@chrispahm/draggable-data-charts).
+Click here to learn [how to use this plugin in an Observable notebook](https://observablehq.com/@chrispahm/draggable-data-charts).
 
 ## Installation
 
@@ -44,145 +47,116 @@ Or, download a release archive file from the dist folder.
 
 ## Configuration
 
-To make (line, bubble, bar and radar chart) data points draggable, simply add ```dragData: true``` to the config section of the chart instance. If you (additionally to the y-axis) would like to drag data along the x-axis, you may also add ```dragX: true```.
+The following Chart.js sample configuration displays (*most*) of the available
+configuration options of the `dragdata` plugin.
 
-To round the values dragged to, simply add ```dragDataRound: 0``` to the config section of the chart instance.
- * `0` will round to `..., -2, -1, 0, 1, 2, ...`
- * `1` will round to `..., -0.2, -0.1, 0.0, 0.1, 0.2, ...`
- * `-1` will round to `..., -20, -10, 0, 10, 20, ...`
+```js
+const draggableChart = new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+    datasets: [{
+      label: '# of Votes',
+      data: [12, 19, 3, 5, 2, 3],
+      fill: true,
+      tension: 0.4,
+      borderWidth: 1,
+      pointHitRadius: 25 // for improved touch support
+      // dragData: false // prohibit dragging this dataset
+                         // same as returning `false` in the onDragStart callback
+                         // for this datsets index position
+    }]
+  },
+  options: {
+    plugins: {
+      dragData: {
+        round: 1, // rounds the values to n decimal places 
+                  // in this case 1, e.g 0.1234 => 0.1)
+        showTooltip: true, // show the tooltip while dragging [default = true]
+        // dragX: true // also enable dragging along the x-axis.
+                       // this solely works for continous, numerical x-axis scales (no categories or dates)!
+        onDragStart: function(e, element) {
+          /*
+          // e = event, element = datapoint that was dragged
+          // you may use this callback to prohibit dragging certain datapoints
+          // by returning false in this callback
+          if (element.datasetIndex === 0 && element.index === 0) {
+            // this would prohibit dragging the first datapoint in the first
+            // dataset entirely
+            return false
+          }
+          */
+        },
+        onDrag: function(e, datasetIndex, index, value) {         
+          /*     
+          // you may control the range in which datapoints are allowed to be
+          // dragged by returning `false` in this callback
+          if (value < 0) return false // this only allows positive values
+          if (datasetIndex === 0 && index === 0 && value > 20) return false 
+          */
+        },
+        onDragEnd: function(e, datasetIndex, index, value) {
+          // you may use this callback to store the final datapoint value
+          // (after dragging) in a database, or update other UI elements that
+          // dependent on it
+        },
+      }
+    },
+    scales: {
+      y: {
+        // dragData: false // disables datapoint dragging for the entire axis
+      }
+    }
+  }
+})
+```
 
-The following example configuration shows how individual event listeners (callbacks) can be configured.
+Minimum and maximum allowed data values can also be specified through the `min` and `max` ticks settings in the scales options. By setting these values accordingly, unexpected (fast) changes to the scales, that may occur when dragging data points towards the outer boundaries of the y-axis, can be prohibited.
 
 ```javascript
 const myChartOptions = {
   type: 'line', // or radar, bar, horizontalBar, bubble
   data: {...}, 
   options: {
-    ... // the rest of your chart options, e.g. axis configuration
-    dragData: true,
-    dragX: false,
-    dragDataRound: 0, // round to full integers (0 decimals)
-    dragOptions: {
-      // magnet: { // enable to stop dragging after a certain value
-      //   to: Math.round
-      // },
-      showTooltip: true // Recommended. This will show the tooltip while the user 
-      // drags the datapoint
-    },
-    onDragStart: function (e, element) {
-      // where e = event
-    },
-    onDrag: function (e, datasetIndex, index, value) {
-      // change cursor style to grabbing during drag action
-      e.target.style.cursor = 'grabbing'
-      // where e = event
-    },
-    onDragEnd: function (e, datasetIndex, index, value) {
-      // restore default cursor style upon drag release
-      e.target.style.cursor = 'default'
-      // where e = event
-    },
-    hover: {
-      onHover: function(e) {
-        // indicate that a datapoint is draggable by showing the 'grab' cursor when hovered
-        const point = this.getElementAtEvent(e)
-        if (point.length) e.target.style.cursor = 'grab'
-        else e.target.style.cursor = 'default'
+    plugins: {dragData: true},
+    scales: {
+      y: {
+        max: 25,
+        min: 0
       }
     }
   }
 }
 ```
 
-Minimum and maximum allowed data values can be specified through the `min` and `max` ticks settings in the scales options. By setting these values accordingly, unexpected (fast) changes to the scales, that may occur when dragging data points towards the outer boundaries of the y-axis, can be prohibited.
+
+### Applying a 'magnet'
+
+In some scenarios, one might want to stop dragging at the closest (rounded) value, or even at a fixed value.
+This may be achieved by specifying a `magnet` callback function
+in the plugins settings:
 
 ```javascript
 const myChartOptions = {
-  type: 'line', // or radar, bar, horizontalBar, bubble
+  type: 'line', // or radar, bar, bubble
   data: {...}, 
   options: {
-    dragData: true,
-    scales: {
-      yAxes: [{
-        ticks: {
-          max: 25,
-          min: 0
+    plugins: {
+      dragData: {
+        magnet: {
+    		    to: Math.round // to: (value) => value + 5
         }
-      }]
-    },
-    ... // the remainder of your chart options, e.g. dragData: true etc.
-}
-```
-
-To avoid dragging specific datasets, you can set dragData to false within the dataset options.
-
-```javascript
-const myChartOptions = {
-  type: 'line', // or radar, bar, horizontalBar, bubble
-  data: {
-    datasets: [
-      {
-        label: "Data Label",
-        fill: false,
-        data: dataPoints,
-        yAxisID: 'B',
-        dragData: false
-      }, {
-    ...
-  },
-  options: {
-    dragData: true,
-    ... // the remainder of your chart options
+      }
+    }
   }
 }
 ```
-
-To avoid dragging specific scales, you can set dragData to false within the axis scale options.
-
-```javascript
-const myChartOptions = {
-  type: 'line', // or radar, bar, horizontalBar, bubble
-  data: {...}, 
-  options: {
-    dragData: true,
-    scales: {
-      yAxes: [{
-        dragData: false
-      }]
-    },
-    ... // the remainder of your chart options
-}
-```
-
-To avoid dragging specific data points inside a draggable dataset, you can return `false` to function `onDragStart`.
-
-To disable the automatic update of the data, you can return `false` to function `onDrag`. Nothing will happen to the points without you changing the `data` attribute somewhere else. This is useful for frameworks like emberjs who us the data down action up paradigm.
-
-### Apply magnet
-
-When you drag a point you might want to stop dragging at the closest (rounded) value, or at a fixed value.
-In order to do that, specify `magnet` options you can easily do it:
-
-```javascript
-const myChartOptions = {
-  type: 'line', // or radar, bar, horizontalBar, bubble
-  data: {...}, 
-  options: {
-    dragOptions: {
-	     magnet: {
-   		    to: Math.round // to: (value) => value + 5
-       }
-    },
-    ... // the remainder of your chart options
-},
-```
-
 
 ## Touch devices
 In order to support touch events, the [`pointHitRadius`](https://www.chartjs.org/docs/latest/charts/line.html#point-styling) option should be set to a value greater than `25`. You can find working example configurations in the `docs/*.html` files. Also note, that mobile devices (and thus touch events) can be simulated with the [device mode in the Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/device-mode/).
 
 ## Gotchas
-When working with a module bundler (e.g. Webpack) and a framework (e.g. Vue.js/React/Angular), you still need to import the plugin library after installing. 
+When working with a module bundler (e.g. Rollup/Webpack) and a framework (e.g. Vue.js/React/Angular), you still need to import the plugin library after installing. 
 Here's a small example for a Vue.js component
 
 ```js
