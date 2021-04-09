@@ -25,9 +25,9 @@ const getElement = (e, chartInstance, callback) => {
     
     // check if dragging the dataset or datapoint is prohibited
     if (dataset.dragData === false || 
-      chartInstance.config.options.scales[xAxisID].dragData === false ||
-      chartInstance.config.options.scales[yAxisID].dragData === false ||
-      chartInstance.config.options.scales[yAxisID].rAxisID === false ||
+      (chartInstance.config.options.scales[xAxisID] && chartInstance.config.options.scales[xAxisID].dragData === false) ||
+      (chartInstance.config.options.scales[yAxisID] && chartInstance.config.options.scales[yAxisID].dragData === false) ||
+      (chartInstance.config.options.scales[rAxisID] && chartInstance.config.options.scales[rAxisID].rAxisID === false) ||
       dataset.data[element.index].dragData === false
     ) {
       element = null
