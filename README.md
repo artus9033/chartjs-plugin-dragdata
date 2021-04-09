@@ -20,6 +20,7 @@ Makes data points draggable. Supports touch events.
 | Line - Small                                                                                                                   | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/smallChart.html)           | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/smallChart.html)           |
 | Line - React Fiddle                                                                                                            | [demo](https://jsfiddle.net/3v9kexbh/)                                                | [source](https://jsfiddle.net/3v9kexbh/)                                                                            |
 | Line - Drag x-, and y-axis (scatter chart)                                                                                     | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/scatter.html)              | [source](https://chrispahm.github.io/chartjs-plugin-dragdata/scatter.html)                                          |
+| Line - Drag dates (x and y axis)                                                                                               | [demo](https://jsfiddle.net/f72kz348/9/)                                              | [source](https://jsfiddle.net/f72kz348/9/)                                                                          |
 | Line - Zoom, Pan, and drag data points (combination with [chartjs-plugin-zoom](https://github.com/chartjs/chartjs-plugin-zoom) | [demo](https://jsfiddle.net/s6xn3q9f/1/)                                              | [source](https://jsfiddle.net/s6xn3q9f/1/)                                                                          |
 | Mixed - Bar, Bubble, and line Chart                                                                                            | [demo](https://jsfiddle.net/rqbcs6ep/3/)                                              | [source](https://jsfiddle.net/rqbcs6ep/3/)                                                                          |
 | Radar - Simple Radar                                                                                                           | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/radar.html)                | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/radar.html)                |
@@ -40,7 +41,7 @@ npm install chartjs-plugin-dragdata
 ### CDN
 In browsers, you may use the following script tag:
 ```
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@latest/dist/chartjs-plugin-dragdata.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@2.0.2/dist/chartjs-plugin-dragdata.min.js"></script>
 ```
 
 Or, download a release archive file from the dist folder.
