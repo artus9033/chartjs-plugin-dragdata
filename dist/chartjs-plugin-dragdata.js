@@ -1369,10 +1369,11 @@
     if (floatingBar) {
       // x contains the new value for one end of the floating bar
       // dataPoint contains the old interval [left, right] of the floating bar
-      // calculate difference between new value(x) and both sides
-      // the side with the smallest difference was the one that was dragged
-      // return an interval with new value on the dragged side and old value of the other side
+      // calculate difference between the new value and both sides
+      // the side with the smallest difference from the new value was the one that was dragged
+      // return an interval with new value on the dragged side and old value on the other side
       let newVal;
+      // choose the right variable based on the orientation of the graph(vertical, horizontal)
       if (chartInstance.config.options.indexAxis === 'y') {
         newVal = x;
       } else {
