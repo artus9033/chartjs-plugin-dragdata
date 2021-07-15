@@ -2,7 +2,7 @@ import {Chart} from 'chart.js'
 import {drag} from 'd3-drag'
 import {select} from 'd3-selection'
 
-let element, yAxisID, xAxisID, rAxisID, type, stacked, initValue, curDatasetIndex, curIndex, eventSettings
+let element, yAxisID, xAxisID, rAxisID, type, stacked, floatingBar, initValue, curDatasetIndex, curIndex, eventSettings
 let isDragging = false
 
 const getElement = (e, chartInstance, callback) => {  
@@ -36,6 +36,11 @@ const getElement = (e, chartInstance, callback) => {
 
     if (type === 'bar') {
       stacked = chartInstance.config.options.scales[xAxisID].stacked
+
+      // if a bar has a data point that is an array of length 2, it's a floating bar
+      const samplePoint = chartInstance.data.datasets[0].data[0]
+      floatingBar = (samplePoint !== null) && Array.isArray(samplePoint) && samplePoint.length == 2
+
       let data = {}
       let newPos = calcPosition(e, chartInstance, datasetIndex, index, data)
       initValue = newPos - curValue      
@@ -104,6 +109,29 @@ function calcPosition(e, chartInstance, datasetIndex, index, data) {
   y = y < chartInstance.scales[yAxisID].min ? chartInstance.scales[yAxisID].min : y
 
   
+  if (floatingBar) {
+    // x contains the new value for one end of the floating bar
+    // dataPoint contains the old interval [left, right] of the floating bar
+    // calculate difference between the new value and both sides
+    // the side with the smallest difference from the new value was the one that was dragged
+    // return an interval with new value on the dragged side and old value on the other side
+    let newVal
+    // choose the right variable based on the orientation of the graph(vertical, horizontal)
+    if (chartInstance.config.options.indexAxis === 'y') {
+      newVal = x
+    } else {
+      newVal = y
+    }
+    const diffFromLeft = Math.abs(newVal - dataPoint[0])
+    const diffFromRight = Math.abs(newVal - dataPoint[1])
+
+    if (diffFromLeft <= diffFromRight) {
+      return [newVal, dataPoint[1]]
+    } else {
+      return [dataPoint[0], newVal]
+    }
+  }
+
   if (dataPoint.x !== undefined && chartInstance.config.options.plugins.dragData.dragX) {
     dataPoint.x = x
   }
@@ -136,6 +164,8 @@ const updateData = (e, chartInstance, pluginOptions, callback) => {
     } else if (stacked) {
       let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
       dataPoint = roundValue(cursorPos - initValue, pluginOptions.round)
+    } else if (floatingBar) {
+      dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
     } else {
       dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
     }
