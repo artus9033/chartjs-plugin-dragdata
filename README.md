@@ -184,7 +184,7 @@ export default {
   },
   mounted() {
     Chart.register(...registerables)
-    this.createChart('chart', chartOptions)
+    this.createChart('chart', this.chartOptions)
   },
   methods: {
     createChart(chartId, chartData) {
