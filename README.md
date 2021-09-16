@@ -170,7 +170,7 @@ Here's a small example for a Vue.js component
   </div>
 </template>
 <script>
-import Chart from 'chart.js'
+import { Chart, registerables } from 'chart.js'
 // load the options file externally for better readability of the component.
 // In the chartOptions object, make sure to add "dragData: true" etc.
 import chartOptions from '~/assets/js/labour.js'
@@ -183,6 +183,7 @@ export default {
     }
   },
   mounted() {
+    Chart.register(...registerables)
     this.createChart('chart', this.chartOptions)
   },
   methods: {
