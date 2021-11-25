@@ -25,12 +25,12 @@
   <canvas id="chartJSContainer" style="height: 90%; width: 90%;"></canvas>
   <script>
     var options = {
-      type: 'radar',
+      type: 'polarArea',
       data: {
-        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange","Other1","Other2","Other3","Other4","Other5","Other6","Other7","Other8","Other9","Other10","Other11","Other12","Other14","Other15"],
+        labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
         datasets: [{
           label: '# of Votes',
-          data: [8, 8, 8, 8, 8, 8,8,8,8,8,8,8,8,8,8,8,8,8,8,8],
+          data: [6, 9, 3, 8, 7, 2],
           pointHitRadius: 25
         }]
       },
@@ -60,7 +60,7 @@
         },
         scales: {
           r: {
-            max: 40,
+            max: 10,
             min: 0,
             stepSize: 1
           }

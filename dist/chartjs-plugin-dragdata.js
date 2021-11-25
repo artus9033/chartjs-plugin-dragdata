@@ -1416,7 +1416,7 @@
       
       let dataPoint = chartInstance.data.datasets[curDatasetIndex].data[curIndex];
 
-      if (type === 'radar') {
+      if (type === 'radar' || 'polarArea') {
         dataPoint = calcRadar(e, chartInstance);
       } else if (stacked) {
         let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex);
