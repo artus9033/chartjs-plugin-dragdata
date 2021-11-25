@@ -159,7 +159,7 @@ const updateData = (e, chartInstance, pluginOptions, callback) => {
     
     let dataPoint = chartInstance.data.datasets[curDatasetIndex].data[curIndex]
 
-    if (type === 'radar' || 'polarArea') {
+    if (type === 'radar' || type === 'polarArea') {
       dataPoint = calcRadar(e, chartInstance)
     } else if (stacked) {
       let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
