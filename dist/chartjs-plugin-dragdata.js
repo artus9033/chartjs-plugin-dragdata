@@ -2,7 +2,7 @@
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('chart.js')) :
   typeof define === 'function' && define.amd ? define(['chart.js'], factory) :
   (global = typeof globalThis !== 'undefined' ? globalThis : global || self, global.index = factory(global.Chart));
-}(this, (function (chart_js) { 'use strict';
+})(this, (function (chart_js) { 'use strict';
 
   var noop = {value: () => {}};
 
@@ -149,10 +149,14 @@
     return new Selection(subgroups, this._parents);
   }
 
+  // Given something array like (or null), returns something that is strictly an
+  // array. This is used to ensure that array-like objects passed to d3.selectAll
+  // or selection.selectAll are converted into proper arrays when creating a
+  // selection; we don’t ever want to create a selection backed by a live
+  // HTMLCollection or NodeList. However, note that selection.selectAll will use a
+  // static NodeList as a group, since it safely derived from querySelectorAll.
   function array(x) {
-    return typeof x === "object" && "length" in x
-      ? x // Array, TypedArray, NodeList, array-like
-      : Array.from(x); // Map, Set, iterable, string, or anything else
+    return x == null ? [] : Array.isArray(x) ? x : Array.from(x);
   }
 
   function empty() {
@@ -167,8 +171,7 @@
 
   function arrayAll(select) {
     return function() {
-      var group = select.apply(this, arguments);
-      return group == null ? [] : array(group);
+      return array(select.apply(this, arguments));
     };
   }
 
@@ -220,7 +223,7 @@
   var filter = Array.prototype.filter;
 
   function children() {
-    return this.children;
+    return Array.from(this.children);
   }
 
   function childrenFilter(match) {
@@ -365,7 +368,7 @@
       var parent = parents[j],
           group = groups[j],
           groupLength = group.length,
-          data = array(value.call(parent, parent && parent.__data__, j, parents)),
+          data = arraylike(value.call(parent, parent && parent.__data__, j, parents)),
           dataLength = data.length,
           enterGroup = enter[j] = new Array(dataLength),
           updateGroup = update[j] = new Array(dataLength),
@@ -391,20 +394,40 @@
     return update;
   }
 
+  // Given some data, this returns an array-like view of it: an object that
+  // exposes a length property and allows numeric indexing. Note that unlike
+  // selectAll, this isn’t worried about “live” collections because the resulting
+  // array will only be used briefly while data is being bound. (It is possible to
+  // cause the data to change while iterating by using a key function, but please
+  // don’t; we’d rather avoid a gratuitous copy.)
+  function arraylike(data) {
+    return typeof data === "object" && "length" in data
+      ? data // Array, TypedArray, NodeList, array-like
+      : Array.from(data); // Map, Set, iterable, string, or anything else
+  }
+
   function selection_exit() {
     return new Selection(this._exit || this._groups.map(sparse), this._parents);
   }
 
   function selection_join(onenter, onupdate, onexit) {
     var enter = this.enter(), update = this, exit = this.exit();
-    enter = typeof onenter === "function" ? onenter(enter) : enter.append(onenter + "");
-    if (onupdate != null) update = onupdate(update);
+    if (typeof onenter === "function") {
+      enter = onenter(enter);
+      if (enter) enter = enter.selection();
+    } else {
+      enter = enter.append(onenter + "");
+    }
+    if (onupdate != null) {
+      update = onupdate(update);
+      if (update) update = update.selection();
+    }
     if (onexit == null) exit.remove(); else onexit(exit);
     return enter && update ? enter.merge(update).order() : update;
   }
 
-  function selection_merge(selection) {
-    if (!(selection instanceof Selection)) throw new Error("invalid merge");
+  function selection_merge(context) {
+    var selection = context.selection ? context.selection() : context;
 
     for (var groups0 = this._groups, groups1 = selection._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
       for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
@@ -1009,6 +1032,11 @@
     return [event.pageX, event.pageY];
   }
 
+  // These are typically used in conjunction with noevent to ensure that we can
+  // preventDefault on the event.
+  const nonpassive = {passive: false};
+  const nonpassivecapture = {capture: true, passive: false};
+
   function nopropagation(event) {
     event.stopImmediatePropagation();
   }
@@ -1020,9 +1048,9 @@
 
   function nodrag(view) {
     var root = view.document.documentElement,
-        selection = select(view).on("dragstart.drag", noevent, true);
+        selection = select(view).on("dragstart.drag", noevent, nonpassivecapture);
     if ("onselectstart" in root) {
-      selection.on("selectstart.drag", noevent, true);
+      selection.on("selectstart.drag", noevent, nonpassivecapture);
     } else {
       root.__noselect = root.style.MozUserSelect;
       root.style.MozUserSelect = "none";
@@ -1033,7 +1061,7 @@
     var root = view.document.documentElement,
         selection = select(view).on("dragstart.drag", null);
     if (noclick) {
-      selection.on("click.drag", noevent, true);
+      selection.on("click.drag", noevent, nonpassivecapture);
       setTimeout(function() { selection.on("click.drag", null); }, 0);
     }
     if ("onselectstart" in root) {
@@ -1111,7 +1139,7 @@
           .on("mousedown.drag", mousedowned)
         .filter(touchable)
           .on("touchstart.drag", touchstarted)
-          .on("touchmove.drag", touchmoved)
+          .on("touchmove.drag", touchmoved, nonpassive)
           .on("touchend.drag touchcancel.drag", touchended)
           .style("touch-action", "none")
           .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
@@ -1121,7 +1149,9 @@
       if (touchending || !filter.call(this, event, d)) return;
       var gesture = beforestart(this, container.call(this, event, d), event, d, "mouse");
       if (!gesture) return;
-      select(event.view).on("mousemove.drag", mousemoved, true).on("mouseup.drag", mouseupped, true);
+      select(event.view)
+        .on("mousemove.drag", mousemoved, nonpassivecapture)
+        .on("mouseup.drag", mouseupped, nonpassivecapture);
       nodrag(event.view);
       nopropagation(event);
       mousemoving = false;
@@ -1210,7 +1240,7 @@
         var p0 = p, n;
         switch (type) {
           case "start": gestures[identifier] = gesture, n = active++; break;
-          case "end": delete gestures[identifier], --active; // nobreak
+          case "end": delete gestures[identifier], --active; // falls through
           case "drag": p = pointer(touch || event, container), n = active; break;
         }
         dispatch.call(
@@ -1416,7 +1446,7 @@
       
       let dataPoint = chartInstance.data.datasets[curDatasetIndex].data[curIndex];
 
-      if (type === 'radar' || 'polarArea') {
+      if (type === 'radar' || type === 'polarArea') {
         dataPoint = calcRadar(e, chartInstance);
       } else if (stacked) {
         let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex);
@@ -1500,4 +1530,4 @@
 
   return ChartJSdragDataPlugin;
 
-})));
+}));
