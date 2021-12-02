@@ -1294,6 +1294,14 @@
   let element, yAxisID, xAxisID, rAxisID, type, stacked, floatingBar, initValue, curDatasetIndex, curIndex, eventSettings;
   let isDragging = false;
 
+  function getSafe(func) {
+    try {
+      return func()
+    } catch (e) {
+      return ''
+    }
+  }
+
   const getElement = (e, chartInstance, callback) => {  
     element = chartInstance.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false)[0];
     type = chartInstance.config.type;
@@ -1302,7 +1310,7 @@
       let datasetIndex = element.datasetIndex;
       let index = element.index;
       // save element settings
-      eventSettings = chartInstance.config.options.plugins?.tooltip?.animation;
+      eventSettings = getSafe(() => chartInstance.config.options.plugins.tooltip.animation);
 
       const dataset = chartInstance.data.datasets[datasetIndex];
       const datasetMeta = chartInstance.getDatasetMeta(datasetIndex);
@@ -1491,8 +1499,10 @@
     curIndex = undefined;
     isDragging = false;
     // re-enable the tooltip animation
-    chartInstance.config.options.plugins.tooltip.animation = eventSettings;
-    chartInstance.update('none');
+    if (chartInstance.config.options.plugins.tooltip) {
+      chartInstance.config.options.plugins.tooltip.animation = eventSettings;
+      chartInstance.update('none');
+    }
     
     // chartInstance.update('none')
     if (typeof callback === 'function' && element) {
