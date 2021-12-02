@@ -1291,7 +1291,7 @@
     return drag;
   }
 
-  let element, yAxisID, xAxisID, rAxisID, type, stacked, floatingBar, initValue, curDatasetIndex, curIndex;
+  let element, yAxisID, xAxisID, rAxisID, type, stacked, floatingBar, initValue, curDatasetIndex, curIndex, eventSettings;
   let isDragging = false;
 
   const getElement = (e, chartInstance, callback) => {  
@@ -1302,8 +1302,8 @@
       let datasetIndex = element.datasetIndex;
       let index = element.index;
       // save element settings
-      // eventSettings = chartInstance.config.options.animation
-      // chartInstance.config.options.animation = false  
+      eventSettings = chartInstance.config.options.plugins?.tooltip?.animation;
+
       const dataset = chartInstance.data.datasets[datasetIndex];
       const datasetMeta = chartInstance.getDatasetMeta(datasetIndex);
       let curValue = dataset.data[index];
@@ -1333,6 +1333,12 @@
         initValue = newPos - curValue;      
       }
 
+      // disable the tooltip animation
+      if (chartInstance.config.options.plugins.dragData.showTooltip === undefined || chartInstance.config.options.plugins.dragData.showTooltip) {
+        if (!chartInstance.config.options.plugins.tooltip) chartInstance.config.options.plugins.tooltip = {};
+        chartInstance.config.options.plugins.tooltip.animation = false;
+      }    
+      
       if (typeof callback === 'function' && element) {
         if (callback(e, datasetIndex, index, curValue) === false) {
           element = null;
@@ -1456,14 +1462,6 @@
       } else {
         dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex);
       }
-      
-      
-      if (pluginOptions.showTooltip === undefined || pluginOptions.showTooltip) {
-        chartInstance.tooltip.setActiveElements([element],{
-          x: element.element.x,
-          y: element.element.y
-        });
-      }
           
       if (!callback || (typeof callback === 'function' && callback(e, curDatasetIndex, curIndex, dataPoint) !== false)) {
         chartInstance.data.datasets[curDatasetIndex].data[curIndex] = dataPoint;
@@ -1492,7 +1490,10 @@
   const dragEndCallback = (e, chartInstance, callback) => {
     curIndex = undefined;
     isDragging = false;
-    // chartInstance.config.options.animation = eventSettings
+    // re-enable the tooltip animation
+    chartInstance.config.options.plugins.tooltip.animation = eventSettings;
+    chartInstance.update('none');
+    
     // chartInstance.update('none')
     if (typeof callback === 'function' && element) {
       const datasetIndex = element.datasetIndex;
@@ -1515,13 +1516,13 @@
         );
       }
     },
-    beforeEvent: function (chart) {
-      if (chart.config.options.plugins && 
-        chart.config.options.plugins.dragData && 
-        chart.config.options.plugins.dragData.showTooltip &&
-        isDragging
-      ) {
-        return false
+    afterEvent: function (chart) { 
+      if (!element) return    
+      if (isDragging) {
+        chart.tooltip.setActiveElements([element],{
+          x: element.element.x,
+          y: element.element.y
+        });
       }
     }
   };
