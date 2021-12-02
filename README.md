@@ -26,7 +26,7 @@ Makes data points draggable. Supports touch events.
 | Line - Zoom, Pan, and drag data points (combination with [chartjs-plugin-zoom](https://github.com/chartjs/chartjs-plugin-zoom) | [demo](https://jsfiddle.net/s6xn3q9f/1/)                                               | [source](https://jsfiddle.net/s6xn3q9f/1/)                                                                           |
 | Mixed - Bar, Bubble, and line Chart                                                                                            | [demo](https://jsfiddle.net/rqbcs6ep/3/)                                               | [source](https://jsfiddle.net/rqbcs6ep/3/)                                                                           |
 | Radar - Simple Radar                                                                                                           | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/radar.html)                 | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/radar.html)                 |
-| Polar - Simple Polar Area Chart                                                                                                    | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/polar.html)                 | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/polar.html)                 |
+| Polar - Simple Polar Area Chart                                                                                                | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/polar.html)                 | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/polar.html)                 |
 | Stacked Bar - Simple Stacked Bar                                                                                               | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedBar.html)            | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/stackedBar.html)            |
 | Stacked Bar - GANTT Chart                                                                                                      | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/ganttChart.html)            | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/ganttChart.html)            |
 | Stacked Horizontal Bar - Simple Stacked Horizontal Bar                                                                         | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/stackedHorizontalBar.html)  | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/stackedHorizontalBar.html)  |
@@ -44,7 +44,7 @@ npm install chartjs-plugin-dragdata
 ### CDN
 In browsers, you may use the following script tag:
 ```
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@2.0.2/dist/chartjs-plugin-dragdata.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@2.2.1/dist/chartjs-plugin-dragdata.min.js"></script>
 ```
 
 Or, download a release archive file from the dist folder.
