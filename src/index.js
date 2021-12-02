@@ -13,8 +13,8 @@ const getElement = (e, chartInstance, callback) => {
     let datasetIndex = element.datasetIndex
     let index = element.index
     // save element settings
-    // eventSettings = chartInstance.config.options.animation
-    // chartInstance.config.options.animation = false  
+    eventSettings = chartInstance.config.options.plugins?.tooltip?.animation
+
     const dataset = chartInstance.data.datasets[datasetIndex]
     const datasetMeta = chartInstance.getDatasetMeta(datasetIndex)
     let curValue = dataset.data[index]
@@ -46,6 +46,12 @@ const getElement = (e, chartInstance, callback) => {
       initValue = newPos - curValue      
     }
 
+    // disable the tooltip animation
+    if (chartInstance.config.options.plugins.dragData.showTooltip === undefined || chartInstance.config.options.plugins.dragData.showTooltip) {
+      if (!chartInstance.config.options.plugins.tooltip) chartInstance.config.options.plugins.tooltip = {}
+      chartInstance.config.options.plugins.tooltip.animation = false
+    }    
+    
     if (typeof callback === 'function' && element) {
       if (callback(e, datasetIndex, index, curValue) === false) {
         element = null
@@ -169,14 +175,6 @@ const updateData = (e, chartInstance, pluginOptions, callback) => {
     } else {
       dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
     }
-    
-    
-    if (pluginOptions.showTooltip === undefined || pluginOptions.showTooltip) {
-      chartInstance.tooltip.setActiveElements([element],{
-        x: element.element.x,
-        y: element.element.y
-      })
-    }
         
     if (!callback || (typeof callback === 'function' && callback(e, curDatasetIndex, curIndex, dataPoint) !== false)) {
       chartInstance.data.datasets[curDatasetIndex].data[curIndex] = dataPoint
@@ -205,7 +203,10 @@ function applyMagnet(chartInstance, i, j) {
 const dragEndCallback = (e, chartInstance, callback) => {
   curDatasetIndex, curIndex = undefined
   isDragging = false
-  // chartInstance.config.options.animation = eventSettings
+  // re-enable the tooltip animation
+  chartInstance.config.options.plugins.tooltip.animation = eventSettings
+  chartInstance.update('none')
+  
   // chartInstance.update('none')
   if (typeof callback === 'function' && element) {
     const datasetIndex = element.datasetIndex
@@ -228,13 +229,13 @@ const ChartJSdragDataPlugin = {
       )
     }
   },
-  beforeEvent: function (chart) {
-    if (chart.config.options.plugins && 
-      chart.config.options.plugins.dragData && 
-      chart.config.options.plugins.dragData.showTooltip &&
-      isDragging
-    ) {
-      return false
+  afterEvent: function (chart) { 
+    if (!element) return    
+    if (isDragging) {
+      chart.tooltip.setActiveElements([element],{
+        x: element.element.x,
+        y: element.element.y
+      })
     }
   }
 }
