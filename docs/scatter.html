@@ -25,63 +25,82 @@
   <canvas id="chartJSContainer" style="height: 90%; width: 90%;"></canvas>
   <script>
     var options = {
-      type: 'line',
+      type: 'scatter',
       data: {
-        datasets: [{
-            label: 'Scatter Dataset',
-            pointRadius: 10,
-            showLine: true,
-            fill: true,
-            tension: 0.4,
-            pointHitRadius: 25,
-            data: [{
-                x: -9.95,
-                y: 5
-            }, {
-                x: 0,
-                y: 10
-            }, {
-                x: 10,
-                y: 5
-            }]
-        }]
-      },
-      options: {
-        scales: {
-          x: {
-            type: 'linear',
-            position: 'bottom',
-            min: -12,
-            max: 12
-          },
-          y: {
-            min: 0,
-            max: 12
-          }
-        },
-        onHover: function(e) {
-          const point = e.chart.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false)
-          if (point.length) e.native.target.style.cursor = 'grab'
-          else e.native.target.style.cursor = 'default'
-        },
-        plugins: {
-          dragData: {
-            dragX: true,
-            round: 1,
-            showTooltip: true,
-            onDragStart: function(e, datasetIndex, index, value) {
-              // console.log(e)
-            },
-            onDrag: function(e, datasetIndex, index, value) {              
-              e.target.style.cursor = 'grabbing'
-              // console.log(e, datasetIndex, index, value)
-            },
-            onDragEnd: function(e, datasetIndex, index, value) {
-              e.target.style.cursor = 'default' 
-              // console.log(datasetIndex, index, value)
-            },
-          }
+    "datasets": [
+        {
+            "label": "A dataset",
+            "data": [
+                {
+                    "x": 0,
+                    "y": -49
+                },
+                {
+                    "x": 10,
+                    "y": -54
+                },
+                {
+                    "x": 20,
+                    "y": -48
+                },
+                {
+                    "x": 30,
+                    "y": -42.9
+                },
+                {
+                    "x": 40,
+                    "y": 46
+                },
+                {
+                    "x": 50,
+                    "y": 44
+                },
+                {
+                    "x": 60,
+                    "y": -76
+                },
+                {
+                    "x": 70,
+                    "y": 78
+                },
+                {
+                    "x": 80,
+                    "y": 34
+                },
+                {
+                    "x": 90,
+                    "y": 49
+                }
+            ],
+            "backgroundColor": "rgba(255, 99, 132, 1)",
+            borderWidth: 2.5,
+      fill: false,
+      pointRadius: 10,
+      pointHitRadius: 25,
+      showLine: true
         }
+    ]
+},
+      options: {
+        layout: {
+  padding: {
+    left: 20,
+    right: 20,
+    top: 20,
+    bottom: 10
+  }
+},
+scales: {
+  y: {
+    beginAtZero: true
+  }
+},
+plugins: {
+  dragData: {
+    round: 1,
+    showTooltip: true
+  }
+}
       }
     }
 
