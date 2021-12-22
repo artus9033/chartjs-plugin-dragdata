@@ -239,17 +239,13 @@ const ChartJSdragDataPlugin = {
       )
     }
   },
-  afterEvent: function (chart) { 
-    if (!element) return    
+  beforeEvent: function (chart) {
     if (isDragging) {
-      chart.tooltip.setActiveElements([element],{
-        x: element.element.x,
-        y: element.element.y
-      })
+    	chart.tooltip.update();
+      return false
     }
-  }
+  },
 }
-
 Chart.register(ChartJSdragDataPlugin)
 
 export default ChartJSdragDataPlugin
