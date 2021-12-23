@@ -47,10 +47,9 @@ const getElement = (e, chartInstance, callback) => {
 
       // if a bar has a data point that is an array of length 2, it's a floating bar
       const samplePoint = chartInstance.data.datasets[0].data[0]
-      floatingBar = (samplePoint !== null) && Array.isArray(samplePoint) && samplePoint.length == 2
+      floatingBar = (samplePoint !== null) && Array.isArray(samplePoint) && samplePoint.length >= 2
 
-      let data = {}
-      let newPos = calcPosition(e, chartInstance, datasetIndex, index, data)
+      let newPos = calcPosition(e, chartInstance, datasetIndex, index)
       initValue = newPos - curValue      
     }
 
@@ -101,7 +100,7 @@ function calcRadar(e, chartInstance) {
   return v
 }
 
-function calcPosition(e, chartInstance, datasetIndex, index, data) {
+function calcPosition(e, chartInstance, datasetIndex, index) {
   let x, y
   const dataPoint = chartInstance.data.datasets[datasetIndex].data[index]
   
@@ -140,9 +139,11 @@ function calcPosition(e, chartInstance, datasetIndex, index, data) {
     const diffFromRight = Math.abs(newVal - dataPoint[1])
 
     if (diffFromLeft <= diffFromRight) {
-      return [newVal, dataPoint[1]]
+      dataPoint[0] = newVal
+      return dataPoint
     } else {
-      return [dataPoint[0], newVal]
+      dataPoint[1] = newVal
+      return dataPoint
     }
   }
 
@@ -171,21 +172,22 @@ const updateData = (e, chartInstance, pluginOptions, callback) => {
     
     isDragging = true
     
-    let dataPoint = chartInstance.data.datasets[curDatasetIndex].data[curIndex]
+    let currentData = chartInstance.data.datasets[curDatasetIndex].data
+    let dataPoint = currentData[curIndex]
 
     if (type === 'radar' || type === 'polarArea') {
       dataPoint = calcRadar(e, chartInstance)
     } else if (stacked) {
-      let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
+      let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex)
       dataPoint = roundValue(cursorPos - initValue, pluginOptions.round)
     } else if (floatingBar) {
-      dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
+      dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex)
     } else {
-      dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex, dataPoint)
+      dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex)
     }
         
     if (!callback || (typeof callback === 'function' && callback(e, curDatasetIndex, curIndex, dataPoint) !== false)) {
-      chartInstance.data.datasets[curDatasetIndex].data[curIndex] = dataPoint
+      currentData[curIndex] = dataPoint
       chartInstance.update('none')
     }
   }
