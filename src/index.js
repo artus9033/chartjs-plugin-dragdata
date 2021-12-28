@@ -163,11 +163,11 @@ function calcPosition(e, chartInstance, datasetIndex, index) {
         const pointRange = dataPointRight - dataPointLeft
         const pointSideRange = pointRange ? pointRange * 0.1 : 0 // 10% of left or right handle to move sides
 
-        if (newVal - dataPointLeft <= pointSideRange) { // Move left side
+        if (pointRange && newVal - dataPointLeft <= pointSideRange) { // Move left side
 
             dataPoint[0] = isDate ? new Date(newVal) : newVal
 
-        } else if (dataPointRight - newVal <= pointSideRange) { // Move right side
+        } else if (pointRange && dataPointRight - newVal <= pointSideRange) { // Move right side
 
             dataPoint[1] = isDate ? new Date(newVal) : newVal
 
