@@ -4,6 +4,7 @@ import { select } from 'd3-selection'
 
 let element, yAxisID, xAxisID, rAxisID, type, stacked, floatingBar, initValue, curDatasetIndex, curIndex, eventSettings
 let isDragging = false
+let dragMode = null // floatingBar only (["l","r","c"] {left,right,center})
 
 function getSafe(func) {
     try {
@@ -141,41 +142,40 @@ function calcPosition(e, chartInstance, datasetIndex, index) {
             maxVal = chartScaleY.max
 		}
 
-		let isDate = false;
+        let isDate = false;
 
-		let dataPointLeft = dataPoint[0]
-		if (typeof dataPointLeft === 'string' || dataPointLeft instanceof String) {
-			dataPointLeft = new Date(dataPointLeft)
-		}
-		if (dataPointLeft instanceof Date) {
-			isDate = true;
-			dataPointLeft = dataPointLeft.getTime()
-		}
+        let dataPointLeft = dataPoint[0]
+        if (dataPointLeft instanceof Date) {
+	        isDate = true;
+	        dataPointLeft = dataPointLeft.getTime()
+        }
 
-		let dataPointRight = dataPoint[1] ?? dataPoint[0]
-		if (typeof dataPointRight === 'string' || dataPointRight instanceof String) {
-			dataPointRight = new Date(dataPointRight)
-		}
-		if (dataPointRight instanceof Date) {
-			dataPointRight = dataPointRight.getTime()
-		}
+        let dataPointRight = dataPoint[1] ?? dataPoint[0]
+        if (dataPointRight instanceof Date) {
+	        dataPointRight = dataPointRight.getTime()
+        }
 
         const pointRange = dataPointRight - dataPointLeft
         const pointSideRange = pointRange ? pointRange * 0.1 : 0 // 10% of left or right handle to move sides
 
-        if (pointRange && newVal - dataPointLeft <= pointSideRange) { // Move left side
+        if (dragMode === "l" || (!dragMode && pointRange && newVal - dataPointLeft <= pointSideRange)) { // Move left side
 
-            dataPoint[0] = isDate ? new Date(newVal) : newVal
+            if (newVal < dataPointRight)
+                dataPoint[0] = isDate ? new Date(newVal) : newVal
+            if (!dragMode) dragMode = "l"
 
-        } else if (pointRange && dataPointRight - newVal <= pointSideRange) { // Move right side
+        } else if (dragMode === "r" || (!dragMode && pointRange && dataPointRight - newVal <= pointSideRange)) { // Move right side
 
-            dataPoint[1] = isDate ? new Date(newVal) : newVal
+            if (newVal > dataPointLeft)
+                dataPoint[1] = isDate ? new Date(newVal) : newVal
+            if (!dragMode) dragMode = "r"
 
-        } else { // Move entire bar
+        } else if (dragMode === "c" || !dragMode) { // Move entire bar
 
             let leftVal = newVal - pointRange / 2;
             let rightVal = newVal + pointRange / 2;
 
+            // Preventing from moving outside of range
             if (leftVal < minVal) {
                 leftVal = minVal
                 rightVal = leftVal + pointRange
@@ -183,6 +183,7 @@ function calcPosition(e, chartInstance, datasetIndex, index) {
                     rightVal = maxVal
             }
 
+            // Preventing from moving outside of range
             if (rightVal > maxVal) {
                 rightVal = maxVal
                 leftVal = rightVal - pointRange
@@ -192,6 +193,8 @@ function calcPosition(e, chartInstance, datasetIndex, index) {
 
             dataPoint[0] = isDate ? new Date(leftVal) : leftVal;
             dataPoint[1] = isDate ? new Date(rightVal) : rightVal;
+
+            if (!dragMode) dragMode = "c"
         }
 
         return dataPoint
@@ -216,7 +219,7 @@ function calcPosition(e, chartInstance, datasetIndex, index) {
 }
 
 const updateData = (e, chartInstance, pluginOptions, callback) => {
-  
+
     if (element) {
         curDatasetIndex = element.datasetIndex
         curIndex = element.index
@@ -265,21 +268,13 @@ function applyMagnet(chartInstance, i, j) {
 const dragEndCallback = (e, chartInstance, callback) => {
 	if (element) {
 		curDatasetIndex, curIndex = undefined
-		isDragging = false
+        isDragging = false
+        dragMode = null
 		// re-enable the tooltip animation
 		if (chartInstance.config.options.plugins.tooltip) {
 			chartInstance.config.options.plugins.tooltip.animation = eventSettings
 			chartInstance.update('none')
 		}
-		let currentData = chartInstance.data.datasets[curDatasetIndex].data
-		let dataPoint = currentData[element.index]
-		var dragDataEvent = new CustomEvent('dragdata', {
-			detail: dataPoint,
-			bubbles: true,
-			cancelable: true,
-			composed: false,
-		});
-		chartInstance.canvas.dispatchEvent(dragDataEvent);
 		// chartInstance.update('none')
 		if (typeof callback === 'function' && element) {
 			const datasetIndex = element.datasetIndex
@@ -304,13 +299,13 @@ const ChartJSdragDataPlugin = {
         }
     },
     afterEvent: function (chart) {
-    if (!element) return    
+        if (!element) return
         if (isDragging) {
             chart.tooltip.setActiveElements([element], {
                 x: element.element.x,
                 y: element.element.y
             })
-    }
+        } 
     }
 }
 
