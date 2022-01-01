@@ -1,0 +1,18 @@
+{
+  "include": ["src/*"],
+  "exclude": ["dist"],
+  "compilerOptions": {
+    "lib": ["es5", "DOM"],
+    "target": "es5",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "rootDir": "./src",
+    "outDir": "./dist",
+    "declaration": true,
+    "declarationDir": ".",
+    "declarationMap": true,
+    "esModuleInterop": true,
+    "noErrorTruncation": true,
+    "jsx": "react-native"
+  }
+}
