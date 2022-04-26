@@ -1337,7 +1337,9 @@
         // if a bar has a data point that is an array of length 2, it's a floating bar
         const samplePoint = chartInstance.data.datasets[0].data[0];
         floatingBar = (samplePoint !== null) && Array.isArray(samplePoint) && samplePoint.length == 2;
-        let newPos = calcPosition(e, chartInstance, datasetIndex, index);
+
+        let dataPoint = chartInstance.data.datasets[datasetIndex].data[index];
+        let newPos = calcPosition(e, chartInstance, dataPoint);
         initValue = newPos - curValue;      
       }
 
@@ -1388,9 +1390,9 @@
     return v
   }
 
-  function calcPosition(e, chartInstance, datasetIndex, index, data) {
+  function calcPosition(e, chartInstance, data) {
     let x, y;
-    const dataPoint = chartInstance.data.datasets[datasetIndex].data[index];
+    const dataPoint = unfreeze(data);
     
     if (e.touches) {
       x = chartInstance.scales[xAxisID].getValueForPixel(e.touches[0].clientX - chartInstance.canvas.getBoundingClientRect().left);
@@ -1463,12 +1465,12 @@
       if (type === 'radar' || type === 'polarArea') {
         dataPoint = calcRadar(e, chartInstance);
       } else if (stacked) {
-        let cursorPos = calcPosition(e, chartInstance, curDatasetIndex, curIndex);
+        let cursorPos = calcPosition(e, chartInstance, dataPoint);
         dataPoint = roundValue(cursorPos - initValue, pluginOptions.round);
       } else if (floatingBar) {
-        dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex);
+        dataPoint = calcPosition(e, chartInstance, dataPoint);
       } else {
-        dataPoint = calcPosition(e, chartInstance, curDatasetIndex, curIndex);
+        dataPoint = calcPosition(e, chartInstance, dataPoint);
       }
           
       if (!callback || (typeof callback === 'function' && callback(e, curDatasetIndex, curIndex, dataPoint) !== false)) {
@@ -1513,6 +1515,12 @@
     }
   };
 
+  const unfreeze = (source) => {
+    if (source instanceof Array) return source.map((elem) => elem)
+    else if (typeof source === 'number') return source
+    else if (typeof source === 'object') return {...source}
+  };
+
   const ChartJSdragDataPlugin = {
     id: 'dragdata',
     afterInit: function (chartInstance) {    
@@ -1528,7 +1536,7 @@
     },
     beforeEvent: function (chart) {
       if (isDragging) {
-      	chart.tooltip.update();
+      	if (chart.tooltip) chart.tooltip.update();
         return false
       }
     },
