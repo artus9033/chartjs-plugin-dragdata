@@ -48,8 +48,9 @@ module.exports = async function run(fileName,settings) {
     }
     return [firstPointLocation,secondPointLocation]
   },settings.pointToDrag)
-  
-  settings.checkEquality(updatedLocations[0],updatedLocations[1],fileName)  
+
+  const firstPointStartLocation = {x: firstPointLocation[0], y: firstPointLocation[1]}
+  settings.checkEquality(firstPointStartLocation, updatedLocations,fileName)
   await page.waitForTimeout(1000)
   await browser.close();
 }
