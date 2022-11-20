@@ -251,7 +251,15 @@ const ChartJSdragDataPlugin = {
     attachListeners(chartInstance)
   },
   afterInit: function (chartInstance) {
-    attachListeners(chartInstance)
+    if (chartInstance.config.options.plugins && chartInstance.config.options.plugins.dragData) {
+      const pluginOptions = chartInstance.config.options.plugins.dragData
+      select(chartInstance.canvas).call(
+        drag().container(chartInstance.canvas)
+          .on('start', e => getElement(e.sourceEvent, chartInstance, pluginOptions.onDragStart))
+          .on('drag', e => updateData(e.sourceEvent, chartInstance, pluginOptions, pluginOptions.onDrag))
+          .on('end', e => dragEndCallback(e.sourceEvent, chartInstance, pluginOptions.onDragEnd))
+      )
+    }
   },
   beforeEvent: function (chart) {
     if (isDragging) {
