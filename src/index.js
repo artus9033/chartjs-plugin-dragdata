@@ -2,7 +2,7 @@ import {Chart} from 'chart.js'
 import {drag} from 'd3-drag'
 import {select} from 'd3-selection'
 
-let element, yAxisID, xAxisID, rAxisID, type, stacked, floatingBar, initValue, curDatasetIndex, curIndex, eventSettings
+let element, yAxisID, xAxisID, rAxisID, type, stacked, floatingBar, initValue, curDatasetIndex, curIndex, eventSettings, onDrag, onDragEnd, onDragStart
 let isDragging = false
 
 function getSafe(func) {
