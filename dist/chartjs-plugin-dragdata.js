@@ -1528,7 +1528,7 @@
     },
     beforeEvent: function (chart) {
       if (isDragging) {
-      	chart.tooltip.update();
+      	if (chart.tooltip) chart.tooltip.update();
         return false
       }
     },
