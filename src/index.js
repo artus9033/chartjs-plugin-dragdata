@@ -2,7 +2,7 @@ import {Chart} from 'chart.js'
 import {drag} from 'd3-drag'
 import {select} from 'd3-selection'
 
-let element, yAxisID, xAxisID, rAxisID, type, stacked, floatingBar, initValue, curDatasetIndex, curIndex, eventSettings
+let element, yAxisID, xAxisID, rAxisID, type, stacked, floatingBar, initValue, curDatasetIndex, curIndex, eventSettings, onDrag, onDragEnd, onDragStart
 let isDragging = false
 
 function getSafe(func) {
@@ -226,9 +226,31 @@ const dragEndCallback = (e, chartInstance, callback) => {
   }
 }
 
+const attachListeners = (chartInstance) => {
+  if (chartInstance.config.options.plugins && chartInstance.config.options.plugins.dragData) {
+    const pluginOptions = chartInstance.config.options.plugins.dragData
+
+    if (pluginOptions.onDragStart != onDragStart || pluginOptions.onDrag != onDrag || pluginOptions.onDragEnd != onDragEnd) {
+      onDragStart = pluginOptions.onDragStart
+      onDrag = pluginOptions.onDrag
+      onDragEnd = pluginOptions.onDragEnd
+
+      select(chartInstance.canvas).call(
+        drag().container(chartInstance.canvas)
+          .on('start', e => getElement(e.sourceEvent, chartInstance, pluginOptions.onDragStart))
+          .on('drag', e => updateData(e.sourceEvent, chartInstance, pluginOptions, pluginOptions.onDrag))
+          .on('end', e => dragEndCallback(e.sourceEvent, chartInstance, pluginOptions.onDragEnd))
+      )
+    }
+  }
+}
+
 const ChartJSdragDataPlugin = {
   id: 'dragdata',
-  afterInit: function (chartInstance) {    
+  beforeDatasetsUpdate: function (chartInstance) {
+    attachListeners(chartInstance)
+  },
+  afterInit: function (chartInstance) {
     if (chartInstance.config.options.plugins && chartInstance.config.options.plugins.dragData) {
       const pluginOptions = chartInstance.config.options.plugins.dragData
       select(chartInstance.canvas).call(
