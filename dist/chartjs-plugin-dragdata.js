@@ -1303,7 +1303,8 @@
   }
 
   const getElement = (e, chartInstance, callback) => {  
-    element = chartInstance.getElementsAtEventForMode(e, 'nearest', { intersect: true }, false)[0];
+    const searchMode = chartInstance.config.options.plugins?.dragData?.interaction?.mode ?? 'nearest';
+    element = chartInstance.getElementsAtEventForMode(e, searchMode, { intersect: true }, false)[0];
     type = chartInstance.config.type;
 
     if (element) {    
