@@ -1,4 +1,5 @@
 import {Chart} from 'chart.js'
+import { getRelativePosition } from 'chart.js/helpers'
 import {drag} from 'd3-drag'
 import {select} from 'd3-selection'
 
