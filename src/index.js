@@ -230,12 +230,11 @@ const ChartJSdragDataPlugin = {
   id: 'dragdata',
   afterInit: function (chartInstance) {    
     if (chartInstance.config.options.plugins && chartInstance.config.options.plugins.dragData) {
-      const pluginOptions = chartInstance.config.options.plugins.dragData
       select(chartInstance.canvas).call(
         drag().container(chartInstance.canvas)
-          .on('start', e => getElement(e.sourceEvent, chartInstance, pluginOptions.onDragStart))
-          .on('drag', e => updateData(e.sourceEvent, chartInstance, pluginOptions, pluginOptions.onDrag))
-          .on('end', e => dragEndCallback(e.sourceEvent, chartInstance, pluginOptions.onDragEnd))
+          .on('start', e => getElement(e.sourceEvent, chartInstance, chartInstance.config.options.plugins.dragData.onDragStart))
+          .on('drag', e => updateData(e.sourceEvent, chartInstance, chartInstance.config.options.plugins.dragData, chartInstance.config.options.plugins.dragData.onDrag))
+          .on('end', e => dragEndCallback(e.sourceEvent, chartInstance, chartInstance.config.options.plugins.dragData.onDragEnd))
       )
     }
   },
