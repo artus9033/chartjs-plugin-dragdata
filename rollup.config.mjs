@@ -20,8 +20,16 @@ function buildOutput (file,format,terse) {
       globals: {
         'chart.js': 'Chart',
         'chart.js/helpers': 'Chart.helpers'
-      }
+      },
+      esModule: true,
+      generatedCode: {
+        reservedNamesAsProps: false
+      },
+		  interop: 'compat',
+		  systemNullSetters: false
     },
+    makeAbsoluteExternalsRelative: true,
+	  preserveEntrySignatures: 'strict',
     plugins: [
       resolve({
         browser: true

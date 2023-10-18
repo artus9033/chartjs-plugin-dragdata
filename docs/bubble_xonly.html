@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Chart.js Drag Data Points Plugin</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.3.0/chart.umd.min.js"></script>
     <script src="assets/chartjs-plugin-dragdata.min.js"></script>
     <style>
     html,body{
@@ -48,7 +48,7 @@
             y: {
               max: 25,
               min: 0
-            }, 
+            },
             x: {
               max: 11,
               min: 9
@@ -65,16 +65,16 @@
               round: 2,
               dragX: true,
               dragY: false,
-              showTooltip: true
+              showTooltip: true,
               onDragStart: function(e) {
                 // console.log(e)
               },
-              onDrag: function(e, datasetIndex, index, value) {              
+              onDrag: function(e, datasetIndex, index, value) {
                 e.target.style.cursor = 'grabbing'
                 // console.log(e, datasetIndex, index, value)
               },
               onDragEnd: function(e, datasetIndex, index, value) {
-                e.target.style.cursor = 'default' 
+                e.target.style.cursor = 'default'
                 // console.log(datasetIndex, index, value)
               },
             }

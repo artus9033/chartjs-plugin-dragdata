@@ -1,7 +1,7 @@
 const run = require('./run.js');
 const Settings = require('./Test-Defaults');
 
-(async () => {  
+(async () => {
   // standard line chart example
   const indexTestSettings = new Settings()
   await run('index',indexTestSettings)
@@ -16,5 +16,5 @@ const Settings = require('./Test-Defaults');
   // small chart
   dualAxisSettings.pointToDrag.index = 1
   await run('smallChart',dualAxisSettings)
-  
+
 })();

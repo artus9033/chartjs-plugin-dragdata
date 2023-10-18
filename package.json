@@ -6,8 +6,8 @@
   "module": "dist/chartjs-plugin-dragdatas.esm.js",
   "browser": "dist/chartjs-plugin-dragdata.min.js",
   "scripts": {
-    "build": "rollup -c",
-    "dev": "rollup -c -w",
+    "build": "rollup -c rollup.config.mjs",
+    "dev": "rollup -c rollup.config.mjs -w",
     "test": "node test/test.js",
     "pretest": "npm run build"
   },
@@ -25,7 +25,7 @@
   "author": "Christoph Pahmeyer <christoph.pahmeyer@ilr.uni-bonn.de>",
   "license": "MIT",
   "dependencies": {
-    "chart.js": "^3.9.1",
+    "chart.js": "^4.3.0",
     "d3-drag": "^3.0.0",
     "d3-selection": "^3.0.0"
   },
