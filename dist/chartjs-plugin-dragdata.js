@@ -1591,12 +1591,10 @@
   const ChartJSdragDataPlugin = {
     id: "dragdata",
     afterInit: function (chartInstance) {
-      console.log(chartInstance.config.options.plugins);
       if (
         chartInstance.config.options.plugins &&
         chartInstance.config.options.plugins.dragData
       ) {
-        console.log("Obababa");
         const pluginOptions = chartInstance.config.options.plugins.dragData;
         select(chartInstance.canvas).call(
           drag()
