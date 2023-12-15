@@ -1,6 +1,6 @@
 {
   "name": "chartjs-plugin-dragdata",
-  "version": "2.2.5",
+  "version": "2.2.6",
   "description": "Draggable data points for Chart.js",
   "main": "dist/chartjs-plugin-dragdata.js",
   "module": "dist/chartjs-plugin-dragdatas.esm.js",
@@ -25,7 +25,6 @@
   "author": "Christoph Pahmeyer <christoph.pahmeyer@ilr.uni-bonn.de>",
   "license": "MIT",
   "dependencies": {
-    "chart.js": "^3.9.1",
     "d3-drag": "^3.0.0",
     "d3-selection": "^3.0.0"
   },
