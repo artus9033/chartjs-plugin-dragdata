@@ -1,0 +1,9 @@
+{
+	"extends": ["@callstack/eslint-config/react", "prettier"],
+	"browser": true,
+	"node": false,
+	"plugins": ["prettier"],
+	"rules": {
+		"prettier/prettier": ["error"]
+	}
+}

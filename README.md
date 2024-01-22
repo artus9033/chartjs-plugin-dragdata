@@ -8,15 +8,18 @@ Makes data points draggable. Supports touch events.
 
 ![Drag Data Animation](https://user-images.githubusercontent.com/20703207/77322131-8a47f800-6d13-11ea-9ca8-b9fc7f820e85.gif)
 
+- [![cov](https://chrispahm.github.io/chartjs-plugin-dragdata/badges/coverage.svg)](https://github.com/chrispahm/chartjs-plugin-dragdata/actions)
+
 ### Online demos
+
 | Chart Type                                                                                                                     | Demo                                                                                   | Source                                                                                                               |
-|:-------------------------------------------------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------|:---------------------------------------------------------------------------------------------------------------------|
+| :----------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------- |
 | Bar - Simple Bar                                                                                                               | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/bar.html)                   | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/bar.html)                   |
 | Bubble - Simple Bubble                                                                                                         | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/bubble.html)                | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/bubble.html)                |
 | Floating bar - simple floating bars                                                                                            | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/floatingBar.html)           | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/floatingBar.html)           |
 | Floating bar - simple floating bars, horizontal                                                                                | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/horizontalFloatingBar.html) | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/horizontalFloatingBar.html) |
 | Horizontal Bar - Simple Horizontal Bar                                                                                         | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/horizontalBar.html)         | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/horizontalBar.html)         |
-| Line - Single Y-Axis                                                                                                           | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/)                           | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/index.html)                 |
+| Line - Single Y-Axis                                                                                                           | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/)                           | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/line.html)                  |
 | Line - Dual Y-Axis                                                                                                             | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/dualAxis.html)              | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/dualAxis.html)              |
 | Line - Drag multiple points                                                                                                    | [demo](https://jsfiddle.net/45nurh9L/3/)                                               | [source](https://jsfiddle.net/45nurh9L/3/)                                                                           |
 | Line - Small                                                                                                                   | [demo](https://chrispahm.github.io/chartjs-plugin-dragdata/smallChart.html)            | [source](https://raw.githubusercontent.com/chrispahm/chartjs-plugin-dragdata/master/docs/smallChart.html)            |
@@ -42,7 +45,9 @@ npm install chartjs-plugin-dragdata
 ```
 
 ### CDN
+
 In browsers, you may use the following script tag:
+
 ```
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@2.2.3/dist/chartjs-plugin-dragdata.min.js"></script>
 ```
@@ -51,36 +56,38 @@ Or, download a release archive file from the dist folder.
 
 ## Configuration
 
-The following Chart.js sample configuration displays (*most*) of the available
+The following Chart.js sample configuration displays (_most_) of the available
 configuration options of the `dragdata` plugin.
 
 ```js
 const draggableChart = new Chart(ctx, {
-  type: 'line',
-  data: {
-    labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
-    datasets: [{
-      label: '# of Votes',
-      data: [12, 19, 3, 5, 2, 3],
-      fill: true,
-      tension: 0.4,
-      borderWidth: 1,
-      pointHitRadius: 25 // for improved touch support
-      // dragData: false // prohibit dragging this dataset
-                         // same as returning `false` in the onDragStart callback
-                         // for this datsets index position
-    }]
-  },
-  options: {
-    plugins: {
-      dragData: {
-        round: 1, // rounds the values to n decimal places 
-                  // in this case 1, e.g 0.1234 => 0.1)
-        showTooltip: true, // show the tooltip while dragging [default = true]
-        // dragX: true // also enable dragging along the x-axis.
-                       // this solely works for continous, numerical x-axis scales (no categories or dates)!
-        onDragStart: function(e, element) {
-          /*
+	type: "line",
+	data: {
+		labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+		datasets: [
+			{
+				label: "# of Votes",
+				data: [12, 19, 3, 5, 2, 3],
+				fill: true,
+				tension: 0.4,
+				borderWidth: 1,
+				pointHitRadius: 25, // for improved touch support
+				// dragData: false // prohibit dragging this dataset
+				// same as returning `false` in the onDragStart callback
+				// for this datsets index position
+			},
+		],
+	},
+	options: {
+		plugins: {
+			dragData: {
+				round: 1, // rounds the values to n decimal places
+				// in this case 1, e.g 0.1234 => 0.1)
+				showTooltip: true, // show the tooltip while dragging [default = true]
+				// dragX: true // also enable dragging along the x-axis.
+				// this solely works for continous, numerical x-axis scales (no categories or dates)!
+				onDragStart: function (e, element) {
+					/*
           // e = event, element = datapoint that was dragged
           // you may use this callback to prohibit dragging certain datapoints
           // by returning false in this callback
@@ -90,29 +97,29 @@ const draggableChart = new Chart(ctx, {
             return false
           }
           */
-        },
-        onDrag: function(e, datasetIndex, index, value) {         
-          /*     
+				},
+				onDrag: function (e, datasetIndex, index, value) {
+					/*     
           // you may control the range in which datapoints are allowed to be
           // dragged by returning `false` in this callback
           if (value < 0) return false // this only allows positive values
           if (datasetIndex === 0 && index === 0 && value > 20) return false 
           */
-        },
-        onDragEnd: function(e, datasetIndex, index, value) {
-          // you may use this callback to store the final datapoint value
-          // (after dragging) in a database, or update other UI elements that
-          // dependent on it
-        },
-      }
-    },
-    scales: {
-      y: {
-        // dragData: false // disables datapoint dragging for the entire axis
-      }
-    }
-  }
-})
+				},
+				onDragEnd: function (e, datasetIndex, index, value) {
+					// you may use this callback to store the final datapoint value
+					// (after dragging) in a database, or update other UI elements that
+					// dependent on it
+				},
+			},
+		},
+		scales: {
+			y: {
+				// dragData: false // disables datapoint dragging for the entire axis
+			},
+		},
+	},
+});
 ```
 
 Minimum and maximum allowed data values can also be specified through the `min` and `max` ticks settings in the scales options. By setting these values accordingly, unexpected (fast) changes to the scales, that may occur when dragging data points towards the outer boundaries of the y-axis, can be prohibited.
@@ -120,7 +127,7 @@ Minimum and maximum allowed data values can also be specified through the `min` 
 ```javascript
 const myChartOptions = {
   type: 'line', // or radar, bar, horizontalBar, bubble
-  data: {...}, 
+  data: {...},
   options: {
     plugins: {dragData: true},
     scales: {
@@ -133,7 +140,6 @@ const myChartOptions = {
 }
 ```
 
-
 ### Applying a 'magnet'
 
 In some scenarios, one might want to stop dragging at the closest (rounded) value, or even at a fixed value.
@@ -143,7 +149,7 @@ in the plugins settings:
 ```javascript
 const myChartOptions = {
   type: 'line', // or radar, bar, bubble
-  data: {...}, 
+  data: {...},
   options: {
     plugins: {
       dragData: {
@@ -157,10 +163,12 @@ const myChartOptions = {
 ```
 
 ## Touch devices
+
 In order to support touch events, the [`pointHitRadius`](https://www.chartjs.org/docs/latest/charts/line.html#point-styling) option should be set to a value greater than `25`. You can find working example configurations in the `docs/*.html` files. Also note, that mobile devices (and thus touch events) can be simulated with the [device mode in the Chrome DevTools](https://developers.google.com/web/tools/chrome-devtools/device-mode/).
 
 ## Gotchas
-When working with a module bundler (e.g. Rollup/Webpack) and a framework (e.g. Vue.js/React/Angular), you still need to import the plugin library after installing. 
+
+When working with a module bundler (e.g. Rollup/Webpack) and a framework (e.g. Vue.js/React/Angular), you still need to import the plugin library after installing.
 Here's a small example for a Vue.js component
 
 ```js
@@ -201,6 +209,7 @@ export default {
 <style>
 </style>
 ```
+
 ## Contributing
 
 Please feel free to submit an issue or a pull request!

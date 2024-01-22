@@ -1,0 +1,6 @@
+dist
+.husky
+coverage
+.nyc_output
+.github
+docs
