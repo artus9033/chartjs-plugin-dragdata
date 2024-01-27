@@ -1,7 +1,8 @@
+coverage
+dist
+docs/assets
 node_modules
 .DS_Store
 .rollup.cache
 .nyc_output
-coverage
-dist
-docs/assets
+.vscode

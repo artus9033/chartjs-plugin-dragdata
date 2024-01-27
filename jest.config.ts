@@ -1,13 +1,10 @@
-import type { Config } from "jest";
+import type { JestConfigWithTsJest } from "ts-jest";
 
-const config: Config = {
+const config: JestConfigWithTsJest = {
 	projects: [
-		"<rootDir>/__tests__/__config__/jest.unit.config.ts",
-		"<rootDir>/__tests__/__config__/jest.integration.config.ts",
+		"<rootDir>/__tests__/unit/jest.unit.config.ts",
+		"<rootDir>/__tests__/integration/jest.integration.config.ts",
 	],
-	transform: {
-		"^.+\\.tsx?$": "ts-jest",
-	},
 	testPathIgnorePatterns: [
 		"**/__utils__",
 		"**/__fixtures__",

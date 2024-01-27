@@ -1,12 +1,8 @@
-import { expect, test } from "playwright-test-coverage";
-
-import { expectDragSuccessful } from "./__fixtures__";
+import { expectDragSuccessful, test } from "./__fixtures__";
 
 test("moves a dataset point to a different dataset point upon drag on Y axis", async ({
 	page,
 }) => {
-	await page.goto("https://playwright.dev/");
-
 	await expectDragSuccessful(
 		page,
 		{ datasetIndex: 0, index: 0 },

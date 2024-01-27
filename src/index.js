@@ -97,7 +97,7 @@ const getElement = (e, chartInstance, callback) => {
 };
 
 function roundValue(value, pos) {
-	if (!isNaN(pos)) {
+	if (!isNaN(pos) && pos >= 0) {
 		return Math.round(value * Math.pow(10, pos)) / Math.pow(10, pos);
 	}
 	return value;
@@ -346,6 +346,22 @@ const ChartJSdragDataPlugin = {
 		}
 	},
 };
+
 Chart.register(ChartJSdragDataPlugin);
+
+// this export will be stripped by @rollup/plugin-replace in non-test builds
+const mExportsForTesting = {
+	dragEndCallback,
+	updateData,
+	getElement,
+	applyMagnet,
+	calcPosition,
+	calcRadar,
+	getSafe,
+	roundValue,
+};
+
+// IMPORTANT: do not alter the below line or rollup will not pick it up for removal
+export const exportsForTesting = mExportsForTesting;
 
 export default ChartJSdragDataPlugin;

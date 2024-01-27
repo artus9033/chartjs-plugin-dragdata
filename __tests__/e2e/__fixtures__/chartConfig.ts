@@ -1,7 +1,8 @@
 import type { Chart, ChartOptions, ChartTypeRegistry } from "chart.js";
-import type { DeepPartial } from "chart.js/types/utils";
 import _ from "lodash";
 import type { Page } from "playwright";
+
+import { DeepPartial } from "../types";
 
 export async function applyConfig<
 	TType extends keyof ChartTypeRegistry,
