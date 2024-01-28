@@ -1,10 +1,19 @@
-import { Config } from "jest";
+import { JestConfigWithTsJest } from "ts-jest";
 
-const config: Config = {
+const config: JestConfigWithTsJest = {
 	preset: "ts-jest",
+	testPathIgnorePatterns: [
+		"__utils__",
+		"__fixtures__",
+		"__mocks__",
+		"__config__",
+		"node_modules",
+	],
+	setupFiles: ["jest-canvas-mock", "../__setup__/jestSetup.ts"],
+	setupFilesAfterEnv: ["../__setup__/setup.ts"],
 	extensionsToTreatAsEsm: [".ts"],
 	transform: {
-		"^.+\\.ts$": [
+		"^.+\\.tsx?$": [
 			"ts-jest",
 			{
 				useESM: true,
@@ -12,7 +21,9 @@ const config: Config = {
 		],
 	},
 	testEnvironment: "jsdom",
-	setupFiles: ["jest-canvas-mock", "../__setup__/jestSetup.ts"],
+	collectCoverageFrom: ["src/*.{js,ts,jsx,tsx}"],
+	coverageReporters: ["lcov", "json"],
+	coveragePathIgnorePatterns: ["node_modules/.*"],
 };
 
 export default config;

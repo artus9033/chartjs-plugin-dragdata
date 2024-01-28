@@ -1,17 +1,12 @@
 import type { JestConfigWithTsJest } from "ts-jest";
 
-const config: JestConfigWithTsJest = {
+// since jest projects don't inherit from root config, we instead use __tests__/__config__/commonJestConfig.ts
+// thus, here we want just to define projects' configs; see https://github.com/jestjs/jest/issues/10991
+const config: Pick<JestConfigWithTsJest, "projects"> = {
 	projects: [
 		"<rootDir>/__tests__/unit/jest.unit.config.ts",
 		"<rootDir>/__tests__/integration/jest.integration.config.ts",
 	],
-	testPathIgnorePatterns: [
-		"**/__utils__",
-		"**/__fixtures__",
-		"**/__mocks__",
-		"**/__config__",
-	],
-	setupFilesAfterEnv: ["<rootDir>/__tests__/__setup__/setup.ts"],
 };
 
 export default config;

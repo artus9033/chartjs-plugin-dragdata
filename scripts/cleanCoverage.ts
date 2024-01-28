@@ -1,16 +1,11 @@
 import fs from "fs";
-import path from "path";
 
-const coverageDirPath = path.resolve(
-	path.dirname(__filename),
-	"..",
-	"coverage",
-);
+import { coverageReportsDirPath } from "./utils/paths";
 
-if (fs.existsSync(coverageDirPath)) {
+if (fs.existsSync(coverageReportsDirPath)) {
 	console.log(
-		`[cleanCoverage.ts] Removing coverage directory: ${coverageDirPath}`,
+		`[cleanCoverage.ts] Removing coverage reports directory: ${coverageReportsDirPath}`,
 	);
 
-	fs.rmSync(coverageDirPath, { recursive: true });
+	fs.rmSync(coverageReportsDirPath, { recursive: true });
 }

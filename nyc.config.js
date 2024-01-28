@@ -6,5 +6,5 @@ module.exports = {
 		"*.config.ts",
 		"*.config.js",
 	],
-	reporter: ["html", "text", "lcov", "json"],
+	reporter: ["lcov", "json"],
 };

@@ -48,7 +48,9 @@ function buildOutput(file, format, terse, bTestBuild, bBundleD3 = true) {
 			...(bTestBuild
 				? [
 						// in a test build, inject istanbul and keep testing exports
-						istanbul({}),
+						istanbul({
+							exclude: ["node_modules/**/*"],
+						}),
 					]
 				: [
 						// in a non-test build, strip the testing exports
