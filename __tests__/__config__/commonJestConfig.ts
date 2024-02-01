@@ -1,16 +1,19 @@
 import { JestConfigWithTsJest } from "ts-jest";
 
+const testPathIgnorePatterns: string[] = [
+	"__utils__",
+	"__fixtures__",
+	"__mocks__",
+	"__config__",
+	"__data__",
+	"node_modules",
+];
+
 const config: JestConfigWithTsJest = {
 	preset: "ts-jest",
-	testPathIgnorePatterns: [
-		"__utils__",
-		"__fixtures__",
-		"__mocks__",
-		"__config__",
-		"node_modules",
-	],
-	setupFiles: ["jest-canvas-mock", "../__setup__/jestSetup.ts"],
-	setupFilesAfterEnv: ["../__setup__/setup.ts"],
+	testPathIgnorePatterns: testPathIgnorePatterns,
+	setupFiles: ["jest-canvas-mock"],
+	setupFilesAfterEnv: ["../__setup__/setup.ts", "../__setup__/jestSetup.ts"],
 	extensionsToTreatAsEsm: [".ts"],
 	transform: {
 		"^.+\\.tsx?$": [
@@ -19,11 +22,15 @@ const config: JestConfigWithTsJest = {
 				useESM: true,
 			},
 		],
+		"^.+\\.vue$": "@vue/vue3-jest",
 	},
 	testEnvironment: "jsdom",
+	testEnvironmentOptions: {
+		customExportConditions: ["node", "node-addons"],
+	},
 	collectCoverageFrom: ["src/*.{js,ts,jsx,tsx}"],
 	coverageReporters: ["lcov", "json"],
-	coveragePathIgnorePatterns: ["node_modules/.*"],
+	coveragePathIgnorePatterns: testPathIgnorePatterns,
 };
 
 export default config;

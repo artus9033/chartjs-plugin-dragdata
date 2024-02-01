@@ -1,9 +1,10 @@
-import { expectDragSuccessful, test } from "./__fixtures__";
+import { test } from "./__fixtures__";
+import { playwrightExpectDragSuccessful } from "./__fixtures__/interaction";
 
 test("moves a dataset point to a different dataset point upon drag on Y axis", async ({
 	page,
 }) => {
-	await expectDragSuccessful(
+	await playwrightExpectDragSuccessful(
 		page,
 		{ datasetIndex: 0, index: 0 },
 		{ datasetIndex: 0, index: 1 },

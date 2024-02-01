@@ -48,7 +48,7 @@ describe("ChartJSdragDataPlugin", () => {
 			chartInstance = new Chart(ctx, {
 				options: {
 					plugins: {
-						// @ts-ignore next line - TODO: fix this
+						// @ts-ignore next line - TODO: fix this later with proper TS typings
 						dragData: {
 							round: 2,
 							magnet: {
@@ -110,7 +110,7 @@ describe("ChartJSdragDataPlugin", () => {
 			);
 		});
 
-		test("should register a d3 drag listener bound to the canvas", () => {
+		test("should register a drag listener bound to the canvas", () => {
 			expect(d3Drag.drag).toHaveBeenCalledTimes(1);
 
 			const d3DragContainerFun = d3Drag.drag.mock.results[0].value.container;
@@ -120,25 +120,15 @@ describe("ChartJSdragDataPlugin", () => {
 			expect(d3DragContainerFun).toHaveBeenCalledWith(chartInstance.canvas);
 		});
 
-		test("should register a d3 drag listener", () => {
-			// const drag = jest.spyOn(d3Drag, "drag");
-			// expect(drag).toHaveBeenCalledTimes(1);
-			//
-		});
+		test("should register drag event listeners", () => {
+			expect(d3Drag.drag).toHaveBeenCalledTimes(1);
+			const d3DragOnFun = d3Drag.drag.mock.results[0].value.on;
 
-		test("should register proper drag event listeners", () => {
-			// const drag = jest.spyOn(d3Drag, "drag");
-			// const dragContainer = drag.mock.results[0].value; // the drag().container(...) return value
-			// const dragContainerOn = jest.spyOn(dragContainer, "on");
-			// expect(dragContainerOn).toHaveBeenCalledWith(
-			// 	"start",
-			// 	expect.any(Function),
-			// );
-			// expect(dragContainerOn).toHaveBeenCalledWith(
-			// 	"drag",
-			// 	expect.any(Function),
-			// );
-			// expect(dragContainerOn).toHaveBeenCalledWith("end", expect.any(Function));
+			// test if drag()'s return instance's on() method had been called with the correct event types & handlers
+			expect(d3DragOnFun).toHaveBeenCalledTimes(3);
+			expect(d3DragOnFun).toHaveBeenCalledWith("start", expect.any(Function));
+			expect(d3DragOnFun).toHaveBeenCalledWith("drag", expect.any(Function));
+			expect(d3DragOnFun).toHaveBeenCalledWith("end", expect.any(Function));
 		});
 	});
 });

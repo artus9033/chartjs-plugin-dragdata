@@ -5,12 +5,12 @@ import Point2D from "../../__utils__/Point2D";
 import { calcDragTargetPosition } from "../../__utils__/cartesian";
 import { AxisSpec, DatasetPointSpec } from "../../__utils__/testTypes";
 import {
-	calcCanvasOffset,
-	getDatasetPointLocation,
+	playwrightCalcCanvasOffset,
+	playwrightGetDatasetPointLocation,
 } from "../__utils__/chartUtils";
 import { bootstrapTest } from "./misc";
 
-export async function expectDragSuccessful(
+export async function playwrightExpectDragSuccessful(
 	page: Page,
 	dragPointSpec: DatasetPointSpec,
 	destRefPointOrSpec: DatasetPointSpec | Point2D,
@@ -19,9 +19,9 @@ export async function expectDragSuccessful(
 ) {
 	await bootstrapTest(page, fileName);
 
-	const canvasOffset = await calcCanvasOffset(page);
+	const canvasOffset = await playwrightCalcCanvasOffset(page);
 
-	let dragStartPoint: Point2D = await getDatasetPointLocation(
+	let dragStartPoint: Point2D = await playwrightGetDatasetPointLocation(
 			page,
 			dragPointSpec,
 			canvasOffset,
@@ -29,14 +29,16 @@ export async function expectDragSuccessful(
 		dragRefPoint: Point2D =
 			destRefPointOrSpec instanceof Point2D
 				? destRefPointOrSpec
-				: await getDatasetPointLocation(page, destRefPointOrSpec, canvasOffset),
+				: await playwrightGetDatasetPointLocation(
+						page,
+						destRefPointOrSpec,
+						canvasOffset,
+					),
 		dragDestPoint = calcDragTargetPosition(
 			dragStartPoint,
 			dragRefPoint,
 			whichAxis,
 		);
-
-	// console.log(`Dragging from ${dragStartPoint} to ${dragDestPoint}`);
 
 	// perform the dragging gesture
 	await page.mouse.move(...dragStartPoint.toArray());
@@ -45,7 +47,7 @@ export async function expectDragSuccessful(
 	await page.mouse.up();
 
 	// check if the values match after dragging
-	const actualNewDraggedPointLocation = await getDatasetPointLocation(
+	const actualNewDraggedPointLocation = await playwrightGetDatasetPointLocation(
 		page,
 		dragPointSpec,
 	);

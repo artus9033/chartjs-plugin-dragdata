@@ -2,42 +2,32 @@ import type { Chart } from "chart.js";
 import type { Page } from "playwright";
 
 import Point2D from "../../__utils__/Point2D";
-import type { DatasetPointSpec } from "../../__utils__/testTypes";
+import {
+	CanvasOffset,
+	getDatasetPointLocation,
+} from "../../__utils__/chartUtils";
+import { DatasetPointSpec } from "../../__utils__/testTypes";
 
-export type CanvasOffset = { left: number; top: number };
-
-export async function calcCanvasOffset(page: Page): Promise<CanvasOffset> {
+export async function playwrightCalcCanvasOffset(page: Page): Promise<DOMRect> {
 	return await page.evaluate(
 		/* istanbul ignore next - fixes fatal errors when evaluating outside of original context, see https://github.com/istanbuljs/istanbuljs/issues/499#issuecomment-580358011 */
-		() => {
-			const { left, top } = (
-				window.test as any as Chart
-			).canvas.getBoundingClientRect();
-
-			return { left, top };
-		},
+		() => window.test.canvas.getBoundingClientRect(),
 	);
 }
 
-export async function getDatasetPointLocation(
+export async function playwrightGetDatasetPointLocation(
 	page: Page,
 	pointSpec: DatasetPointSpec,
 	canvasOffset: CanvasOffset | null = null,
 ): Promise<Point2D> {
-	return new Point2D(
+	const getChartDatasetMeta = async (datasetIndex: number) =>
 		await page.evaluate(
 			/* istanbul ignore next - fixes fatal errors when evaluating outside of original context, see https://github.com/istanbuljs/istanbuljs/issues/499#issuecomment-580358011 */
-			({ dragPointSpec, canvasOffset }) => {
-				const { x, y } = (window.test as any as Chart).getDatasetMeta(
-					dragPointSpec.datasetIndex,
-				).data[dragPointSpec.index];
+			({ datasetIndex }) => window.test.getDatasetMeta(datasetIndex),
+			{ datasetIndex },
+		);
 
-				return {
-					x: x + (canvasOffset?.left ?? 0),
-					y: y + (canvasOffset?.top ?? 0),
-				};
-			},
-			{ dragPointSpec: pointSpec, canvasOffset },
-		),
+	return new Point2D(
+		await getDatasetPointLocation(getChartDatasetMeta, pointSpec, canvasOffset),
 	);
 }
