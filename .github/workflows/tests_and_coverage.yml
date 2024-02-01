@@ -3,7 +3,6 @@ name: run-tests-and-report-coverage
 on:
   pull_request:
     types: [opened, synchronize]
-  push:
 
 jobs:
   assemble-release:
@@ -11,13 +10,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Use Node.js 20.9.0
         uses: actions/setup-node@v4
         with:
           node-version: 20.9.0
-
-      - name: Checkout
-        uses: actions/checkout@v4
+          cache: "npm"
 
       - name: Install npm dependencies
         run: npm install --legacy-peer-deps
