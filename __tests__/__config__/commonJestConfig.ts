@@ -1,4 +1,4 @@
-import { JestConfigWithTsJest } from "ts-jest";
+import { Config } from "jest";
 
 const testPathIgnorePatterns: string[] = [
 	"__utils__",
@@ -7,23 +7,20 @@ const testPathIgnorePatterns: string[] = [
 	"__config__",
 	"__data__",
 	"node_modules",
+	"dist",
 ];
 
-const config: JestConfigWithTsJest = {
-	preset: "ts-jest",
+const config: Config = {
 	testPathIgnorePatterns: testPathIgnorePatterns,
-	setupFiles: ["jest-canvas-mock"],
 	setupFilesAfterEnv: ["../__setup__/setup.ts", "../__setup__/jestSetup.ts"],
-	extensionsToTreatAsEsm: [".ts"],
 	transform: {
-		"^.+\\.tsx?$": [
-			"ts-jest",
-			{
-				useESM: true,
-			},
+		"^.+\\.[t|j]sx?$": [
+			"babel-jest",
+			{ configFile: "<rootDir>/../../babel.config.js" },
 		],
 		"^.+\\.vue$": "@vue/vue3-jest",
 	},
+	transformIgnorePatterns: ["node_modules/(?!d3-*)"],
 	testEnvironment: "jsdom",
 	testEnvironmentOptions: {
 		customExportConditions: ["node", "node-addons"],

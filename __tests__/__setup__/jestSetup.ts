@@ -1,7 +1,8 @@
 import "@testing-library/jest-dom/jest-globals";
 
+import Chart from "chart.js/auto";
 import ResizeObserver from "resize-observer-polyfill";
 
-import { expect } from "@jest/globals";
+global.Chart = Chart;
 
 global.ResizeObserver = ResizeObserver;

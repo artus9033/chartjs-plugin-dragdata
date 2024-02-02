@@ -107,45 +107,56 @@
 								return dateFns.differenceInDays(value[1], value[0]) + "d";
 							},
 						},
-						dragData: {
-							round: 0,
-							onDrag: (e, datasetIndex, index, value) => {
-								const duration = dateFns.differenceInDays(value[1], value[0]);
-								ganttChart.data.datasets.forEach((segment, i) => {
-									// console.log(i);
-									const curDuration = dateFns.differenceInDays(
-										segment.data[index][1],
-										segment.data[index][0],
-									);
-									const thisStart = new Date(segment.data[0]);
-									const thisEnd = new Date(segment.data[1]);
+						dragData:
+							new URLSearchParams(window.location.search).get(
+								"disablePlugin",
+							) === "true"
+								? false
+								: {
+										round: 0,
+										onDrag: (e, datasetIndex, index, value) => {
+											const duration = dateFns.differenceInDays(
+												value[1],
+												value[0],
+											);
+											ganttChart.data.datasets.forEach((segment, i) => {
+												// console.log(i);
+												const curDuration = dateFns.differenceInDays(
+													segment.data[index][1],
+													segment.data[index][0],
+												);
+												const thisStart = new Date(segment.data[0]);
+												const thisEnd = new Date(segment.data[1]);
 
-									if (ganttChart.data.datasets[i + 1] && i !== 0) {
-										const nextStart = new Date(
-											ganttChart.data.datasets[i + 1].data[index][0],
-										);
-										// console.log(nextStart);
-										if (nextStart !== thisEnd) {
-											segment.data[index] = [thisStart, nextStart];
-										}
-									}
-									if (i > 0) {
-										// console.log(i);
-										// console.log(ganttChart.data.datasets[i - 1]);
-										const prevEnd = new Date(
-											ganttChart.data.datasets[i - 1].data[index][1],
-										);
-										if (thisStart !== prevEnd) {
-											// retain current segment length
-											const newEnd = dateFns.addDays(prevEnd, curDuration);
-											// console.log(prevEnd, newEnd);
-											segment.data[index] = [prevEnd, newEnd];
-										}
-									}
-								});
-								ganttChart.update(0);
-							},
-						},
+												if (ganttChart.data.datasets[i + 1] && i !== 0) {
+													const nextStart = new Date(
+														ganttChart.data.datasets[i + 1].data[index][0],
+													);
+													// console.log(nextStart);
+													if (nextStart !== thisEnd) {
+														segment.data[index] = [thisStart, nextStart];
+													}
+												}
+												if (i > 0) {
+													// console.log(i);
+													// console.log(ganttChart.data.datasets[i - 1]);
+													const prevEnd = new Date(
+														ganttChart.data.datasets[i - 1].data[index][1],
+													);
+													if (thisStart !== prevEnd) {
+														// retain current segment length
+														const newEnd = dateFns.addDays(
+															prevEnd,
+															curDuration,
+														);
+														// console.log(prevEnd, newEnd);
+														segment.data[index] = [prevEnd, newEnd];
+													}
+												}
+											});
+											ganttChart.update(0);
+										},
+									},
 					},
 					scales: {
 						x: {

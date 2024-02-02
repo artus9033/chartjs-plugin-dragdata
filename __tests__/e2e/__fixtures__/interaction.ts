@@ -1,56 +1,45 @@
 import type { Page } from "playwright";
 import { expect } from "playwright-test-coverage";
 
+import { _genericTestDrag } from "../../__fixtures__/generic/interaction";
 import Point2D from "../../__utils__/Point2D";
-import { calcDragTargetPosition } from "../../__utils__/cartesian";
-import { AxisSpec, DatasetPointSpec } from "../../__utils__/testTypes";
+import { AxisSpec } from "../../__utils__/axisSpec";
+import { DatasetPointSpec } from "../../__utils__/testTypes";
 import {
 	playwrightCalcCanvasOffset,
-	playwrightGetDatasetPointLocation,
+	playwrightGetChartDatasetMeta,
 } from "../__utils__/chartUtils";
-import { bootstrapTest } from "./misc";
 
-export async function playwrightExpectDragSuccessful(
-	page: Page,
-	dragPointSpec: DatasetPointSpec,
-	destRefPointOrSpec: DatasetPointSpec | Point2D,
-	fileName: string,
-	whichAxis: AxisSpec,
-) {
-	await bootstrapTest(page, fileName);
+export async function playwrightTestDrag({
+	page,
+	dragPointSpec,
+	destRefPointOrSpec,
+	whichAxis,
+	disablePlugin = false,
+}: {
+	page: Page;
+	dragPointSpec: DatasetPointSpec;
+	destRefPointOrSpec: DatasetPointSpec | Point2D;
+	whichAxis: AxisSpec;
+	disablePlugin?: boolean;
+}) {
+	const canvasBB = await playwrightCalcCanvasOffset(page);
 
-	const canvasOffset = await playwrightCalcCanvasOffset(page);
-
-	let dragStartPoint: Point2D = await playwrightGetDatasetPointLocation(
-			page,
-			dragPointSpec,
-			canvasOffset,
-		),
-		dragRefPoint: Point2D =
-			destRefPointOrSpec instanceof Point2D
-				? destRefPointOrSpec
-				: await playwrightGetDatasetPointLocation(
-						page,
-						destRefPointOrSpec,
-						canvasOffset,
-					),
-		dragDestPoint = calcDragTargetPosition(
-			dragStartPoint,
-			dragRefPoint,
-			whichAxis,
-		);
-
-	// perform the dragging gesture
-	await page.mouse.move(...dragStartPoint.toArray());
-	await page.mouse.down();
-	await page.mouse.move(...dragDestPoint.toArray());
-	await page.mouse.up();
-
-	// check if the values match after dragging
-	const actualNewDraggedPointLocation = await playwrightGetDatasetPointLocation(
-		page,
+	return await _genericTestDrag({
+		canvasBB,
+		performDrag: async (dragStartPoint, dragDestPoint) => {
+			await page.mouse.move(...dragStartPoint.toArray());
+			await page.mouse.down();
+			await page.mouse.move(...dragDestPoint.toArray());
+			await page.mouse.up();
+		},
+		getChartDatasetMeta: (datasetIndex) =>
+			playwrightGetChartDatasetMeta(page, datasetIndex),
 		dragPointSpec,
-	);
-
-	expect(actualNewDraggedPointLocation).pointsToBeClose(dragDestPoint);
+		destRefPointOrSpec,
+		whichAxis,
+		isDragDataPluginEnabled: !disablePlugin,
+		bExpectResult: true,
+		expect,
+	});
 }

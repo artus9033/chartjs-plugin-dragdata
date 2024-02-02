@@ -1,5 +1,5 @@
 import Point2D from "./Point2D";
-import { AxisSpec } from "./testTypes";
+import { AxisSpec } from "./axisSpec";
 
 /**
  * Calculates the Euclidean distance between two points in a 2D space.

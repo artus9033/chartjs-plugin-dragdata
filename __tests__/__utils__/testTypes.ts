@@ -5,5 +5,3 @@ export type DatasetPointSpec = {
 
 export type Point2DObject = { x: number; y: number };
 export type Point2DArray = [x: number, y: number];
-
-export type AxisSpec = "x" | "y";

@@ -71,9 +71,14 @@
 					indexAxis: "y",
 					responsive: true,
 					plugins: {
-						dragData: {
-							round: 0,
-						},
+						dragData:
+							new URLSearchParams(window.location.search).get(
+								"disablePlugin",
+							) === "true"
+								? false
+								: {
+										round: 0,
+									},
 					},
 					scales: {
 						x: {

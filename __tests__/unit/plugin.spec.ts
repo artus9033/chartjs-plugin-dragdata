@@ -1,12 +1,12 @@
-import { Chart, ChartTypeRegistry } from "chart.js";
+import { Chart } from "chart.js";
 import d3Drag from "d3-drag";
 import d3Selection from "d3-selection";
-
-import { jest } from "@jest/globals";
 
 import ChartJSdragDataPlugin, {
 	exportsForTesting,
 } from "../../dist/chartjs-plugin-dragdata-test";
+import { UNIT_TEST_CHART_TYPES } from "./__utils__/constants";
+import { setupChartInstance } from "./__utils__/utils";
 
 jest.mock("d3-drag", () => ({
 	drag: jest.fn(() => ({
@@ -30,64 +30,14 @@ jest.mock("d3-selection", () => {
 	};
 });
 
-describe("ChartJSdragDataPlugin", () => {
-	describe.each<keyof ChartTypeRegistry>([
-		"line",
-		// "bar",
-		// "scatter",
-		// "bubble",
-		// "polarArea",
-		// "radar",
-	])("%s chart", (chartType) => {
+describe("plugin", () => {
+	describe.each(UNIT_TEST_CHART_TYPES)("%s chart", (chartType) => {
 		let chartInstance: Chart<typeof chartType>;
 
 		beforeEach(() => {
-			let canvas = document.createElement("canvas");
-			var ctx = canvas.getContext("2d")!;
-
-			chartInstance = new Chart(ctx, {
-				options: {
-					plugins: {
-						// @ts-ignore next line - TODO: fix this later with proper TS typings
-						dragData: {
-							round: 2,
-							magnet: {
-								to: jest.fn(),
-								pluginOptions: {
-									onDragStart: jest.fn(),
-									onDrag: jest.fn(),
-									onDragEnd: jest.fn(),
-								},
-							},
-						},
-					},
-				},
-				type: "bar",
-				data: {
-					datasets: [
-						{
-							data: [1, 2, 3],
-						},
-					],
-				},
-				scales: {
-					xAxisID: {
-						max: 10,
-						min: 0,
-					},
-					yAxisID: {
-						max: 10,
-						min: 0,
-					},
-				},
-				getDatasetMeta: jest.fn(),
-				getElementsAtEventForMode: jest.fn(),
-				update: jest.fn(),
-			});
+			chartInstance = setupChartInstance(chartType);
 
 			Chart.register(ChartJSdragDataPlugin);
-
-			// ChartJSdragDataPlugin.afterInit(chartInstance);
 		});
 
 		afterEach(() => {

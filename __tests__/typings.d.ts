@@ -5,6 +5,10 @@ interface CustomMatchers<R = unknown> {
 	pointsToBeClose(p2: Point2D, maxDistance?: number): R;
 }
 
+interface CustomMatchersJest<R = unknown> {
+	pointsToBeClose(p2: Point2D, maxDistance?: number): R;
+}
+
 declare global {
 	// the test instance exposed by all test pages - typing for tests' code
 	interface Window {
@@ -13,9 +17,9 @@ declare global {
 
 	// augment Jest matchers
 	namespace jest {
-		// interface Expect extends CustomMatchers {}
+		interface Expect extends CustomMatchers {}
 		interface Matchers<R> extends CustomMatchers<R> {}
-		// interface InverseAsymmetricMatchers extends CustomMatchers {}
+		interface InverseAsymmetricMatchers extends CustomMatchers {}
 	}
 
 	// augment Playwright matchers
@@ -23,4 +27,6 @@ declare global {
 		interface Matchers<R> extends CustomMatchers<R> {}
 		interface MakeMatchers<R> extends CustomMatchers<R> {}
 	}
+
+	var Chart: typeof Chart;
 }

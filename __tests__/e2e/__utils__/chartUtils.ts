@@ -15,19 +15,13 @@ export async function playwrightCalcCanvasOffset(page: Page): Promise<DOMRect> {
 	);
 }
 
-export async function playwrightGetDatasetPointLocation(
+export async function playwrightGetChartDatasetMeta(
 	page: Page,
-	pointSpec: DatasetPointSpec,
-	canvasOffset: CanvasOffset | null = null,
-): Promise<Point2D> {
-	const getChartDatasetMeta = async (datasetIndex: number) =>
-		await page.evaluate(
-			/* istanbul ignore next - fixes fatal errors when evaluating outside of original context, see https://github.com/istanbuljs/istanbuljs/issues/499#issuecomment-580358011 */
-			({ datasetIndex }) => window.test.getDatasetMeta(datasetIndex),
-			{ datasetIndex },
-		);
-
-	return new Point2D(
-		await getDatasetPointLocation(getChartDatasetMeta, pointSpec, canvasOffset),
+	datasetIndex: number,
+) {
+	return await page.evaluate(
+		/* istanbul ignore next - fixes fatal errors when evaluating outside of original context, see https://github.com/istanbuljs/istanbuljs/issues/499#issuecomment-580358011 */
+		({ datasetIndex }) => window.test.getDatasetMeta(datasetIndex),
+		{ datasetIndex },
 	);
 }

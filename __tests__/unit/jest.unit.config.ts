@@ -1,8 +1,8 @@
-import { JestConfigWithTsJest } from "ts-jest";
+import { Config } from "jest";
 
 import commonJestConfig from "../__config__/commonJestConfig";
 
-const config: JestConfigWithTsJest = {
+const config: Config = {
 	...commonJestConfig,
 	displayName: "unit",
 	testMatch: ["**/*.spec.[jt]s?(x)"],

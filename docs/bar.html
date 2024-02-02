@@ -70,21 +70,26 @@
 						else e.native.target.style.cursor = "default";
 					},
 					plugins: {
-						dragData: {
-							round: 1,
-							showTooltip: true,
-							onDragStart: function (e) {
-								// console.log(e)
-							},
-							onDrag: function (e, datasetIndex, index, value) {
-								e.target.style.cursor = "grabbing";
-								// console.log(e, datasetIndex, index, value)
-							},
-							onDragEnd: function (e, datasetIndex, index, value) {
-								e.target.style.cursor = "default";
-								// console.log(datasetIndex, index, value)
-							},
-						},
+						dragData:
+							new URLSearchParams(window.location.search).get(
+								"disablePlugin",
+							) === "true"
+								? false
+								: {
+										round: 1,
+										showTooltip: true,
+										onDragStart: function (e) {
+											// console.log(e)
+										},
+										onDrag: function (e, datasetIndex, index, value) {
+											e.target.style.cursor = "grabbing";
+											// console.log(e, datasetIndex, index, value)
+										},
+										onDragEnd: function (e, datasetIndex, index, value) {
+											e.target.style.cursor = "default";
+											// console.log(datasetIndex, index, value)
+										},
+									},
 					},
 					scales: {
 						y: {

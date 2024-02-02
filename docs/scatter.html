@@ -103,12 +103,17 @@
 						},
 					},
 					plugins: {
-						dragData: {
-							round: 1,
-							showTooltip: true,
-							// IMPORTANT - you also need to specify dragX
-							dragX: true,
-						},
+						dragData:
+							new URLSearchParams(window.location.search).get(
+								"disablePlugin",
+							) === "true"
+								? false
+								: {
+										round: 1,
+										showTooltip: true,
+										// IMPORTANT - you also need to specify dragX
+										dragX: true,
+									},
 					},
 				},
 			};
