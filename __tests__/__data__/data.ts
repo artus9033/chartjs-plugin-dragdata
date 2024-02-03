@@ -2,6 +2,8 @@ import { ChartConfiguration, ChartOptions } from "chart.js";
 import _ from "lodash";
 import { TestScenario } from "../__utils__/scenario";
 import { DeepPartial } from "chart.js/dist/types/utils";
+import testsConfig from "../__utils__/testsConfig";
+import Offset2D from "../__utils__/Offset2D";
 
 export const TestChartOptions: ChartOptions = {
 	plugins: {
@@ -37,76 +39,115 @@ export const simpleChartScenarioBase = {
 		options: {},
 	},
 	steps: [
-		{
-			axisSpec: "y",
-			dragPointSpec: { datasetIndex: 0, index: 0 },
-			destRefPointOrSpec: { datasetIndex: 0, index: 1 },
-		},
-		{
-			axisSpec: "y",
-			dragPointSpec: { datasetIndex: 0, index: 0 },
-			destRefPointOrSpec: { datasetIndex: 0, index: 2 },
-		},
-		{
-			axisSpec: "y",
-			dragPointSpec: { datasetIndex: 1, index: 0 },
-			destRefPointOrSpec: { datasetIndex: 0, index: 4 },
-		},
-		// {
-		// 	axisSpec: "x",
-		// 	dragPointSpec: { datasetIndex: 0, index: 0 },
-		// 	destRefPointOrSpec: { datasetIndex: 0, index: 1 },
-		// },
-		// {
-		// 	axisSpec: "x",
-		// 	dragPointSpec: { datasetIndex: 0, index: 0 },
-		// 	destRefPointOrSpec: { datasetIndex: 0, index: 2 },
-		// },
-		// {
-		// 	axisSpec: "x",
-		// 	dragPointSpec: { datasetIndex: 1, index: 0 },
-		// 	destRefPointOrSpec: { datasetIndex: 0, index: 4 },
-		// },
+		...testsConfig.TESTED_AXES.flatMap(
+			(axisSpec) =>
+				[
+					...((testsConfig.ENABLED_INTERACTIONS.includes("standardDragging")
+						? [
+								{
+									// dataset index 0 point index 0 -> dataset index 0 point index 1
+									axisSpec,
+									dragPointSpec: { datasetIndex: 0, index: 0 },
+									dragDestPointSpecOrStartPointOffset: {
+										datasetIndex: 0,
+										index: 1,
+									},
+								},
+								{
+									// dataset index 0 point index 2 -> dataset index 0 point index 2
+									axisSpec,
+									dragPointSpec: { datasetIndex: 0, index: 2 },
+									dragDestPointSpecOrStartPointOffset: {
+										datasetIndex: 0,
+										index: 2,
+									},
+								},
+								{
+									// dataset index 1 point index 3 -> dataset index 0 point index 4
+									axisSpec,
+									dragPointSpec: { datasetIndex: 1, index: 3 },
+									dragDestPointSpecOrStartPointOffset: {
+										datasetIndex: 0,
+										index: 4,
+									},
+								},
+								{
+									// dataset index 1 point index 2 -> point position offset by +20px on x and +40.5px on y
+									axisSpec,
+									dragPointSpec: { datasetIndex: 1, index: 2 },
+									dragDestPointSpecOrStartPointOffset: new Offset2D({
+										x: 20,
+										y: 40.5,
+									}),
+								},
+							]
+						: []) as TestScenario["steps"]),
+					...((testsConfig.ENABLED_INTERACTIONS.includes(
+						"draggingOutOfCanvasBoundsX",
+					)
+						? [
+								{
+									// dataset index 1 point index 3 -> -70% of the chart width on x (out of bounds of the chart to the left)
+									axisSpec,
+									dragPointSpec: { datasetIndex: 1, index: 2 },
+									dragDestPointSpecOrStartPointOffset: new Offset2D({
+										xRelative: -0.7,
+										yRelative: 0,
+									}),
+								},
+								{
+									// dataset index 1 point index 3 -> +70% of the chart width on x (out of bounds of the chart to the right)
+									axisSpec,
+									dragPointSpec: { datasetIndex: 1, index: 2 },
+									dragDestPointSpecOrStartPointOffset: new Offset2D({
+										xRelative: 0.7,
+										yRelative: 0,
+									}),
+								},
+							]
+						: []) as TestScenario["steps"]),
+					...((testsConfig.ENABLED_INTERACTIONS.includes(
+						"draggingOutOfCanvasBoundsY",
+					)
+						? []
+						: []) as TestScenario["steps"]),
+				] as TestScenario["steps"],
+		),
 	],
 } satisfies TestScenario;
 
 export const simpleCategoricalChartScenario = _.merge(
 	{},
+	simpleChartScenarioBase,
 	{
-		...simpleChartScenarioBase,
+		isCategoricalX: true,
 	},
-) as TestScenario;
+) satisfies TestScenario;
 
-export const simpleLinearChartScenario = _.merge(
-	{},
-	{
-		...simpleChartScenarioBase,
-	},
-	{
-		configuration: {
-			data: {
-				datasets: simpleChartScenarioBase.configuration.data.datasets.map(
-					(dataset) => ({
-						...dataset,
-						data: dataset.data.map((value, index) => ({
-							x: index + 1.5,
-							y: value,
-						})),
-					}),
-				),
-			},
-			options: {
-				scales: {
-					x: {
-						type: "linear",
-					},
+export const simpleLinearChartScenario = _.merge({}, simpleChartScenarioBase, {
+	configuration: {
+		data: {
+			datasets: simpleChartScenarioBase.configuration.data.datasets.map(
+				(dataset) => ({
+					...dataset,
+					data: dataset.data.map((value, index) => ({
+						x: index,
+						y: value,
+					})),
+				}),
+			),
+		},
+		options: {
+			scales: {
+				x: {
+					type: "linear",
 				},
 			},
 		},
-	} satisfies {
-		configuration: DeepPartial<TestScenario["configuration"]>;
 	},
-) as TestScenario;
+} satisfies {
+	configuration: DeepPartial<TestScenario["configuration"]>;
+}) as TestScenario;
 
 export type TestScenariosRegistry = Record<string, TestScenario>;
 

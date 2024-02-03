@@ -57,6 +57,16 @@ export const assetSpecs: AssetSpec[] = [
 		),
 		destFileName: "chartjs-plugin-dragdata.min.js",
 	},
+	{
+		sourcePath: path.join(
+			path.dirname(__filename),
+			"..",
+			"..",
+			"dist",
+			"chartjs-plugin-dragdata-test-browser.js",
+		),
+		destFileName: "chartjs-plugin-dragdata-test-browser.js",
+	},
 ];
 
 export async function bundle(): Promise<boolean> {

@@ -1,24 +1,31 @@
-import { Chart } from "chart.js";
+import type { Chart } from "chart.js";
 
 import { fireEvent } from "@testing-library/react";
 
-import Point2D from "../../__utils__/Point2D";
-import { AxisSpec } from "../../__utils__/axisSpec";
-import { DatasetPointSpec } from "../../__utils__/testTypes";
-import { _genericTestDrag } from "../generic/interaction";
+import {
+	GenericDragTestParams,
+	_genericTestDrag,
+} from "../generic/interaction";
 
-export async function performDragWithoutTesting(
-	chart: Chart,
-	dragPointSpec: DatasetPointSpec,
-	destRefPointOrSpec: DatasetPointSpec | Point2D,
-	whichAxis: AxisSpec,
-) {
+export async function performDragWithoutTesting({
+	chart,
+	...parameters
+}: {
+	chart: Chart;
+} & Pick<
+	GenericDragTestParams,
+	| "dragPointSpec"
+	| "dragDestPointSpecOrStartPointOffset"
+	| "whichAxis"
+	| "draggableAxis"
+>) {
 	const canvasBB = chart.canvas.getBoundingClientRect();
 
 	const getChartDatasetMeta = (datasetIndex: number) =>
 		chart.getDatasetMeta(datasetIndex);
 
 	return await _genericTestDrag({
+		...parameters,
 		canvasBB,
 		performDrag: (dragStartPoint, dragDestPoint) => {
 			fireEvent.mouseDown(chart.canvas, {
@@ -40,9 +47,6 @@ export async function performDragWithoutTesting(
 			});
 		},
 		getChartDatasetMeta: getChartDatasetMeta,
-		dragPointSpec,
-		destRefPointOrSpec,
-		whichAxis,
 		isDragDataPluginEnabled: (chart.options.plugins as any).dragData,
 		// in Jest environment, rendering on the canvas does not work as
 		// expected & positions of data points are calculated wrong,

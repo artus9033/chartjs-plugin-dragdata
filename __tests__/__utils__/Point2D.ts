@@ -1,6 +1,6 @@
 class Point2D {
-	public x: number;
-	public y: number;
+	public readonly x: number;
+	public readonly y: number;
 
 	constructor({ x, y }: { x: number; y: number }) {
 		this.x = x;
@@ -19,7 +19,7 @@ class Point2D {
 	}
 
 	toString() {
-		return `Point2D { x: ${Math.round(this.x * 10)}, y: ${Math.round(this.y * 10) / 10} }`;
+		return `Point2D { x: ${Math.round(this.x * 10) / 10}, y: ${Math.round(this.y * 10) / 10} }`;
 	}
 }
 

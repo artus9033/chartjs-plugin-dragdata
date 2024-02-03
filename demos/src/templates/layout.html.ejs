@@ -8,7 +8,6 @@
 			content="width=device-width, initial-scale=1.0, user-scalable=no"
 		/>
 		<script src="assets/chart.min.js"></script>
-		<script src="assets/chartjs-plugin-dragdata.min.js"></script>
 		<script src="assets/lodash.min.js"></script>
 		<style>
 			html,
@@ -29,67 +28,88 @@
 
 		<script>
 			const urlSearchParams = new URLSearchParams(window.location.search),
-				isTest = urlSearchParams.get("isTest") === "true",
-				disablePlugin = urlSearchParams.get("disablePlugin") !== "false",
-				draggableAxis = urlSearchParams.get("draggableAxis"),
-				bothAxesDraggable = draggableAxis === "both",
-				xAxisDraggable =
-					!draggableAxis || bothAxesDraggable || draggableAxis === "x",
-				yAxisDraggable = bothAxesDraggable || draggableAxis === "y";
+				isTest = urlSearchParams.get("isTest") === "true";
 
-			console.log("Received page configuration:");
-			const receivedConfigForLogging = {
-				isTest,
-				disablePlugin,
-				draggableAxis,
-				xAxisDraggable,
-				yAxisDraggable,
+			document.body.onload = function onDocumentLoaded() {
+				function onPluginScriptLoaded() {
+					console.log("Plugin script loaded");
+
+					const disablePlugin =
+							urlSearchParams.get("disablePlugin") !== "false",
+						draggableAxis = urlSearchParams.get("draggableAxis"),
+						bothAxesDraggable = draggableAxis === "both",
+						xAxisDraggable =
+							!draggableAxis || bothAxesDraggable || draggableAxis === "x",
+						yAxisDraggable = bothAxesDraggable || draggableAxis === "y";
+
+					console.log("Received page configuration:");
+					const receivedConfigForLogging = {
+						isTest,
+						disablePlugin,
+						draggableAxis,
+						xAxisDraggable,
+						yAxisDraggable,
+					};
+					console.table(receivedConfigForLogging);
+
+					const configurationOverrides = JSON.parse(
+							`<%- configurationOverrides %>`,
+						),
+						configuration = _.merge(
+							{
+								type: "line",
+								options: {
+									animation: !isTest,
+									plugins: {
+										dragData: disablePlugin
+											? false
+											: {
+													dragX: xAxisDraggable,
+													dragY: yAxisDraggable,
+													round: JSON.parse("<%= roundingPrecision %>"),
+													showTooltip: true,
+													onDrag: function (e) {
+														e.target.style.cursor = "grabbing";
+													},
+													onDragEnd: function (e) {
+														e.target.style.cursor = "default";
+													},
+												},
+									},
+									onHover: function (e) {
+										const point = e.chart.getElementsAtEventForMode(
+											e,
+											"nearest",
+											{ intersect: true },
+											false,
+										);
+										if (point.length) e.native.target.style.cursor = "grab";
+										else e.native.target.style.cursor = "default";
+									},
+								},
+							},
+							configurationOverrides,
+						);
+
+					console.log("Constructed chart configuration:", configuration);
+
+					var ctx = document
+						.getElementById("chartJSContainer")
+						.getContext("2d");
+					window.test = new Chart(ctx, configuration);
+				}
+
+				// load the plugin script dynamically - either with IstanbulJS's coverage statements or not, depending on the value of isTest
+				let scriptElement = document.createElement("script");
+				scriptElement.src = isTest
+					? "assets/chartjs-plugin-dragdata-test-browser.js"
+					: "assets/chartjs-plugin-dragdata.min.js";
+
+				console.log("Loading plugin script from:", scriptElement.src);
+
+				scriptElement.onload = onPluginScriptLoaded;
+				document.head.appendChild(scriptElement);
 			};
-			console.table(receivedConfigForLogging);
-
-			const configurationOverrides = JSON.parse(
-					`<%- configurationOverrides %>`,
-				),
-				configuration = _.merge(
-					{
-						type: "line",
-						options: {
-							animation: !isTest,
-							plugins: {
-								dragData: disablePlugin
-									? false
-									: {
-											dragX: xAxisDraggable,
-											dragY: yAxisDraggable,
-											round: JSON.parse("<%= roundingPrecision %>"),
-											showTooltip: true,
-											onDrag: function (e) {
-												e.target.style.cursor = "grabbing";
-											},
-											onDragEnd: function (e) {
-												e.target.style.cursor = "default";
-											},
-										},
-							},
-							onHover: function (e) {
-								const point = e.chart.getElementsAtEventForMode(
-									e,
-									"nearest",
-									{ intersect: true },
-									false,
-								);
-								if (point.length) e.native.target.style.cursor = "grab";
-								else e.native.target.style.cursor = "default";
-							},
-						},
-					},
-					configurationOverrides,
-				);
-
-			console.log("Constructed chart configuration:", configuration);
-
-			var ctx = document.getElementById("chartJSContainer").getContext("2d");
-			window.test = new Chart(ctx, configuration);
 		</script>
 	</body>
 </html>

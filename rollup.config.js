@@ -103,7 +103,7 @@ const config = [
 	// bundle for E2E testing: istanbul + bundled D3 (for browser)
 	bundleDragDataPlugin({
 		file: pkg.main.replace(".js", "-test-browser.js"),
-		format: "es",
+		format: "umd",
 		terse: false,
 		bTestBuild: true,
 	}),

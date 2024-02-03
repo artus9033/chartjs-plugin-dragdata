@@ -1,0 +1,12 @@
+# Config used to tweak running tests
+e2e:
+  testedAxes: # the axes to test dragging against
+    x: true
+    y: true
+    both: true
+  TEST_HTML_FILES_WHITELIST:
+  # empty whitelist by default
+  enabledInteractions: # interactions to test
+    - standardDragging
+    - draggingOutOfCanvasBoundsX
+    - draggingOutOfCanvasBoundsY

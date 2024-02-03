@@ -1,8 +1,16 @@
+import path from "path";
+
 import { expect as playwrightExpect } from "playwright-test-coverage";
 import { ExpectMatcherState } from "playwright/test";
 
 import Point2D from "../__utils__/Point2D";
 import { euclideanDistance } from "../__utils__/cartesian";
+
+process.env["NODE_CONFIG_DIR"] = path.join(
+	path.dirname(__filename),
+	"..",
+	"config",
+);
 
 type PlaywrightMatcherReturnType = {
 	message: () => string;

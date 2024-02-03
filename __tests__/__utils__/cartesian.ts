@@ -17,14 +17,14 @@ export function euclideanDistance(p1: Point2D, p2: Point2D): number {
  * @param pointA the source point
  * @param pointB the point to take one coordinate from
  * @param whichAxis the axis that determines which coordinate from `pointA` to substitute with the one from `pointB`
- * @param draggableAxis the axis/axes that is/are allowed to be dragged by chart config
+ * @param draggableAxis the axis/axes that is/are allowed to be dragged by chart config; if no axis is draggable, pass in `undefined`
  * @returns the new point, constrained to the `draggableAxis`
  */
 export function calcDragTargetPosition(
 	pointA: Point2D,
 	pointB: Point2D,
 	whichAxis: AxisSpec,
-	draggableAxis: AxisSpec,
+	draggableAxis?: AxisSpec,
 ): Point2D {
 	let desiredPoint: Point2D;
 
@@ -57,16 +57,21 @@ export function calcDragTargetPosition(
 	switch (draggableAxis) {
 		case "x":
 			// constrain the drag to the x axis
-			desiredPoint.y = pointA.y;
+			desiredPoint = new Point2D({ x: desiredPoint.x, y: pointA.y });
 			break;
 
 		case "y":
 			// constrain the drag to the y axis
-			desiredPoint.x = pointA.x;
+			desiredPoint = new Point2D({ x: pointA.x, y: desiredPoint.y });
 			break;
 
 		case "both":
 			// no constraints
+			break;
+
+		case undefined:
+			// no axis is draggable
+			desiredPoint = new Point2D({ x: pointA.x, y: pointA.y });
 			break;
 
 		default:

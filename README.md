@@ -8,7 +8,7 @@
 <a href="https://github.com/chartjs/awesome"><img src="https://awesome.re/badge-flat2.svg" alt="Awesome"></a>
 
 **Now compatible with Chart.js v3 🎉**  
-**Looking for a version compatible to Chart.js < 2.9.x? Then visit the [v2 branch](https://github.com/chrispahm/chartjs-plugin-dragdata/tree/v2)!**
+**Looking for a version compatible to Chart.js < 2.9.x? Then visit the [v2 branch](https://github.com/artus9033/chartjs-plugin-dragdata/tree/v2)!**
 
 A plugin for Chart.js >= 2.4.0  
 Makes data points draggable. Supports touch events.

@@ -20,6 +20,7 @@ export default defineConfig({
 		video: "retain-on-failure",
 		trace: "off",
 	},
+	workers: "50%",
 	maxFailures: process.env.ci ? undefined : 1,
 	projects: [
 		/* Test against desktop browsers */
@@ -52,7 +53,7 @@ export default defineConfig({
 						use: { ...devices["iPhone 12"] },
 					},
 				]),
-	],
+	].map((project) => ({ ...project, fullyParallel: true })),
 	testMatch: path.join(
 		path.dirname(__filename),
 		"__tests__",
@@ -62,8 +63,9 @@ export default defineConfig({
 	globalSetup: path.join(
 		path.dirname(__filename),
 		"__tests__",
+		"e2e",
 		"__setup__",
-		"setup.ts",
+		"playwrightGlobalSetup.ts",
 	),
 	outputDir: path.join(
 		path.dirname(__filename),

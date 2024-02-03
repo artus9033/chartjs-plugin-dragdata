@@ -1,33 +1,36 @@
 import type { Page } from "playwright";
 import { expect } from "playwright-test-coverage";
 
-import { _genericTestDrag } from "../../__fixtures__/generic/interaction";
-import Point2D from "../../__utils__/Point2D";
-import { AxisSpec } from "../../__utils__/axisSpec";
-import { DatasetPointSpec } from "../../__utils__/testTypes";
 import {
-	playwrightCalcCanvasOffset,
+	GenericDragTestParams,
+	_genericTestDrag,
+} from "../../__fixtures__/generic/interaction";
+import {
+	playwrightCalcCanvasBB,
 	playwrightGetChartDatasetMeta,
 } from "../__utils__/chartUtils";
 
 export async function playwrightTestDrag({
 	page,
-	dragPointSpec,
-	destRefPointOrSpec,
-	whichAxis,
-	draggableAxis,
 	isDragDataPluginDisabled = false,
+	...parameters
 }: {
 	page: Page;
-	dragPointSpec: DatasetPointSpec;
-	destRefPointOrSpec: DatasetPointSpec | Point2D;
-	whichAxis: AxisSpec;
-	draggableAxis: AxisSpec;
 	isDragDataPluginDisabled?: boolean;
-}) {
-	const canvasBB = await playwrightCalcCanvasOffset(page);
+} & Pick<
+	GenericDragTestParams,
+	| "dragPointSpec"
+	| "dragDestPointSpecOrStartPointOffset"
+	| "whichAxis"
+	| "draggableAxis"
+	| "isCategoricalX"
+	| "isCategoricalY"
+	| "expectedDestPointSpecOverride"
+>) {
+	const canvasBB = await playwrightCalcCanvasBB(page);
 
 	return await _genericTestDrag({
+		...parameters,
 		canvasBB,
 		performDrag: async (dragStartPoint, dragDestPoint) => {
 			await page.mouse.move(...dragStartPoint.toArray());
@@ -37,10 +40,6 @@ export async function playwrightTestDrag({
 		},
 		getChartDatasetMeta: (datasetIndex) =>
 			playwrightGetChartDatasetMeta(page, datasetIndex),
-		dragPointSpec,
-		destRefPointOrSpec,
-		whichAxis,
-		draggableAxis,
 		isDragDataPluginEnabled: !isDragDataPluginDisabled,
 		bExpectResult: true,
 		expect,
