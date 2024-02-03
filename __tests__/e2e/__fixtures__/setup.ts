@@ -1,17 +1,11 @@
 import { test } from "@playwright/test";
 
-import { bootstrapTest } from "./misc";
+import { BootstrapTestOptions, bootstrapTest } from "./misc";
 
-export async function setupTests({
-	fileName,
-	disablePlugin = false,
-}: {
-	fileName: string;
-	disablePlugin?: boolean;
-}) {
+export async function setupTests(options: BootstrapTestOptions) {
 	test.beforeEach(async ({ page }, testInfo) => {
 		testInfo.snapshotSuffix = ""; // disable per-platform screenshot snapshots
 
-		await bootstrapTest(page, { fileName, disablePlugin });
+		await bootstrapTest(page, options);
 	});
 }

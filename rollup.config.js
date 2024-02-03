@@ -2,7 +2,6 @@ const commonjs = require("@rollup/plugin-commonjs");
 const resolve = require("@rollup/plugin-node-resolve");
 const terser = require("@rollup/plugin-terser");
 const istanbul = require("rollup-plugin-istanbul");
-const copy = require("rollup-plugin-copy");
 const replace = require("@rollup/plugin-replace");
 const typescript = require("@rollup/plugin-typescript");
 
@@ -17,16 +16,18 @@ const banner = `/*!
 
 /**
  *	Create a rollup configuration for a given file
- * @param {string} file the input file
- * @param {import("rollup").ModuleFormat} format the format of the output module
- * @param {boolean} terse whether to run terser plugin
- * @param {boolean} bTestBuild whether to run instanbul plugin (if true) for coverage or to strip testing exports (if false)
- * @param {boolean} bBundleD3 whether to bundle D3 plugins or to reference them as externals
- * @returns
+ * @param {string} options.file the input file
+ * @param {import("rollup").ModuleFormat} options.format the format of the output module
+ * @param {boolean} options.terse whether to run terser plugin
+ * @param {boolean} options.bTestBuild whether to run instanbul plugin (if true) for coverage or to strip testing exports (if false)
+ * @param {boolean} options.bBundleD3 whether to bundle D3 plugins or to reference them as externals
+ * @return {import('rollup').RollupOptions} the built options
  */
-function buildOutput(file, format, terse, bTestBuild, bBundleD3 = true) {
+function bundleDragDataPlugin(options) {
+	const { file, format, terse, bTestBuild, bBundleD3 = true } = options;
+
 	/** @type {import('rollup').RollupOptions} */
-	const options = {
+	const customOptions = {
 		input: "src/index.js",
 		external: [
 			"chart.js",
@@ -34,17 +35,21 @@ function buildOutput(file, format, terse, bTestBuild, bBundleD3 = true) {
 			...(bBundleD3 ? [] : ["d3-drag", "d3-selection"]),
 		],
 		output: {
+			exports: "named",
+			banner,
 			name: "index",
 			file,
 			format,
-			exports: "named",
 			globals: {
 				"chart.js": "Chart",
 				"chart.js/helpers": "Chart.helpers",
 			},
-			banner,
 		},
 		plugins: [
+			commonjs(),
+			resolve({
+				browser: true,
+			}),
 			...(bTestBuild
 				? [
 						// in a test build, inject istanbul and keep testing exports
@@ -62,37 +67,55 @@ function buildOutput(file, format, terse, bTestBuild, bBundleD3 = true) {
 							preventAssignment: true, // prevent replacing near assignment - setting recommended by plugin docs
 						}),
 					]),
-			commonjs(),
-			resolve({
-				browser: true,
-			}),
 			terse ? terser() : undefined,
-			copy({
-				targets: [
-					{ src: pkg.main, dest: "docs/assets" }, // not for testing, just for docs deployment; testing package will be redirected with playwright's fixtures for network mocks
-					{
-						src: "node_modules/chart.js/dist/chart.umd.js",
-						dest: "docs/assets",
-						rename: "chart.min.js",
-					},
-				],
-			}),
 			typescript({
 				tsconfig: "./tsconfig.build.json",
 			}),
 		],
 	};
 
-	return options;
+	return customOptions;
 }
 
 /** @type {import('rollup').RollupOptions[]} */
 const config = [
-	buildOutput(pkg.main, "umd", false, false),
-	buildOutput(pkg.browser, "umd", true, false),
-	buildOutput(pkg.module, "es", true, false),
-	buildOutput(pkg.main.replace(".js", "-test-browser.js"), "umd", false, true), // bundle for E2E testing: istanbul + bundled D3 (for browser)
-	buildOutput(pkg.main.replace(".js", "-test.js"), "umd", false, true, false), // bundle for unit/integration testing: istanbul + external D3
+	bundleDragDataPlugin({
+		file: pkg.main,
+		format: "umd",
+		terse: false,
+		bTestBuild: false,
+	}),
+
+	bundleDragDataPlugin({
+		file: pkg.browser,
+		format: "umd",
+		terse: true,
+		bTestBuild: false,
+	}),
+
+	bundleDragDataPlugin({
+		file: pkg.module,
+		format: "es",
+		terse: true,
+		bTestBuild: false,
+	}),
+
+	// bundle for E2E testing: istanbul + bundled D3 (for browser)
+	bundleDragDataPlugin({
+		file: pkg.main.replace(".js", "-test-browser.js"),
+		format: "es",
+		terse: false,
+		bTestBuild: true,
+	}),
+
+	// bundle for unit/integration testing: istanbul + external D3
+	bundleDragDataPlugin({
+		file: pkg.main.replace(".js", "-test.js"),
+		format: "es",
+		terse: false,
+		bTestBuild: true,
+		bBundleD3: false,
+	}),
 ];
 
 module.exports = config;

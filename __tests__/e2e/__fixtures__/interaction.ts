@@ -15,13 +15,13 @@ export async function playwrightTestDrag({
 	dragPointSpec,
 	destRefPointOrSpec,
 	whichAxis,
-	disablePlugin = false,
+	isDragDataPluginDisabled = false,
 }: {
 	page: Page;
 	dragPointSpec: DatasetPointSpec;
 	destRefPointOrSpec: DatasetPointSpec | Point2D;
 	whichAxis: AxisSpec;
-	disablePlugin?: boolean;
+	isDragDataPluginDisabled?: boolean;
 }) {
 	const canvasBB = await playwrightCalcCanvasOffset(page);
 
@@ -38,7 +38,7 @@ export async function playwrightTestDrag({
 		dragPointSpec,
 		destRefPointOrSpec,
 		whichAxis,
-		isDragDataPluginEnabled: !disablePlugin,
+		isDragDataPluginEnabled: !isDragDataPluginDisabled,
 		bExpectResult: true,
 		expect,
 	});

@@ -1,3 +1,5 @@
+import { ChartConfiguration } from "chart.js";
+
 import Point2D from "./Point2D";
 import { AxisSpec } from "./axisSpec";
 import { DatasetPointSpec } from "./testTypes";
@@ -7,7 +9,11 @@ export type TestScenarioStep = {
 	dragPointSpec: DatasetPointSpec;
 	destRefPointOrSpec: DatasetPointSpec | Point2D;
 };
-export type TestScenario = TestScenarioStep[];
+export type TestScenario = {
+	configuration: Partial<ChartConfiguration>;
+	steps: TestScenarioStep[];
+	roundingPrecision: number;
+};
 
 export function describeDatasetPointSpecOrPoint(
 	datasetPointSpecOrPoint: DatasetPointSpec | Point2D,

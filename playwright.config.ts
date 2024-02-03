@@ -20,6 +20,7 @@ export default defineConfig({
 		video: "retain-on-failure",
 		trace: "off",
 	},
+	maxFailures: process.env.ci ? undefined : 1,
 	projects: [
 		/* Test against desktop browsers */
 		{

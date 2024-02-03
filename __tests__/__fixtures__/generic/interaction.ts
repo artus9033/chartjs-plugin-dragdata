@@ -8,13 +8,14 @@ import {
 	getDatasetPointLocation,
 } from "../../__utils__/chartUtils";
 import { DatasetPointSpec } from "../../__utils__/testTypes";
+import { sleep } from "../../e2e/__fixtures__";
 import { CustomMatchers } from "../../typings";
 
 export async function _genericTestDrag({
 	initFunc,
 	performDrag,
 	canvasBB,
-	getChartDatasetMeta: getChartDatasetMeta,
+	getChartDatasetMeta,
 	dragPointSpec,
 	destRefPointOrSpec,
 	whichAxis,
@@ -75,6 +76,13 @@ export async function _genericTestDrag({
 
 	if (bExpectResult) {
 		// TODO: fix this later with proper TS typings
+		console.log({
+			isDragDataPluginEnabled,
+			whichAxis,
+			dragStartPoint,
+			dragDestPoint,
+			actualNewDraggedPointLocation,
+		});
 		if (isDragDataPluginEnabled) {
 			// if plugin is enabled, then the new position should match destination point position
 			expect?.(actualNewDraggedPointLocation).pointsToBeClose(dragDestPoint);
