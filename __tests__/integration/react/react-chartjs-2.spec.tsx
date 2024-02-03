@@ -5,7 +5,7 @@ import { Chart } from "react-chartjs-2";
 import { cleanup, render } from "@testing-library/react";
 
 import ChartJSdragDataPlugin from "../../../dist/chartjs-plugin-dragdata-test-browser";
-import { TestChartOptions, data } from "../../__data__/data";
+import { TestChartOptions, simpleChartScenarioBase } from "../../__data__/data";
 
 ChartJS.register(...registerables);
 
@@ -28,7 +28,7 @@ function ChartComponent() {
 				chartInstance = ref!;
 			}}
 			type="line"
-			data={data}
+			data={simpleChartScenarioBase.configuration.data}
 			options={{
 				...TestChartOptions,
 			}}

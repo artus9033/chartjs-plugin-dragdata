@@ -17,24 +17,61 @@ export function euclideanDistance(p1: Point2D, p2: Point2D): number {
  * @param pointA the source point
  * @param pointB the point to take one coordinate from
  * @param whichAxis the axis that determines which coordinate from `pointA` to substitute with the one from `pointB`
- * @returns the new point
+ * @param draggableAxis the axis/axes that is/are allowed to be dragged by chart config
+ * @returns the new point, constrained to the `draggableAxis`
  */
 export function calcDragTargetPosition(
 	pointA: Point2D,
 	pointB: Point2D,
 	whichAxis: AxisSpec,
+	draggableAxis: AxisSpec,
 ): Point2D {
-	if (whichAxis === "x") {
-		// drag on the x axis
-		return new Point2D({
-			x: pointB.x,
-			y: pointA.y,
-		});
-	} else {
-		// drag on the y axis
-		return new Point2D({
-			x: pointA.x,
-			y: pointB.y,
-		});
+	let desiredPoint: Point2D;
+
+	switch (whichAxis) {
+		case "x":
+			// drag desired to happen on the x axis
+			desiredPoint = new Point2D({
+				x: pointB.x,
+				y: pointA.y,
+			});
+			break;
+
+		case "y":
+			// drag desired to happen on the y axis
+			desiredPoint = new Point2D({
+				x: pointA.x,
+				y: pointB.y,
+			});
+			break;
+
+		case "both":
+			// drag desired to happen on both axes
+			desiredPoint = new Point2D({ x: pointB.x, y: pointB.y });
+			break;
+
+		default:
+			throw new Error(`Unknown whichAxis: ${whichAxis}`);
 	}
+
+	switch (draggableAxis) {
+		case "x":
+			// constrain the drag to the x axis
+			desiredPoint.y = pointA.y;
+			break;
+
+		case "y":
+			// constrain the drag to the y axis
+			desiredPoint.x = pointA.x;
+			break;
+
+		case "both":
+			// no constraints
+			break;
+
+		default:
+			throw new Error(`Unknown draggableAxis: ${draggableAxis}`);
+	}
+
+	return desiredPoint;
 }

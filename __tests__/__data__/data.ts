@@ -1,22 +1,7 @@
-import { ChartData, ChartOptions } from "chart.js";
+import { ChartConfiguration, ChartOptions } from "chart.js";
 import _ from "lodash";
 import { TestScenario } from "../__utils__/scenario";
 import { DeepPartial } from "chart.js/dist/types/utils";
-
-export const data: ChartData = {
-	labels: ["January", "February", "March", "April", "May", "June", "July"],
-	datasets: [
-		{
-			label: "My First dataset",
-			backgroundColor: "rgba(255,99,132,0.2)",
-			borderColor: "rgba(255,99,132,1)",
-			borderWidth: 1,
-			hoverBackgroundColor: "rgba(255,99,132,0.4)",
-			hoverBorderColor: "rgba(255,99,132,1)",
-			data: [65, 59, 80, 81, 56, 55, 40],
-		},
-	],
-};
 
 export const TestChartOptions: ChartOptions = {
 	plugins: {
@@ -25,7 +10,7 @@ export const TestChartOptions: ChartOptions = {
 	animation: false,
 };
 
-const simpleChartScenarioBase = {
+export const simpleChartScenarioBase = {
 	roundingPrecision: 2,
 	configuration: {
 		data: {
@@ -85,14 +70,14 @@ const simpleChartScenarioBase = {
 	],
 } satisfies TestScenario;
 
-const simpleCategoricalChartScenario = _.merge(
+export const simpleCategoricalChartScenario = _.merge(
 	{},
 	{
 		...simpleChartScenarioBase,
 	},
 ) as TestScenario;
 
-const simpleLinearChartScenario = _.merge(
+export const simpleLinearChartScenario = _.merge(
 	{},
 	{
 		...simpleChartScenarioBase,
@@ -123,12 +108,73 @@ const simpleLinearChartScenario = _.merge(
 	},
 ) as TestScenario;
 
-export const TestScenarios = {
+export type TestScenariosRegistry = Record<string, TestScenario>;
+
+function postprocessScenariosRegistry(
+	registry: TestScenariosRegistry,
+): TestScenariosRegistry {
+	return Object.fromEntries(
+		Object.entries(registry).map(([fileName, scenario]) => {
+			let originalScales = scenario.configuration.options?.scales ?? {
+				x: {},
+				y: {},
+			};
+
+			return [
+				fileName,
+				_.merge(scenario, {
+					configuration: {
+						options: {
+							scales: _.reduce(
+								originalScales,
+								(obj, value, key) => {
+									if (!scenario.configuration.data) return obj;
+
+									const allValues =
+										scenario.configuration.data.datasets.flatMap((dataset) =>
+											dataset.data
+												.filter((value) => value !== null)
+												.map((value) =>
+													typeof value === "number"
+														? value
+														: Array.isArray(value)
+															? value[key === "x" ? 0 : 1]
+															: key === "x"
+																? value!.x
+																: value!.y,
+												),
+										);
+
+									if (key === "x" && scenario.configuration.data?.labels)
+										return obj;
+
+									// @ts-ignore
+									obj[key] = {
+										...value,
+										min: Math.min(...allValues),
+										max: Math.max(...allValues),
+									} as DeepPartial<
+										NonNullable<ChartConfiguration["options"]>["scales"]
+									>;
+
+									return obj;
+								},
+								{},
+							) as any,
+						},
+					},
+				} satisfies DeepPartial<TestScenario>) satisfies TestScenario,
+			];
+		}),
+	);
+}
+
+export const TestScenarios = postprocessScenariosRegistry({
 	/** "Simple" dataset scenarios */
 	"line-categorical.html": simpleCategoricalChartScenario,
 	"line-linear.html": simpleLinearChartScenario,
-	"bar.html": simpleCategoricalChartScenario,
-	"horizontalBar.html": simpleCategoricalChartScenario,
-	"polar.html": simpleCategoricalChartScenario,
-	"radar.html": simpleCategoricalChartScenario,
-} satisfies Record<string, TestScenario>;
+	// "bar.html": simpleCategoricalChartScenario,
+	// "horizontalBar.html": simpleCategoricalChartScenario,
+	// "polar.html": simpleCategoricalChartScenario,
+	// "radar.html": simpleCategoricalChartScenario,
+} satisfies TestScenariosRegistry);

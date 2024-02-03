@@ -216,9 +216,17 @@ function calcPosition(e, chartInstance, datasetIndex, index, data) {
 		return dataPoint;
 	} else {
 		if (chartInstance.config.options.indexAxis === "y") {
-			return x;
+			if (chartInstance.config.options.plugins.dragData.dragX !== false) {
+				return x;
+			} else {
+				return dataPoint;
+			}
 		} else {
-			return y;
+			if (chartInstance.config.options.plugins.dragData.dragY !== false) {
+				return y;
+			} else {
+				return dataPoint;
+			}
 		}
 	}
 }

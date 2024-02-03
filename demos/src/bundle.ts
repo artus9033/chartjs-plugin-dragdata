@@ -59,7 +59,9 @@ export const assetSpecs: AssetSpec[] = [
 	},
 ];
 
-export async function bundle() {
+export async function bundle(): Promise<boolean> {
+	let success = true;
+
 	if (fs.existsSync(demosDistDirPath)) {
 		fs.rmSync(demosDistDirPath, { recursive: true });
 	}
@@ -103,8 +105,12 @@ export async function bundle() {
 			}
 		} catch (e) {
 			console.error(`${LOG_TAG} Error rendering: ${e}`);
+
+			success = false;
 		}
 	}
+
+	return success;
 }
 
 if (require.main === module) {

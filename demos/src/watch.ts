@@ -16,16 +16,23 @@ const demosSrcDirPath = path.dirname(__filename),
 
 let bundlerRunning: boolean = false;
 
+function logBundlerResult(success: boolean) {
+	if (success) {
+		console.log("[Watcher] Bundling finished successfully");
+	} else {
+		console.error("[Watcher] Bundling failed");
+	}
+
+	console.log();
+}
+
 (async function main() {
 	console.log(`[Watcher] Watching for changes in ${demosSrcDirPath}`);
 	console.log();
 
 	console.log("[Watcher] Bundling initially at start");
 
-	await bundle();
-
-	console.log("[Watcher] Initial bundling finished");
-	console.log();
+	logBundlerResult(await bundle());
 
 	chokidar
 		.watch(
@@ -50,9 +57,8 @@ let bundlerRunning: boolean = false;
 
 			bundlerRunning = true;
 
-			bundle().then(() => {
-				console.log("[Watcher] Bundler finished");
-				console.log();
+			bundle().then((success) => {
+				logBundlerResult(success);
 
 				bundlerRunning = false;
 			});

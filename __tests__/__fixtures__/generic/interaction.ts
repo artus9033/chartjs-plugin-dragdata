@@ -8,7 +8,6 @@ import {
 	getDatasetPointLocation,
 } from "../../__utils__/chartUtils";
 import { DatasetPointSpec } from "../../__utils__/testTypes";
-import { sleep } from "../../e2e/__fixtures__";
 import { CustomMatchers } from "../../typings";
 
 export async function _genericTestDrag({
@@ -19,6 +18,7 @@ export async function _genericTestDrag({
 	dragPointSpec,
 	destRefPointOrSpec,
 	whichAxis,
+	draggableAxis,
 	isDragDataPluginEnabled,
 	bExpectResult = true,
 	expect,
@@ -33,6 +33,7 @@ export async function _genericTestDrag({
 	dragPointSpec: DatasetPointSpec;
 	destRefPointOrSpec: DatasetPointSpec | Point2D;
 	whichAxis: AxisSpec;
+	draggableAxis: AxisSpec;
 	isDragDataPluginEnabled: boolean;
 } & (
 	| {
@@ -63,6 +64,7 @@ export async function _genericTestDrag({
 			dragStartPoint,
 			dragRefPoint,
 			whichAxis,
+			draggableAxis,
 		);
 
 	// simulate a drag event
@@ -75,16 +77,8 @@ export async function _genericTestDrag({
 	);
 
 	if (bExpectResult) {
-		// TODO: fix this later with proper TS typings
-		console.log({
-			isDragDataPluginEnabled,
-			whichAxis,
-			dragStartPoint,
-			dragDestPoint,
-			actualNewDraggedPointLocation,
-		});
 		if (isDragDataPluginEnabled) {
-			// if plugin is enabled, then the new position should match destination point position
+			// if plugin is enabled, then the new position should match destination point position constrained to the allowed draggable axis
 			expect?.(actualNewDraggedPointLocation).pointsToBeClose(dragDestPoint);
 		} else {
 			// if plugin is disabled, then the new position should not have changed at all

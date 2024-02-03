@@ -45,10 +45,7 @@ const customMatchers: ExpectExtendMap = {
 			message: () =>
 				`Expected the points to be absolutely-distant by at most: ${this.utils.printExpected(
 					maxDistance,
-				)}\nActual distance: ${this.utils.printReceived(absDistance)}\n\n${this.utils.diff(
-					maxDistance,
-					absDistance,
-				)}`,
+				)}\nActual distance: ${this.utils.printReceived(absDistance)}\n\nThe points:\n\t> expected: ${this.utils.printExpected(p2.toString())}\n\t> actual: ${this.utils.printExpected(p1.toString())}`,
 			pass: false,
 		};
 	},
