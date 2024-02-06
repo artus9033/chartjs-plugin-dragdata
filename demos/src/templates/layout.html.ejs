@@ -30,6 +30,8 @@
 			const urlSearchParams = new URLSearchParams(window.location.search),
 				isTest = urlSearchParams.get("isTest") === "true";
 
+			window.isTestReady = false;
+
 			document.body.onload = function onDocumentLoaded() {
 				function onPluginScriptLoaded() {
 					console.log("Plugin script loaded");
@@ -69,10 +71,12 @@
 													round: JSON.parse("<%= roundingPrecision %>"),
 													showTooltip: true,
 													onDrag: function (e) {
-														e.target.style.cursor = "grabbing";
+														if (e.target?.style)
+															e.target.style.cursor = "grabbing";
 													},
 													onDragEnd: function (e) {
-														e.target.style.cursor = "default";
+														if (e.target?.style)
+															e.target.style.cursor = "default";
 													},
 												},
 									},
@@ -97,6 +101,8 @@
 						.getElementById("chartJSContainer")
 						.getContext("2d");
 					window.test = new Chart(ctx, configuration);
+
+					window.isTestReady = true;
 				}
 
 				// load the plugin script dynamically - either with IstanbulJS's coverage statements or not, depending on the value of isTest

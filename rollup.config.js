@@ -21,7 +21,7 @@ const banner = `/*!
  * @param {boolean} options.terse whether to run terser plugin
  * @param {boolean} options.bTestBuild whether to run instanbul plugin (if true) for coverage or to strip testing exports (if false)
  * @param {boolean} options.bBundleD3 whether to bundle D3 plugins or to reference them as externals
- * @return {import('rollup').RollupOptions} the built options
+ * @returns {import('rollup').RollupOptions} the built options
  */
 function bundleDragDataPlugin(options) {
 	const { file, format, terse, bTestBuild, bBundleD3 = true } = options;

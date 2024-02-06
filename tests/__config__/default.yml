@@ -1,0 +1,17 @@
+# config used to tweak running tests
+unit: # unit tests
+  whitelistedTestCategories: # if non-empty, only these 'groups' (types) of tests will be run
+  # empty whitelist by default - include all available
+  whitelistedTestedChartTypes: # if non-empty, tests will be run only against these types of charts
+  # empty whitelist by default - include all available
+e2e: # end-to-end tests
+  whitelistedBrowsers: # the browsers to be used for running tests inside (in playwright.config.ts)
+  # empty whitelist by default - include all available
+  testedAxes: # the axes to test dragging against
+    x: true
+    y: true
+    both: true
+  whitelistedHTMLFiles: # if non-empty, only these files will be tested
+  # empty whitelist by default - include all available
+  whitelistedInteractions: # if non-empty, only these interactions will be tested
+  # empty whitelist by default - include all available

@@ -8,9 +8,11 @@
 	"scripts": {
 		"rollup:base": "rollup --config rollup.config.js",
 		"build": "npm run rollup:base",
+		"build:demos": "npx ts-node demos/src/bundle.ts",
+		"build:demos:watch": "npx ts-node demos/src/watch.ts",
 		"dev": "npm run rollup:base -- --watch",
 		"cleanCoverage": "npx ts-node scripts/cleanCoverage.ts",
-		"collectCoverage": "npx ts-node scripts/collectCoverage.ts && npx nyc merge coverage/merged/src coverage/merged/report/merged-coverage.json && npx nyc report -t coverage/merged --report-dir coverage/merged/report --reporter=html",
+		"collectCoverage": "npx ts-node scripts/collectCoverage.ts && npx nyc merge coverage/merged/src coverage/merged/report/merged-coverage.json && npx nyc report -t coverage/merged/report --report-dir coverage/merged/report/html --reporter=html",
 		"test": "npm run test:unit ; npm run test:integration ; npm run test:e2e",
 		"nyc:base": "cross-env NODE_ENV=test nyc",
 		"test:unit": "npx jest --coverage --coverageDirectory=coverage/unit --config jest.config.ts --selectProjects unit",
@@ -19,13 +21,11 @@
 		"test:e2e:base": "npm run nyc:base -- --report-dir=coverage/e2e playwright test",
 		"test:e2e:ui": "npm run test:e2e:base -- --ui",
 		"test:e2e:headed": "npm run test:e2e:base --headed",
-		"pretest": "npm run bundleDemos && npm run cleanCoverage ; npm run build",
+		"pretest": "npm run build:demos && npm run cleanCoverage ; npm run build",
 		"posttest": "npm run collectCoverage",
 		"lint": "npx lint-staged && eslint",
 		"prepare": "npx husky install",
-		"postinstall": "npx playwright install",
-		"bundleDemos": "npx ts-node demos/src/bundle.ts",
-		"bundleDemos:watch": "npx ts-node demos/src/watch.ts"
+		"postinstall": "npx playwright install"
 	},
 	"repository": {
 		"type": "git",

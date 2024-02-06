@@ -1,3 +1,5 @@
+import "../../scripts/setupEnv";
+
 import path from "path";
 
 import chokidar from "chokidar";
@@ -9,7 +11,7 @@ const demosSrcDirPath = path.dirname(__filename),
 		path.dirname(__filename),
 		"..",
 		"..",
-		"__tests__",
+		"tests",
 		"__data__",
 		"data.ts",
 	);

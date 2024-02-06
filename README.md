@@ -1,7 +1,7 @@
 # chartjs-plugin-dragdata.js
 
 [![codecov](https://codecov.io/gh/artus9033/chartjs-plugin-dragdata/graph/badge.svg?token=TDRWG9LKG4)](https://codecov.io/gh/artus9033/chartjs-plugin-dragdata)
-[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/artus9033/chartjs-plugin-dragdata/tests_and_coverage.yml)](https://github.com/artus9033/chartjs-plugin-dragdata/actions/workflows/ci.yml)
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/artus9033/chartjs-plugin-dragdata/ci.yml)](https://github.com/artus9033/chartjs-plugin-dragdata/actions/workflows/ci.yml)
 [![release](https://img.shields.io/github/v/release/artus9033/chartjs-plugin-dragdata?include_prereleases)](https://github.com/artus9033/chartjs-plugin-dragdata/releases)
 [![npm (latest)](https://img.shields.io/npm/v/chartjs-plugin-zoom/latest)](https://www.npmjs.com/package/chartjs-plugin-zoom/v/latest)
 [![npm (next)](https://img.shields.io/npm/v/chartjs-plugin-zoom/next)](https://www.npmjs.com/package/chartjs-plugin-zoom/v/next)

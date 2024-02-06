@@ -1,9 +1,11 @@
+import "../../scripts/setupEnv";
+
 import fs from "fs";
 import path from "path";
 
 import * as prettier from "prettier";
 
-import { TestPageBundle } from "./types";
+import type { TestPageBundle } from "./types";
 import { requireUncached } from "./utils";
 
 const LOG_TAG = "[Bundler]",

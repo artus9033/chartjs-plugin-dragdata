@@ -1,7 +1,8 @@
 module.exports = {
 	exclude: [
 		".rollup.cache",
-		"__tests__",
+		"tests",
+		"scripts",
 		"node_modules",
 		"*.config.ts",
 		"*.config.js",
