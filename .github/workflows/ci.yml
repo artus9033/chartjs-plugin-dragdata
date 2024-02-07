@@ -20,7 +20,7 @@ jobs:
           cache: "npm"
 
       - name: Install npm dependencies
-        run: npm install --legacy-peer-deps
+        run: npm ci --legacy-peer-deps
 
       - name: Install playwright dependency libraries
         run: npx playwright install-deps
