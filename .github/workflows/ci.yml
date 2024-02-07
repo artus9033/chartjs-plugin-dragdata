@@ -1,4 +1,4 @@
-name: run-tests-and-report-coverage
+name: ci
 
 on:
   pull_request:
