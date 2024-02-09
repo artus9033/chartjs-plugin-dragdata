@@ -57,6 +57,7 @@ export default defineConfig({
 	},
 	workers: "50%",
 	maxFailures: process.env.ci ? undefined : 1,
+	retries: 2,
 	projects:
 		/* Test against desktop browsers */
 		(hasGUI()

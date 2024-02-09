@@ -2,7 +2,7 @@ import type { Expect } from "playwright/test";
 
 import { calcDragTargetPosition } from "../../__utils__/cartesian";
 import {
-	GetChartDatasetMetaFunc,
+	GetChartDatasetSamplePixelPositionFunc,
 	GetChartScalesFunc,
 	getDatasetPointLocationOnScreen,
 } from "../../__utils__/chartUtils";
@@ -22,8 +22,8 @@ export type GenericDragTestParams = {
 	) => Promise<void> | void;
 	/** DOMRect of the Chart canvas */
 	canvasBB: DOMRect;
-	/** function returning the {@see {`DatasetMeta`}} of Chart.js */
-	getChartDatasetMeta: GetChartDatasetMetaFunc;
+	/** function returning the position ({@see {Point2D}}) of the specified dataset sample */
+	getChartDatasetSamplePixelPosition: GetChartDatasetSamplePixelPositionFunc;
 	/** function returning the {@see {`Chart["scales"]`}} of Chart.js */
 	getChartScales: GetChartScalesFunc;
 	/** specification of the dragged point; also used as the expected final point position if `isDragDataPluginEnabled` is `false` and `expectedDestPointSpecOverride` is not passed in */
@@ -67,7 +67,7 @@ export async function _genericTestDrag({
 	initFunc,
 	performDrag,
 	canvasBB,
-	getChartDatasetMeta,
+	getChartDatasetSamplePixelPosition,
 	getChartScales,
 	dragPointSpec,
 	dragDestPointSpecOrStartPointOffset,
@@ -91,7 +91,7 @@ export async function _genericTestDrag({
 		};
 
 	let dragStartPoint: Point2D = await getDatasetPointLocationOnScreen(
-			getChartDatasetMeta,
+			getChartDatasetSamplePixelPosition,
 			dragPointSpec,
 			canvasBB,
 		),
@@ -99,7 +99,7 @@ export async function _genericTestDrag({
 			dragDestPointSpecOrStartPointOffset instanceof Offset2D
 				? dragDestPointSpecOrStartPointOffset.translatePoint(dragStartPoint)
 				: await getDatasetPointLocationOnScreen(
-						getChartDatasetMeta,
+						getChartDatasetSamplePixelPosition,
 						dragDestPointSpecOrStartPointOffset,
 						canvasBB,
 					),
@@ -112,7 +112,7 @@ export async function _genericTestDrag({
 		),
 		expectedDestPointOverride = expectedDestPointSpecOverride
 			? await getDatasetPointLocationOnScreen(
-					getChartDatasetMeta,
+					getChartDatasetSamplePixelPosition,
 					expectedDestPointSpecOverride,
 					canvasBB,
 				)
@@ -123,7 +123,10 @@ export async function _genericTestDrag({
 
 	// check if the values match after dragging
 	let actualNewDraggedPointLocation: Point2D =
-		await getDatasetPointLocationOnScreen(getChartDatasetMeta, dragPointSpec);
+		await getDatasetPointLocationOnScreen(
+			getChartDatasetSamplePixelPosition,
+			dragPointSpec,
+		);
 
 	if (bExpectResult) {
 		if (isDragDataPluginEnabled) {

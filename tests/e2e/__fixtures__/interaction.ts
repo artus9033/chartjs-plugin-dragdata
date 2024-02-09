@@ -8,15 +8,11 @@ import {
 import { BoundingBox } from "../../__utils__/structures/Point2D";
 import {
 	playwrightCalcCanvasBB,
-	playwrightGetChartDatasetMeta,
+	playwrightGetChartDatasetSamplePixelPosition,
 	playwrightGetChartScales,
 } from "../__utils__/chartUtils";
 
-export async function playwrightTestDrag({
-	page,
-	isDragDataPluginDisabled = false,
-	...parameters
-}: {
+export type PlaywrightTestDragParams = {
 	page: Page;
 	isDragDataPluginDisabled?: boolean;
 } & Pick<
@@ -28,7 +24,13 @@ export async function playwrightTestDrag({
 	| "isCategoricalX"
 	| "isCategoricalY"
 	| "expectedDestPointSpecOverride"
->) {
+>;
+
+export async function playwrightTestDrag({
+	page,
+	isDragDataPluginDisabled = false,
+	...parameters
+}: PlaywrightTestDragParams) {
 	const canvasBB = await playwrightCalcCanvasBB(page),
 		windowBB: BoundingBox = await page.evaluate(() => ({
 			x: 0,
@@ -50,8 +52,12 @@ export async function playwrightTestDrag({
 			await page.mouse.move(...dragDestPoint.toArray());
 			await page.mouse.up();
 		},
-		getChartDatasetMeta: (datasetIndex) =>
-			playwrightGetChartDatasetMeta(page, datasetIndex),
+		getChartDatasetSamplePixelPosition: (datasetIndex, sampleIndex) =>
+			playwrightGetChartDatasetSamplePixelPosition(
+				page,
+				datasetIndex,
+				sampleIndex,
+			),
 		getChartScales: () => playwrightGetChartScales(page),
 		isDragDataPluginEnabled: !isDragDataPluginDisabled,
 		bExpectResult: true,

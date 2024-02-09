@@ -12,7 +12,7 @@ interface CustomMatchersJest<R = unknown> {
 declare global {
 	// the test instance exposed by all test pages - typing for tests' code
 	interface Window {
-		test: Chart;
+		testedChart: Chart;
 		isTestReady?: boolean;
 	}
 

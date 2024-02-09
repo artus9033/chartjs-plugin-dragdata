@@ -1,7 +1,4 @@
 import { test } from "playwright-test-coverage";
-import fs from "fs";
-import path from "path";
-import { TestScenarios } from "../__data__/data";
 import {
 	ALL_AXES_SPECS,
 	AxisSpec,
@@ -10,47 +7,29 @@ import {
 import { describeDatasetPointSpecOrPoint } from "../__utils__/structures/scenario";
 import { setupTests } from "./__fixtures__";
 import { playwrightTestDrag } from "./__fixtures__/interaction";
-import testsConfig, { isWhitelistItemAllowed } from "../__utils__/testsConfig";
-
-const demosDistDirPath = path.join(
-	path.dirname(__filename),
-	"..",
-	"..",
-	"demos",
-	"dist",
-);
+import testsConfig from "../__utils__/testsConfig";
+import { describeEachChartType } from "./__utils__/testHelpers";
 
 for (const disablePlugin of [false, true]) {
 	test.describe(`data dragging ${disablePlugin ? "disabled" : "enabled"}`, async () => {
-		for (const fileName of fs
-			.readdirSync(demosDistDirPath)
-			.filter(
-				(file) =>
-					!fs.lstatSync(path.join(demosDistDirPath, file)).isDirectory(),
-			) as (keyof typeof TestScenarios)[]) {
-			(path.extname(fileName) === ".html" &&
-				isWhitelistItemAllowed("e2e", "whitelistedHTMLFiles", fileName)
-				? test.describe
-				: test.describe.skip)(`${fileName.split(".")[0]} chart`, () => {
-				const scenario = TestScenarios[fileName];
+		describeEachChartType(function testGenerator(fileName, scenario) {
+			for (let draggableAxis of ALL_AXES_SPECS satisfies AxisSpec[]) {
+				(testsConfig.e2e.testedAxes.includes(draggableAxis)
+					? test.describe
+					: test.describe.skip)(
+					`draggable ${getAxisDescription(draggableAxis)}`,
+					() => {
+						setupTests({ fileName, disablePlugin, draggableAxis });
 
-				for (let draggableAxis of ALL_AXES_SPECS satisfies AxisSpec[]) {
-					(testsConfig.e2e.testedAxes.includes(draggableAxis)
-						? test.describe
-						: test.describe.skip)(
-						`draggable ${getAxisDescription(draggableAxis)}`,
-						() => {
-							setupTests({ fileName, disablePlugin, draggableAxis });
+						for (const stepsGroup of scenario.stepGroups) {
+							const groupNameSpaceCase = stepsGroup.groupName.replace(
+								/[A-Z]/g,
+								(letter) => ` ${letter.toLowerCase()}`,
+							);
 
-							for (const stepsGroup of scenario.stepGroups) {
-								const groupNameSpaceCase = stepsGroup.groupName.replace(
-									/[A-Z]/g,
-									(letter) => ` ${letter.toLowerCase()}`,
-								);
-
-								(stepsGroup.shouldBeSkipped
-									? test.describe.skip
-									: test.describe)(groupNameSpaceCase, () => {
+							(stepsGroup.shouldBeSkipped ? test.describe.skip : test.describe)(
+								groupNameSpaceCase,
+								() => {
 									for (const step of stepsGroup.steps) {
 										const pluginDisabledForTestedAxis =
 											disablePlugin ||
@@ -69,17 +48,15 @@ for (const disablePlugin of [false, true]) {
 												isCategoricalX: scenario.isCategoricalX,
 												isCategoricalY: scenario.isCategoricalY,
 											});
-
-											// await expect(page).toHaveScreenshot();
 										});
 									}
-								});
-							}
-						},
-					);
-				}
-			});
-		}
+								},
+							);
+						}
+					},
+				);
+			}
+		});
 	});
 }
 
