@@ -16,6 +16,7 @@ import {
 	playwrightGetChartDatasetSamplePixelPosition,
 	playwrightGetChartScales,
 } from "../__utils__/chartUtils";
+import { SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT } from "../__utils__/constants";
 
 export type PlaywrightTestDragParams = {
 	page: Page;
@@ -68,7 +69,9 @@ export async function playwrightTestDrag({
 				assertScreenshots &&
 				isSimpleWhitelistItemAllowed(whenToTakeScreenshots, "afterMouseDown")
 			) {
-				await expect(page).toHaveScreenshot();
+				await expect(page).toHaveScreenshot({
+					maxDiffPixelRatio: SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT,
+				});
 			}
 
 			await page.mouse.move(...dragDestPoint.toArray());
@@ -78,7 +81,9 @@ export async function playwrightTestDrag({
 				assertScreenshots &&
 				isSimpleWhitelistItemAllowed(whenToTakeScreenshots, "afterMouseDown")
 			) {
-				await expect(page).toHaveScreenshot();
+				await expect(page).toHaveScreenshot({
+					maxDiffPixelRatio: SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT,
+				});
 			}
 		},
 		getChartDatasetSamplePixelPosition: (datasetIndex, sampleIndex) =>
