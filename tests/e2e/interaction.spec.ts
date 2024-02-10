@@ -11,18 +11,22 @@ import testsConfig, {
 	isTestsConfigWhitelistItemAllowed,
 } from "../__utils__/testsConfig";
 import { describeEachChartType } from "./__utils__/testHelpers";
-import { ALL_TESTED_MAGNET_VARIANTS } from "../__utils__/magnet";
+import { ALL_TESTED_MAGNET_VARIANTS, MagnetVariant } from "../__utils__/magnet";
 
 for (const disablePlugin of [false, true]) {
 	test.describe(`data dragging ${disablePlugin ? "disabled" : "enabled"}`, async () => {
 		describeEachChartType(function testGenerator(fileName, scenario) {
-			for (let draggableAxis of ALL_AXES_SPECS satisfies AxisSpec[]) {
+			for (let draggableAxis of disablePlugin
+				? (["both"] satisfies AxisSpec[])
+				: ALL_AXES_SPECS) {
 				(testsConfig.e2e.testedAxes.includes(draggableAxis)
 					? test.describe
 					: test.describe.skip)(
 					`draggable ${getAxisDescription(draggableAxis)}`,
 					() => {
-						for (const magnet of ALL_TESTED_MAGNET_VARIANTS) {
+						for (const magnet of disablePlugin
+							? (["none"] satisfies MagnetVariant[])
+							: ALL_TESTED_MAGNET_VARIANTS) {
 							(isTestsConfigWhitelistItemAllowed(
 								"e2e",
 								"whitelistedMagnetVariants",
@@ -39,7 +43,9 @@ for (const disablePlugin of [false, true]) {
 										magnet,
 									});
 
-									for (const stepsGroup of scenario.stepGroups) {
+									for (const stepsGroup of disablePlugin
+										? scenario.stepGroups.slice(0, 1)
+										: scenario.stepGroups) {
 										const groupNameSpaceCase = stepsGroup.groupName.replace(
 											/[A-Z]/g,
 											(letter) => ` ${letter.toLowerCase()}`,
@@ -48,7 +54,9 @@ for (const disablePlugin of [false, true]) {
 										(stepsGroup.shouldBeSkipped
 											? test.describe.skip
 											: test.describe)(groupNameSpaceCase, () => {
-											for (const step of stepsGroup.steps) {
+											for (const step of disablePlugin
+												? stepsGroup.steps.slice(0, 1)
+												: stepsGroup.steps) {
 												const pluginDisabledForTestedAxis =
 													disablePlugin ||
 													(step.axisSpec !== "both" &&

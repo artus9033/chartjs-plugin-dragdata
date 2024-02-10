@@ -66,37 +66,37 @@ export const simpleChartScenarioBase = {
 	stepGroups: ALL_AXES_SPECS.flatMap((axisSpec) =>
 		[
 			conditionallySkipInteractionForGroupOfSteps("standardDragging", [
-				// {
-				// 	// dataset index 0 point index 0 -> dataset index 0 point index 1
-				// 	axisSpec,
-				// 	dragPointSpec: { datasetIndex: 0, index: 0 },
-				// 	dragDestPointSpecOrStartPointOffset: {
-				// 		datasetIndex: 0,
-				// 		index: 1,
-				// 	},
-				// 	shouldTakeScreenshot: true,
-				// },
-				// {
-				// 	// dataset index 0 point index 2 -> point position offset by +10.45px on x and +4.675px on y
-				// 	// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
-				// 	axisSpec,
-				// 	dragPointSpec: { datasetIndex: 0, index: 2 },
-				// 	dragDestPointSpecOrStartPointOffset: new Offset2D({
-				// 		x: 60.45,
-				// 		y: 90.675,
-				// 	}),
-				// 	shouldTakeScreenshot: true,
-				// },
-				// {
-				// 	// dataset index 0 point index 2 -> dataset index 0 point index 2
-				// 	// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
-				// 	axisSpec,
-				// 	dragPointSpec: { datasetIndex: 0, index: 2 },
-				// 	dragDestPointSpecOrStartPointOffset: {
-				// 		datasetIndex: 0,
-				// 		index: 2,
-				// 	},
-				// },
+				{
+					// dataset index 0 point index 0 -> dataset index 0 point index 1
+					axisSpec,
+					dragPointSpec: { datasetIndex: 0, index: 0 },
+					dragDestPointSpecOrStartPointOffset: {
+						datasetIndex: 0,
+						index: 1,
+					},
+					shouldTakeScreenshot: true,
+				},
+				{
+					// dataset index 0 point index 2 -> point position offset by +10.45px on x and +4.675px on y
+					// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
+					axisSpec,
+					dragPointSpec: { datasetIndex: 0, index: 2 },
+					dragDestPointSpecOrStartPointOffset: new Offset2D({
+						x: 60.45,
+						y: 90.675,
+					}),
+					shouldTakeScreenshot: true,
+				},
+				{
+					// dataset index 0 point index 2 -> dataset index 0 point index 2
+					// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
+					axisSpec,
+					dragPointSpec: { datasetIndex: 0, index: 2 },
+					dragDestPointSpecOrStartPointOffset: {
+						datasetIndex: 0,
+						index: 2,
+					},
+				},
 				{
 					// dataset index 1 point index 3 -> dataset index 0 point index 3
 					axisSpec,
@@ -106,15 +106,15 @@ export const simpleChartScenarioBase = {
 						index: 3,
 					},
 				},
-				// {
-				// 	// dataset index 1 point index 2 -> point position offset by +20px on x and +40.5px on y
-				// 	axisSpec,
-				// 	dragPointSpec: { datasetIndex: 1, index: 2 },
-				// 	dragDestPointSpecOrStartPointOffset: new Offset2D({
-				// 		x: 20,
-				// 		y: 40.5,
-				// 	}),
-				// },
+				{
+					// dataset index 1 point index 2 -> point position offset by +20px on x and +40.5px on y
+					axisSpec,
+					dragPointSpec: { datasetIndex: 1, index: 2 },
+					dragDestPointSpecOrStartPointOffset: new Offset2D({
+						x: 20,
+						y: 40.5,
+					}),
+				},
 			]),
 			conditionallySkipInteractionForGroupOfSteps(
 				"draggingOutOfCanvasBoundsX",

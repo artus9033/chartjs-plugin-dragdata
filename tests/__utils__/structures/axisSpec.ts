@@ -1,6 +1,6 @@
 export type AxisSpec = "x" | "y" | "both";
 
-export const ALL_AXES_SPECS: AxisSpec[] = ["x", "y", "both"];
+export const ALL_AXES_SPECS: AxisSpec[] = ["both", "x", "y"];
 
 export function getAxisDescription(axis: AxisSpec) {
 	switch (axis) {

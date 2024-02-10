@@ -56,7 +56,7 @@ export default defineConfig({
 		trace: "off",
 	},
 	workers: "50%",
-	maxFailures: process.env.ci ? undefined : 1,
+	maxFailures: process.env.ci ? undefined : 10,
 	retries: 2,
 	projects:
 		/* Test against desktop browsers */
