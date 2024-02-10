@@ -21,6 +21,7 @@
 		"test:e2e:base": "npm run nyc:base -- --report-dir=coverage/e2e playwright test",
 		"test:e2e:ui": "npm run test:e2e:base -- --ui",
 		"test:e2e:headed": "npm run test:e2e:base --headed",
+		"test:e2e:updateSnapshots": "npm run test:e2e -- -- --update-snapshots",
 		"pretest": "npm run build:demos && npm run cleanCoverage ; npm run build",
 		"posttest": "npm run collectCoverage",
 		"lint": "npx lint-staged && eslint",

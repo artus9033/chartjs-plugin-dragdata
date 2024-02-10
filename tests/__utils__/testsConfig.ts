@@ -2,12 +2,20 @@ import path from "path";
 
 import config from "config";
 
-import { DeepFinalPropertiesOf } from "../e2e/__utils__/types";
+import { DeepFinalPropertiesOf } from "./types";
 import { TestChartTypes } from "../unit/__utils__/constants";
 import Whitelist from "./structures/Whitelist";
 import { ALL_AXES_SPECS, AxisSpec } from "./structures/axisSpec";
+import { MagnetVariant } from "./magnet";
 
-export function isWhitelistItemAllowed<
+export function isSimpleWhitelistItemAllowed<T>(
+	whitelist: Whitelist<T> | undefined,
+	which: T,
+) {
+	return !whitelist ? true : whitelist.isAllowed(which);
+}
+
+export function isTestsConfigWhitelistItemAllowed<
 	TestsGroupKey extends keyof TestsConfig,
 	TestsCategoryWhitelistKey extends keyof TestsConfig[TestsGroupKey],
 	TestsCategoryWhitelist extends
@@ -24,11 +32,7 @@ export function isWhitelistItemAllowed<
 ): boolean {
 	let whitelist = testsConfig[testsGroup][category];
 
-	return !whitelist
-		? true
-		: (whitelist as unknown as Whitelist<TestsCategoryWhitelistItem>).isAllowed(
-				which,
-			);
+	return isSimpleWhitelistItemAllowed(whitelist as any, which);
 }
 
 function maybeLoadEntryFromConfig<RawConfigValueType>(
@@ -160,6 +164,7 @@ export type E2EConfig = {
 	whitelistedHTMLFiles: Whitelist<string> | undefined;
 	whitelistedInteractions: Whitelist<E2EInteraction> | undefined;
 	whitelistedBrowsers: Whitelist<string> | undefined;
+	whitelistedMagnetVariants: Whitelist<MagnetVariant> | undefined;
 };
 
 let e2e: E2EConfig = {
@@ -167,6 +172,7 @@ let e2e: E2EConfig = {
 	whitelistedHTMLFiles: undefined,
 	whitelistedInteractions: undefined,
 	whitelistedBrowsers: undefined,
+	whitelistedMagnetVariants: undefined,
 };
 
 e2e.testedAxes = loadCustomizableListingFromConfig(
@@ -187,6 +193,11 @@ e2e.whitelistedInteractions = loadWhitelistFromConfig(
 e2e.whitelistedBrowsers = loadWhitelistFromConfig(
 	"e2e.whitelistedBrowsers",
 	e2e.whitelistedBrowsers,
+);
+
+e2e.whitelistedMagnetVariants = loadWhitelistFromConfig(
+	"e2e.whitelistedMagnetVariants",
+	e2e.whitelistedMagnetVariants,
 );
 
 /** E2E config - end */

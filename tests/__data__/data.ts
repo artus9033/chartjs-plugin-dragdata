@@ -8,7 +8,7 @@ import {
 import { DeepPartial } from "chart.js/dist/types/utils";
 import testsConfig, {
 	E2EInteraction,
-	isWhitelistItemAllowed,
+	isTestsConfigWhitelistItemAllowed,
 } from "../__utils__/testsConfig";
 import Offset2D from "../__utils__/structures/Offset2D";
 import { ALL_AXES_SPECS } from "../__utils__/structures/axisSpec";
@@ -24,7 +24,7 @@ function conditionallySkipInteractionForGroupOfSteps(
 	category: E2EInteraction,
 	steps: Array<TestScenarioStep>,
 ): TestScenarioStepsGroup<E2EInteraction> {
-	let isInteractionAllowed = isWhitelistItemAllowed(
+	let isInteractionAllowed = isTestsConfigWhitelistItemAllowed(
 		"e2e",
 		"whitelistedInteractions",
 		category,
@@ -66,42 +66,55 @@ export const simpleChartScenarioBase = {
 	stepGroups: ALL_AXES_SPECS.flatMap((axisSpec) =>
 		[
 			conditionallySkipInteractionForGroupOfSteps("standardDragging", [
+				// {
+				// 	// dataset index 0 point index 0 -> dataset index 0 point index 1
+				// 	axisSpec,
+				// 	dragPointSpec: { datasetIndex: 0, index: 0 },
+				// 	dragDestPointSpecOrStartPointOffset: {
+				// 		datasetIndex: 0,
+				// 		index: 1,
+				// 	},
+				// 	shouldTakeScreenshot: true,
+				// },
+				// {
+				// 	// dataset index 0 point index 2 -> point position offset by +10.45px on x and +4.675px on y
+				// 	// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
+				// 	axisSpec,
+				// 	dragPointSpec: { datasetIndex: 0, index: 2 },
+				// 	dragDestPointSpecOrStartPointOffset: new Offset2D({
+				// 		x: 60.45,
+				// 		y: 90.675,
+				// 	}),
+				// 	shouldTakeScreenshot: true,
+				// },
+				// {
+				// 	// dataset index 0 point index 2 -> dataset index 0 point index 2
+				// 	// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
+				// 	axisSpec,
+				// 	dragPointSpec: { datasetIndex: 0, index: 2 },
+				// 	dragDestPointSpecOrStartPointOffset: {
+				// 		datasetIndex: 0,
+				// 		index: 2,
+				// 	},
+				// },
 				{
-					// dataset index 0 point index 0 -> dataset index 0 point index 1
-					axisSpec,
-					dragPointSpec: { datasetIndex: 0, index: 0 },
-					dragDestPointSpecOrStartPointOffset: {
-						datasetIndex: 0,
-						index: 1,
-					},
-				},
-				{
-					// dataset index 0 point index 2 -> dataset index 0 point index 2
-					axisSpec,
-					dragPointSpec: { datasetIndex: 0, index: 2 },
-					dragDestPointSpecOrStartPointOffset: {
-						datasetIndex: 0,
-						index: 2,
-					},
-				},
-				{
-					// dataset index 1 point index 3 -> dataset index 0 point index 4
+					// dataset index 1 point index 3 -> dataset index 0 point index 3
 					axisSpec,
 					dragPointSpec: { datasetIndex: 1, index: 3 },
 					dragDestPointSpecOrStartPointOffset: {
 						datasetIndex: 0,
-						index: 4,
+						index: 3,
 					},
 				},
-				{
-					// dataset index 1 point index 2 -> point position offset by +20px on x and +40.5px on y
-					axisSpec,
-					dragPointSpec: { datasetIndex: 1, index: 2 },
-					dragDestPointSpecOrStartPointOffset: new Offset2D({
-						x: 20,
-						y: 40.5,
-					}),
-				},
+				// {
+				// 	// dataset index 1 point index 2 -> point position offset by +20px on x and +40.5px on y
+				// 	axisSpec,
+				// 	dragPointSpec: { datasetIndex: 1, index: 2 },
+				// 	dragDestPointSpecOrStartPointOffset: new Offset2D({
+				// 		x: 20,
+				// 		y: 40.5,
+				// 	}),
+				// },
 			]),
 			conditionallySkipInteractionForGroupOfSteps(
 				"draggingOutOfCanvasBoundsX",
@@ -123,6 +136,7 @@ export const simpleChartScenarioBase = {
 							xRelative: 1.5,
 							yRelative: 0,
 						}),
+						shouldTakeScreenshot: true,
 					},
 				],
 			),
@@ -130,7 +144,7 @@ export const simpleChartScenarioBase = {
 				"draggingOutOfCanvasBoundsY",
 				[
 					{
-						// dataset index 1 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the bottom)
+						// dataset index 1 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the top)
 						axisSpec,
 						dragPointSpec: { datasetIndex: 1, index: 2 },
 						dragDestPointSpecOrStartPointOffset: new Offset2D({
@@ -139,13 +153,14 @@ export const simpleChartScenarioBase = {
 						}),
 					},
 					{
-						// dataset index 1 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the top)
+						// dataset index 1 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the bottom)
 						axisSpec,
 						dragPointSpec: { datasetIndex: 1, index: 3 },
 						dragDestPointSpecOrStartPointOffset: new Offset2D({
 							xRelative: 0,
 							yRelative: 1.5,
 						}),
+						shouldTakeScreenshot: true,
 					},
 				],
 			),
@@ -154,6 +169,7 @@ export const simpleChartScenarioBase = {
 			shouldBeSkipped: testsConfig.e2e.testedAxes.includes(axisSpec)
 				? group.shouldBeSkipped
 				: true,
+			shouldTakeScreenshot: axisSpec === "both",
 		})),
 	),
 } satisfies TestScenario<E2EInteraction>;

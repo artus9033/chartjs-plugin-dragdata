@@ -1,24 +1,46 @@
+import _ from "lodash";
 import type { Expect } from "playwright/test";
 
-import { calcDragTargetPosition } from "../../__utils__/cartesian";
+import {
+	calcDragTargetPosition,
+	euclideanDistance,
+} from "../../__utils__/cartesian";
 import {
 	GetChartDatasetSamplePixelPositionFunc,
 	GetChartScalesFunc,
 	getDatasetPointLocationOnScreen,
 } from "../../__utils__/chartUtils";
+import {
+	MagnetEstimatedErrors,
+	MagnetImplementations,
+	MagnetVariant,
+} from "../../__utils__/magnet";
 import Offset2D from "../../__utils__/structures/Offset2D";
 import Point2D, { BoundingBox } from "../../__utils__/structures/Point2D";
+import Whitelist from "../../__utils__/structures/Whitelist";
 import { AxisSpec } from "../../__utils__/structures/axisSpec";
 import { DatasetPointSpec } from "../../__utils__/testTypes";
 import { CustomMatchers } from "../../typings";
+
+export type GetDataFromPointOnScreenFunc = (
+	pointOnScreen: Point2D,
+	canvasBB: BoundingBox,
+) => Promise<Point2D | number | undefined>;
+
+export type GetCoordinateOnScaleForAxisFunc = (
+	data: number,
+	axis: "x" | "y",
+) => Promise<number>;
 
 export type GenericDragTestParams = {
 	/** function to run as init at the beginning of this operation */
 	initFunc?: () => Promise<void> | void;
 	/** the function used to perform the actual drag on the window */
 	performDrag: (
-		dragStartPoint: Point2D,
-		dragDestPoint: Point2D,
+		options: { dragStartPoint: Point2D; dragDestPoint: Point2D } & Pick<
+			GenericDragTestParams,
+			"assertScreenshots" | "whenToTakeScreenshots"
+		>,
 	) => Promise<void> | void;
 	/** DOMRect of the Chart canvas */
 	canvasBB: DOMRect;
@@ -50,6 +72,10 @@ export type GenericDragTestParams = {
 	/** whether the Y axis is categorical; in reality, this means that regardless of `draggableAxis`, tests should expect
 	 * the point not to move on the Y axis if this is `true` */
 	isCategoricalY?: boolean;
+	/** whether to test screenshots */
+	assertScreenshots?: boolean;
+	/** controls when to take screenshots for testing ; applicable only when `assertScreenshots` is `true`; all occasions are allowed by default (provided `assertScreenshots` is enabled) */
+	whenToTakeScreenshots?: Whitelist<"afterMouseDown" | "afterMouseUp">;
 } & (
 	| {
 			/** whether to assert the result at all - **overrides all other expectation parameters**  */
@@ -61,7 +87,22 @@ export type GenericDragTestParams = {
 			bExpectResult: false;
 			expect?: never;
 	  }
-);
+) &
+	(
+		| {
+				/** string enum used to determine the actual value-rounding function implementation for this test */
+				magnet: MagnetVariant;
+				/** finds the {@see {ChartData}} for a given position on screen */
+				getDataFromPointOnScreen: GetDataFromPointOnScreenFunc;
+				/** finds the {@see {Point2D}} on screen for a given chart value */
+				getCoordinateOnScaleForAxis: GetCoordinateOnScaleForAxisFunc;
+		  }
+		| {
+				magnet?: never;
+				getDataFromPointOnScreen?: never;
+				getCoordinateOnScaleForAxis?: never;
+		  }
+	);
 
 export async function _genericTestDrag({
 	initFunc,
@@ -79,6 +120,11 @@ export async function _genericTestDrag({
 	isCategoricalX,
 	isCategoricalY,
 	expectedDestPointSpecOverride,
+	magnet,
+	getDataFromPointOnScreen,
+	getCoordinateOnScaleForAxis,
+	assertScreenshots = false,
+	whenToTakeScreenshots = new Whitelist(null),
 }: GenericDragTestParams) {
 	await initFunc?.();
 
@@ -119,7 +165,12 @@ export async function _genericTestDrag({
 			: undefined;
 
 	// simulate a drag event
-	await performDrag(dragStartPoint, dragDestPoint);
+	await performDrag({
+		dragStartPoint,
+		dragDestPoint,
+		assertScreenshots,
+		whenToTakeScreenshots,
+	});
 
 	// check if the values match after dragging
 	let actualNewDraggedPointLocation: Point2D =
@@ -150,7 +201,7 @@ export async function _genericTestDrag({
 				}
 			}
 
-			const expectedDestPoint = calcDragTargetPosition(
+			let expectedDestPoint = calcDragTargetPosition(
 				dragStartPoint,
 				expectedDestPointOverride ?? dragDesiredDestPoint,
 				whichAxis,
@@ -158,13 +209,167 @@ export async function _genericTestDrag({
 				chartAreaBB,
 			);
 
+			let pointDistanceTolerance: number | undefined = undefined; // if magnet is disabled, then leave the default (low) tolerance
+
+			// if applicable, assert that the value has been rounded as per how the magnet is set up
+			if (magnet) {
+				let actualData = await getDataFromPointOnScreen(
+					actualNewDraggedPointLocation,
+					canvasBB,
+				);
+
+				const magnetImpl = MagnetImplementations[magnet],
+					magnetEstimatedError = MagnetEstimatedErrors[magnet];
+
+				if (magnetImpl) {
+					if (actualData === null || actualData === undefined) {
+						throw new Error(
+							`_genericTestDrag: cannot get data from point on screen: ${actualNewDraggedPointLocation}`,
+						);
+					}
+
+					let actualDataAfterMagnet = applyMagnet(magnet, actualData);
+
+					// the magnet shall not alter the data sample anymore if it has already been applied;
+					// strict position checking is done below, in the normal expect
+					if (typeof actualDataAfterMagnet === "number") {
+						expect?.(actualData as number).toBeCloseTo(
+							actualDataAfterMagnet,
+							6,
+						); // tolerance up to 1e-6
+					} else {
+						expect?.(actualData as number).pointsToBeClose(
+							actualDataAfterMagnet,
+							euclideanDistance(
+								new Point2D({ x: 0, y: 0 }),
+								new Point2D({ x: 0 + 1e-6, y: 0 + 1e-6 }), // tolerance up to 1e-6
+							),
+						);
+					}
+
+					const expectedValue = await getDataFromPointOnScreen(
+						expectedDestPoint,
+						canvasBB,
+					);
+
+					if (expectedValue) {
+						let expectedValueAfterMagnet = applyMagnet(magnet, expectedValue);
+
+						if (typeof expectedValueAfterMagnet === "number") {
+							if (isCategoricalX) {
+								expectedDestPoint = new Point2D({
+									x: expectedDestPoint.x,
+									y:
+										(await getCoordinateOnScaleForAxis(
+											expectedValueAfterMagnet,
+											"y",
+										)) + canvasBB.top,
+								});
+							} else {
+								// isCategoricalY is true
+
+								expectedDestPoint = new Point2D({
+									x:
+										(await getCoordinateOnScaleForAxis(
+											expectedValueAfterMagnet,
+											"x",
+										)) + canvasBB.left,
+									y: expectedDestPoint.y,
+								});
+							}
+						} else {
+							expectedDestPoint = new Offset2D({
+								x: canvasBB.left,
+								y: canvasBB.top,
+							}).translatePoint(
+								new Point2D({
+									x: await getCoordinateOnScaleForAxis(
+										expectedValueAfterMagnet.x,
+										"x",
+									),
+									y: await getCoordinateOnScaleForAxis(
+										expectedValueAfterMagnet.y,
+										"y",
+									),
+								}),
+							);
+						}
+					}
+
+					/**
+					 * since applyMagnet estimates the position from the rounded estimated coordinates,
+					 * it might happen that the estimation error influences the rounding in such a way that
+					 * e.g. 6.04 ~= 6 vs 6.05 ~= 6.1 when rounding to the 1st decimal place,
+					 * thus to overcome this issue we want to allow for a bigger maximum distance
+					 */
+
+					// ensure the point would be on-screen by specifying the middle of the chart
+					const middleCoordX = (chartScales.x.min + chartScales.x.max) / 2,
+						middleCoordY = (chartScales.y.min + chartScales.y.max) / 2;
+
+					// calculate the differences in pixels for values different by the value error caused by the magnet
+					let magnetEstimatedErrorOnScreenX = Math.abs(
+							(await getCoordinateOnScaleForAxis(middleCoordX, "x")) -
+								(await getCoordinateOnScaleForAxis(
+									middleCoordX + magnetEstimatedError,
+									"x",
+								)),
+						),
+						magnetEstimatedErrorOnScreenY = Math.abs(
+							(await getCoordinateOnScaleForAxis(middleCoordY, "y")) -
+								(await getCoordinateOnScaleForAxis(
+									middleCoordY + magnetEstimatedError,
+									"y",
+								)),
+						);
+
+					// calculate the euclidean distance between points differing by the estimated max error on each of the axes
+					pointDistanceTolerance = euclideanDistance(
+						new Point2D({ x: 0, y: 0 }),
+						new Point2D({
+							x: 0 + magnetEstimatedErrorOnScreenX,
+							y: 0 + magnetEstimatedErrorOnScreenY,
+						}), // tolerance up to the estimated error
+					);
+				}
+			}
+
 			// if plugin is enabled, then the new position should match destination point position constrained to the allowed draggable axis
 			expect?.(actualNewDraggedPointLocation).pointsToBeClose(
 				expectedDestPoint,
+				pointDistanceTolerance,
 			);
 		} else {
 			// if plugin is disabled, then the new position should not have changed at all
 			expect?.(actualNewDraggedPointLocation).pointsToBeClose(dragStartPoint);
 		}
 	}
+}
+
+function applyMagnet<Data extends number | Point2D>(
+	magnet: MagnetVariant,
+	data: Data,
+): Data {
+	const magnetImpl = MagnetImplementations[magnet];
+
+	if (magnetImpl) {
+		let dataCpy = _.cloneDeep(data);
+
+		// the magnet shall not alter the data sample anymore if it has already been applied;
+		// strict position checking is done below, in the normal expect
+		if (typeof dataCpy === "number") {
+			(dataCpy as number) = magnetImpl(dataCpy);
+
+			return dataCpy;
+		} else {
+			dataCpy = new Point2D({
+				x: magnetImpl(dataCpy.x as number),
+				y: magnetImpl(dataCpy.y as number),
+			}) as Data;
+
+			return dataCpy;
+		}
+	}
+
+	return data;
 }

@@ -59,7 +59,7 @@ class Offset2D {
 	}
 
 	toString() {
-		return `Offset2D { x: ${this.x === undefined ? `rel. ${Math.round(this.xRelative! * 100)}%` : `abs. ${Math.round(this.x * 100) / 100}`}, y: ${this.y === undefined ? `rel. ${Math.round(this.yRelative! * 100)}%` : `abs. ${Math.round(this.y * 100) / 100}`} }`;
+		return `Offset2D { x: ${this.x === undefined ? `rel. ${Math.round(this.xRelative! * 100)}%` : `abs. ${this.x}`}, y: ${this.y === undefined ? `rel. ${Math.round(this.yRelative! * 100)}%` : `abs. ${this.y}`} }`;
 	}
 }
 

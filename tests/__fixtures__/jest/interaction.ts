@@ -2,7 +2,6 @@ import type { Chart } from "chart.js";
 
 import { fireEvent } from "@testing-library/react";
 
-import { GetChartDatasetSamplePixelPositionFunc } from "../../__utils__/chartUtils";
 import Point2D from "../../__utils__/structures/Point2D";
 import {
 	GenericDragTestParams,
@@ -20,6 +19,7 @@ export async function performDragWithoutTesting({
 	| "dragDestPointSpecOrStartPointOffset"
 	| "whichAxis"
 	| "draggableAxis"
+	| "magnet"
 >) {
 	const canvasBB = chart.canvas.getBoundingClientRect();
 
@@ -28,7 +28,7 @@ export async function performDragWithoutTesting({
 	return await _genericTestDrag({
 		...parameters,
 		canvasBB,
-		performDrag: (dragStartPoint, dragDestPoint) => {
+		performDrag: ({ dragStartPoint, dragDestPoint }) => {
 			fireEvent.mouseDown(chart.canvas, {
 				clientX: canvasBB.top + dragStartPoint.x,
 				clientY: canvasBB.left + dragStartPoint.y,
@@ -61,5 +61,6 @@ export async function performDragWithoutTesting({
 		// expected & positions of data points are calculated wrong,
 		// thus it does not make sense to test this behaviour - such tests are done during E2E testing
 		bExpectResult: false,
+		magnet: undefined,
 	});
 }

@@ -4,7 +4,7 @@ import path from "path";
 
 import { Project, defineConfig, devices } from "@playwright/test";
 
-import { isWhitelistItemAllowed } from "./tests/__utils__/testsConfig";
+import { isTestsConfigWhitelistItemAllowed } from "./tests/__utils__/testsConfig";
 
 function hasGUI() {
 	if (process.argv.includes("--headed") || process.argv.includes("--ui"))
@@ -50,7 +50,7 @@ const chromeRunner: Project = {
 export default defineConfig({
 	use: {
 		launchOptions: {
-			slowMo: hasGUI() ? 650 : undefined,
+			slowMo: hasGUI() ? 550 : undefined,
 		},
 		video: "retain-on-failure",
 		trace: "off",
@@ -63,7 +63,11 @@ export default defineConfig({
 		(hasGUI()
 			? [chromeRunner]
 			: allAvailableRunners.filter(({ name }) =>
-					isWhitelistItemAllowed("e2e", "whitelistedBrowsers", name!),
+					isTestsConfigWhitelistItemAllowed(
+						"e2e",
+						"whitelistedBrowsers",
+						name!,
+					),
 				)
 		).map((project) => ({ ...project, fullyParallel: true })),
 	testMatch: path.join(path.dirname(__filename), "tests", "e2e", "*.spec.ts"),

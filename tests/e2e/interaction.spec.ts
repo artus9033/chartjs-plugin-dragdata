@@ -5,10 +5,13 @@ import {
 	getAxisDescription,
 } from "../__utils__/structures/axisSpec";
 import { describeDatasetPointSpecOrPoint } from "../__utils__/structures/scenario";
-import { setupTests } from "./__fixtures__";
+import { setupEachTest } from "./__fixtures__";
 import { playwrightTestDrag } from "./__fixtures__/interaction";
-import testsConfig from "../__utils__/testsConfig";
+import testsConfig, {
+	isTestsConfigWhitelistItemAllowed,
+} from "../__utils__/testsConfig";
 import { describeEachChartType } from "./__utils__/testHelpers";
+import { ALL_TESTED_MAGNET_VARIANTS } from "../__utils__/magnet";
 
 for (const disablePlugin of [false, true]) {
 	test.describe(`data dragging ${disablePlugin ? "disabled" : "enabled"}`, async () => {
@@ -19,35 +22,59 @@ for (const disablePlugin of [false, true]) {
 					: test.describe.skip)(
 					`draggable ${getAxisDescription(draggableAxis)}`,
 					() => {
-						setupTests({ fileName, disablePlugin, draggableAxis });
-
-						for (const stepsGroup of scenario.stepGroups) {
-							const groupNameSpaceCase = stepsGroup.groupName.replace(
-								/[A-Z]/g,
-								(letter) => ` ${letter.toLowerCase()}`,
-							);
-
-							(stepsGroup.shouldBeSkipped ? test.describe.skip : test.describe)(
-								groupNameSpaceCase,
+						for (const magnet of ALL_TESTED_MAGNET_VARIANTS) {
+							(isTestsConfigWhitelistItemAllowed(
+								"e2e",
+								"whitelistedMagnetVariants",
+								magnet,
+							)
+								? test.describe
+								: test.describe.skip)(
+								magnet === "none" ? "without magnet" : `with magnet ${magnet}`,
 								() => {
-									for (const step of stepsGroup.steps) {
-										const pluginDisabledForTestedAxis =
-											disablePlugin ||
-											(step.axisSpec !== "both" &&
-												step.axisSpec !== draggableAxis);
+									setupEachTest({
+										fileName,
+										disablePlugin,
+										draggableAxis,
+										magnet,
+									});
 
-										test(`${pluginDisabledForTestedAxis ? "does not move" : "moves"} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} upon dragging on ${getAxisDescription(step.axisSpec)}`, async ({
-											page,
-										}) => {
-											await playwrightTestDrag({
-												...step,
-												whichAxis: step.axisSpec,
-												page,
-												draggableAxis,
-												isDragDataPluginDisabled: disablePlugin,
-												isCategoricalX: scenario.isCategoricalX,
-												isCategoricalY: scenario.isCategoricalY,
-											});
+									for (const stepsGroup of scenario.stepGroups) {
+										const groupNameSpaceCase = stepsGroup.groupName.replace(
+											/[A-Z]/g,
+											(letter) => ` ${letter.toLowerCase()}`,
+										);
+
+										(stepsGroup.shouldBeSkipped
+											? test.describe.skip
+											: test.describe)(groupNameSpaceCase, () => {
+											for (const step of stepsGroup.steps) {
+												const pluginDisabledForTestedAxis =
+													disablePlugin ||
+													(step.axisSpec !== "both" &&
+														step.axisSpec !== draggableAxis);
+
+												test(`${pluginDisabledForTestedAxis ? "does not move" : "moves"} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} upon dragging on ${getAxisDescription(step.axisSpec)}`, async ({
+													page,
+												}) => {
+													await playwrightTestDrag({
+														...step,
+														whichAxis: step.axisSpec,
+														page,
+														draggableAxis,
+														isDragDataPluginDisabled: disablePlugin,
+														isCategoricalX: scenario.isCategoricalX,
+														isCategoricalY: scenario.isCategoricalY,
+														magnet,
+														// so as not to produce an enormous amount of screenshots, we only take snapshots for specific tests
+														assertScreenshots:
+															draggableAxis === "both" && // only if both axes are not prohibited from being draggable by config (although they can still be categorical, thus not draggable)
+															step.axisSpec === "both" && // only if the test involves dragging on both axes
+															stepsGroup.shouldTakeScreenshot && // if the group is marked as involving screenshot assertion
+															step.shouldTakeScreenshot, // only if the step is marked as involving screenshot assertion
+													});
+												});
+											}
 										});
 									}
 								},

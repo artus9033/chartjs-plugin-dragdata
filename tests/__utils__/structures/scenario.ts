@@ -13,10 +13,20 @@ export type TestScenarioStepsGroup<GroupNameType> = {
 	steps: TestScenarioStep[];
 	/** whether this group of interactions should be skipped */
 	shouldBeSkipped: boolean;
+	/**
+	 * whether this group of steps should allow for screenshot snapshot testing
+	 * note: other limitations as to taking the screenshot still apply, this is a required yet not sufficient conditions
+	 */
+	shouldTakeScreenshot?: boolean;
 };
 
 export type TestScenarioStep = {
 	axisSpec: AxisSpec;
+	/**
+	 * whether this group of steps should allow for screenshot snapshot testing
+	 * note: other limitations as to taking the screenshot still apply, this is a required yet not sufficient conditions
+	 */
+	shouldTakeScreenshot?: boolean;
 } & Pick<
 	GenericDragTestParams,
 	| "dragPointSpec"

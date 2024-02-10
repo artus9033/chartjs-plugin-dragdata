@@ -1,10 +1,10 @@
 import {
 	Integration,
-	isWhitelistItemAllowed,
+	isTestsConfigWhitelistItemAllowed,
 } from "../../__utils__/testsConfig";
 
 export function integrationAllowed(integration: Integration): boolean {
-	return isWhitelistItemAllowed(
+	return isTestsConfigWhitelistItemAllowed(
 		"integration",
 		"whitelistedIntegrations",
 		integration,

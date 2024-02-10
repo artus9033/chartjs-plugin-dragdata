@@ -1,6 +1,7 @@
 import { test } from "playwright-test-coverage";
 
-import { setupTests } from "./__fixtures__";
+import { DatasetPointSpec } from "../__utils__/testTypes";
+import { setupEachTest } from "./__fixtures__";
 import {
 	PlaywrightTestDragParams,
 	playwrightTestDrag,
@@ -14,15 +15,15 @@ type PluginEnablerLocationSpec =
 	| "data sample config";
 
 const ALL_ENABLER_LOCATION_SPECS: PluginEnablerLocationSpec[] = [
-	// "x-scale",
-	// "y-scale",
-	// "dataset config",
+	"x-scale",
+	"y-scale",
+	"dataset config",
 	"data sample config",
 ];
 
 describeEachChartType(function testGenerator(fileName, scenario) {
 	for (let enablerLocationSpec of ALL_ENABLER_LOCATION_SPECS) {
-		setupTests({ fileName, draggableAxis: "both" });
+		setupEachTest({ fileName, draggableAxis: "both" });
 
 		// to configure drag data to be disabled for a given data sample, we need to pass an object specifying that sample
 		// on the other hand, when one of the axes is categorical, then the sample is scalar (number), thus such a test case is impossible to be carried out
@@ -35,13 +36,21 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 			test(`data dragging behaviour changes appropriately upon ${enablerLocationSpec} dragData configuration property changes`, async ({
 				page,
 			}) => {
-				const step = scenario.stepGroups[0].steps[0],
+				const dragPointSpec: DatasetPointSpec = {
+						datasetIndex: 0,
+						index: 0,
+					},
+					dragDestPointSpecOrStartPointOffset: DatasetPointSpec = {
+						datasetIndex: 1,
+						index: 3,
+					},
 					commonDragParams: Omit<
 						PlaywrightTestDragParams,
 						"isDragDataPluginDisabled"
 					> = {
-						...step,
-						whichAxis: step.axisSpec,
+						dragPointSpec,
+						dragDestPointSpecOrStartPointOffset,
+						whichAxis: "both",
 						page,
 						draggableAxis: "both",
 						isCategoricalX: scenario.isCategoricalX,
@@ -50,7 +59,12 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 
 				async function updateChartDragDataEnabledConfig(bEnabled: boolean) {
 					await page.evaluate(
-						({ enablerLocationSpec, bEnabled, step }) => {
+						({
+							enablerLocationSpec,
+							bEnabled,
+							dragPointSpec,
+							dragDestPointSpecOrStartPointOffset,
+						}) => {
 							switch (enablerLocationSpec) {
 								case "dataset config":
 									window.testedChart.data.datasets =
@@ -64,8 +78,8 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 									{
 										const dataSample =
 											window.testedChart.data.datasets[
-												step.dragPointSpec.datasetIndex
-											].data[step.dragPointSpec.datasetIndex];
+												dragPointSpec.datasetIndex
+											].data[dragPointSpec.datasetIndex];
 
 										if (typeof dataSample === "number") {
 											throw new Error(
@@ -74,8 +88,8 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 										}
 
 										window.testedChart.data.datasets[
-											step.dragPointSpec.datasetIndex
-										].data[step.dragPointSpec.datasetIndex] = Array.isArray(
+											dragPointSpec.datasetIndex
+										].data[dragPointSpec.datasetIndex] = Array.isArray(
 											dataSample,
 										)
 											? {
@@ -109,7 +123,8 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 						{
 							enablerLocationSpec,
 							bEnabled,
-							step,
+							dragPointSpec,
+							dragDestPointSpecOrStartPointOffset,
 						},
 					);
 				}

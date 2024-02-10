@@ -1,9 +1,13 @@
 import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test-browser";
-import { isWhitelistItemAllowed } from "../__utils__/testsConfig";
+import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 
 const { roundValue } = exportsForTesting;
 
-(isWhitelistItemAllowed("unit", "whitelistedTestCategories", "roundValue")
+(isTestsConfigWhitelistItemAllowed(
+	"unit",
+	"whitelistedTestCategories",
+	"roundValue",
+)
 	? describe
 	: describe.skip)("roundValue", () => {
 	test("should correctly round to the specified decimal places", () => {

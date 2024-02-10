@@ -27,19 +27,34 @@
 		<canvas id="chartJSContainer" style="height: 90%; width: 90%"></canvas>
 
 		<script>
-			const urlSearchParams = new URLSearchParams(window.location.search),
-				isTest = urlSearchParams.get("isTest") === "true";
-
 			window.isTestReady = false;
 
-			document.body.onload = function onDocumentLoaded() {
+			window.setupTest = function setupTest(options) {
+				const {
+					isTest,
+					disablePlugin,
+					draggableAxis,
+					magnetImplSerialized,
+					roundingPrecision,
+					configurationOverrides,
+				} = options;
+
+				if (isTest) {
+					console.log(
+						"[setupTest] Current URL (for test debugging purposes):",
+						window.location.href,
+					);
+
+					console.log(
+						"[setupTest] Stringified options passed in (for test debugging purposes):",
+						JSON.stringify(options),
+					);
+				}
+
 				function onPluginScriptLoaded() {
 					console.log("Plugin script loaded");
 
-					const disablePlugin =
-							urlSearchParams.get("disablePlugin") !== "false",
-						draggableAxis = urlSearchParams.get("draggableAxis"),
-						bothAxesDraggable = draggableAxis === "both",
+					const bothAxesDraggable = draggableAxis === "both",
 						xAxisDraggable =
 							!draggableAxis || bothAxesDraggable || draggableAxis === "x",
 						yAxisDraggable = bothAxesDraggable || draggableAxis === "y";
@@ -51,49 +66,53 @@
 						draggableAxis,
 						xAxisDraggable,
 						yAxisDraggable,
+						magnet: !!magnetImplSerialized,
 					};
 					console.table(receivedConfigForLogging);
 
-					const configurationOverrides = JSON.parse(
-							`<%- configurationOverrides %>`,
-						),
-						configuration = _.merge(
-							{
-								type: "line",
-								options: {
-									animation: !isTest,
-									plugins: {
-										dragData: disablePlugin
-											? false
-											: {
-													dragX: xAxisDraggable,
-													dragY: yAxisDraggable,
-													round: JSON.parse("<%= roundingPrecision %>"),
-													showTooltip: true,
-													onDrag: function (e) {
-														if (e.target?.style)
-															e.target.style.cursor = "grabbing";
-													},
-													onDragEnd: function (e) {
-														if (e.target?.style)
-															e.target.style.cursor = "default";
-													},
+					const configuration = _.merge(
+						{
+							type: "line",
+							options: {
+								animation: !isTest,
+								plugins: {
+									dragData: disablePlugin
+										? false
+										: {
+												dragX: xAxisDraggable,
+												dragY: yAxisDraggable,
+												round: roundingPrecision,
+												showTooltip: true,
+												onDrag: function (e) {
+													if (e.target?.style)
+														e.target.style.cursor = "grabbing";
 												},
-									},
-									onHover: function (e) {
-										const point = e.chart.getElementsAtEventForMode(
-											e,
-											"nearest",
-											{ intersect: true },
-											false,
-										);
-										if (point.length) e.native.target.style.cursor = "grab";
-										else e.native.target.style.cursor = "default";
-									},
+												onDragEnd: function (e) {
+													if (e.target?.style)
+														e.target.style.cursor = "default";
+												},
+												magnet: magnetImplSerialized
+													? {
+															// the reasoning for brackets below is: https://stackoverflow.com/questions/49262112/is-there-a-way-to-evaluate-a-function-defined-as-a-string-by-using-eval
+															to: eval(`(${magnetImplSerialized})`),
+														}
+													: undefined,
+											},
+								},
+								onHover: function (e) {
+									const point = e.chart.getElementsAtEventForMode(
+										e,
+										"nearest",
+										{ intersect: true },
+										false,
+									);
+									if (point.length) e.native.target.style.cursor = "grab";
+									else e.native.target.style.cursor = "default";
 								},
 							},
-							configurationOverrides,
-						);
+						},
+						configurationOverrides,
+					);
 
 					console.log("Constructed chart configuration:", configuration);
 

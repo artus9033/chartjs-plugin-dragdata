@@ -5,7 +5,7 @@ import d3Selection from "d3-selection";
 import ChartJSdragDataPlugin, {
 	exportsForTesting,
 } from "../../dist/chartjs-plugin-dragdata-test";
-import { isWhitelistItemAllowed } from "../__utils__/testsConfig";
+import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { UNIT_TEST_CHART_TYPES } from "./__utils__/constants";
 import { setupChartInstance, unitTestCategoryAllowed } from "./__utils__/utils";
 
@@ -37,7 +37,11 @@ jest.mock("d3-selection", () => {
 
 describe("plugin", () => {
 	for (const chartType of UNIT_TEST_CHART_TYPES) {
-		(isWhitelistItemAllowed("unit", "whitelistedTestedChartTypes", chartType)
+		(isTestsConfigWhitelistItemAllowed(
+			"unit",
+			"whitelistedTestedChartTypes",
+			chartType,
+		)
 			? describe
 			: describe.skip)(`${chartType} chart`, () => {
 			let chartInstance: Chart<typeof chartType>;

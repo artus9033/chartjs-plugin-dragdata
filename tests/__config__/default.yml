@@ -15,3 +15,5 @@ e2e: # end-to-end tests
   # empty whitelist by default - include all available
   whitelistedInteractions: # if non-empty, only these interactions will be tested
   # empty whitelist by default - include all available
+  whitelistedMagnetVariants: # if non-empty, only these magnet variants will be tested
+  # empty whitelist by default - include all available

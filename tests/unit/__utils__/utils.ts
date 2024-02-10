@@ -3,7 +3,7 @@ import { Chart, ChartTypeRegistry } from "chart.js";
 import { TestChartOptions, simpleChartScenarioBase } from "../../__data__/data";
 import {
 	UnitTestCategory,
-	isWhitelistItemAllowed,
+	isTestsConfigWhitelistItemAllowed,
 } from "../../__utils__/testsConfig";
 
 export function setupChartInstance<T extends keyof ChartTypeRegistry>(
@@ -24,5 +24,9 @@ export function setupChartInstance<T extends keyof ChartTypeRegistry>(
 }
 
 export function unitTestCategoryAllowed(category: UnitTestCategory): boolean {
-	return isWhitelistItemAllowed("unit", "whitelistedTestCategories", category);
+	return isTestsConfigWhitelistItemAllowed(
+		"unit",
+		"whitelistedTestCategories",
+		category,
+	);
 }

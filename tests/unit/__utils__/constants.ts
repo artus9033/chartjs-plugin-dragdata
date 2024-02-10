@@ -1,5 +1,5 @@
 import { ChartTypeRegistry } from "chart.js";
-import { ArrayItemType } from "../../e2e/__utils__/types";
+import { ArrayItemType } from "../../__utils__/types";
 
 export const UNIT_TEST_CHART_TYPES = [
 	"line",
