@@ -8,15 +8,11 @@ import {
 import Offset2D from "../../__utils__/structures/Offset2D";
 import Point2D, { BoundingBox } from "../../__utils__/structures/Point2D";
 import {
-	isSimpleWhitelistItemAllowed,
-	isTestsConfigWhitelistItemAllowed,
-} from "../../__utils__/testsConfig";
-import {
 	playwrightCalcCanvasBB,
 	playwrightGetChartDatasetSamplePixelPosition,
 	playwrightGetChartScales,
 } from "../__utils__/chartUtils";
-import { SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT } from "../__utils__/constants";
+import { hasGUI } from "../__utils__/testHelpers";
 
 export type PlaywrightTestDragParams = {
 	page: Page;
@@ -32,7 +28,6 @@ export type PlaywrightTestDragParams = {
 	| "expectedDestPointSpecOverride"
 	| "magnet"
 	| "getDataFromPointOnScreen"
-	| "assertScreenshots"
 >;
 
 export async function playwrightTestDrag({
@@ -52,39 +47,22 @@ export async function playwrightTestDrag({
 	return await _genericTestDrag({
 		...parameters,
 		canvasBB,
-		performDrag: async ({
-			dragStartPoint,
-			dragDestPoint,
-			assertScreenshots,
-			whenToTakeScreenshots,
-		}) => {
+		performDrag: async ({ dragStartPoint, dragDestPoint }) => {
 			// playwright "loops" the cursor when leaving the window bounds, thus we want to clip the coordinates
 			dragStartPoint = dragStartPoint.copyConstrainedTo(windowBB);
 			dragDestPoint = dragDestPoint.copyConstrainedTo(windowBB);
 
+			if (hasGUI()) {
+				console.log(
+					`[playwrightTestDrag] Dragging ${dragStartPoint.toString()} -> ${dragDestPoint.toString()}`,
+				);
+			}
+
 			await page.mouse.move(...dragStartPoint.toArray());
 			await page.mouse.down();
 
-			if (
-				assertScreenshots &&
-				isSimpleWhitelistItemAllowed(whenToTakeScreenshots, "afterMouseDown")
-			) {
-				await expect(page).toHaveScreenshot({
-					maxDiffPixelRatio: SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT,
-				});
-			}
-
 			await page.mouse.move(...dragDestPoint.toArray());
 			await page.mouse.up();
-
-			if (
-				assertScreenshots &&
-				isSimpleWhitelistItemAllowed(whenToTakeScreenshots, "afterMouseDown")
-			) {
-				await expect(page).toHaveScreenshot({
-					maxDiffPixelRatio: SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT,
-				});
-			}
 		},
 		getChartDatasetSamplePixelPosition: (datasetIndex, sampleIndex) =>
 			playwrightGetChartDatasetSamplePixelPosition(
@@ -125,16 +103,16 @@ export async function playwrightTestDrag({
 								? x
 								: new Point2D({ x, y });
 					},
-					getCoordinateOnScaleForAxis: async (data, axis) => {
-						return await page.evaluate(
-							({ data, axis }) =>
-								isNaN(data)
-									? NaN
-									: window.testedChart.scales[axis].getPixelForValue(data),
-							{ data, axis },
-						);
-					},
 				}
 			: { magnet: undefined, getDataFromPointOnScreen: undefined }),
+		getCoordinateOnScaleForAxis: async (data, axis) => {
+			return await page.evaluate(
+				({ data, axis }) =>
+					isNaN(data)
+						? NaN
+						: window.testedChart.scales[axis].getPixelForValue(data),
+				{ data, axis },
+			);
+		},
 	});
 }

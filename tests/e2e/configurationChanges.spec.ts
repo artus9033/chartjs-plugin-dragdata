@@ -1,7 +1,7 @@
 import { test } from "playwright-test-coverage";
 
 import { DatasetPointSpec } from "../__utils__/testTypes";
-import { setupEachTest } from "./__fixtures__";
+import { setupE2ETest } from "./__fixtures__";
 import {
 	PlaywrightTestDragParams,
 	playwrightTestDrag,
@@ -21,9 +21,15 @@ const ALL_ENABLER_LOCATION_SPECS: PluginEnablerLocationSpec[] = [
 	"data sample config",
 ];
 
-describeEachChartType(function testGenerator(fileName, scenario) {
+test.describe.configure({ mode: "parallel" });
+
+describeEachChartType(async function testGenerator(fileName, scenario) {
+	test.describe.configure({ mode: "parallel" });
+
 	for (let enablerLocationSpec of ALL_ENABLER_LOCATION_SPECS) {
-		setupEachTest({ fileName, draggableAxis: "both" });
+		test.beforeEach(async ({ page }, testInfo) => {
+			await setupE2ETest({ fileName, draggableAxis: "both" }, page, testInfo);
+		});
 
 		// to configure drag data to be disabled for a given data sample, we need to pass an object specifying that sample
 		// on the other hand, when one of the axes is categorical, then the sample is scalar (number), thus such a test case is impossible to be carried out
@@ -59,12 +65,7 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 
 				async function updateChartDragDataEnabledConfig(bEnabled: boolean) {
 					await page.evaluate(
-						({
-							enablerLocationSpec,
-							bEnabled,
-							dragPointSpec,
-							dragDestPointSpecOrStartPointOffset,
-						}) => {
+						({ enablerLocationSpec, bEnabled, dragPointSpec }) => {
 							switch (enablerLocationSpec) {
 								case "dataset config":
 									window.testedChart.data.datasets =
@@ -124,7 +125,6 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 							enablerLocationSpec,
 							bEnabled,
 							dragPointSpec,
-							dragDestPointSpecOrStartPointOffset,
 						},
 					);
 				}

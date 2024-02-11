@@ -15,9 +15,8 @@ import {
 	MagnetImplementations,
 	MagnetVariant,
 } from "../../__utils__/magnet";
-import Offset2D from "../../__utils__/structures/Offset2D";
+import Offset2D, { Offset2DScale } from "../../__utils__/structures/Offset2D";
 import Point2D, { BoundingBox } from "../../__utils__/structures/Point2D";
-import Whitelist from "../../__utils__/structures/Whitelist";
 import { AxisSpec } from "../../__utils__/structures/axisSpec";
 import { DatasetPointSpec } from "../../__utils__/testTypes";
 import { CustomMatchers } from "../../typings";
@@ -36,12 +35,10 @@ export type GenericDragTestParams = {
 	/** function to run as init at the beginning of this operation */
 	initFunc?: () => Promise<void> | void;
 	/** the function used to perform the actual drag on the window */
-	performDrag: (
-		options: { dragStartPoint: Point2D; dragDestPoint: Point2D } & Pick<
-			GenericDragTestParams,
-			"assertScreenshots" | "whenToTakeScreenshots"
-		>,
-	) => Promise<void> | void;
+	performDrag: (options: {
+		dragStartPoint: Point2D;
+		dragDestPoint: Point2D;
+	}) => Promise<void> | void;
 	/** DOMRect of the Chart canvas */
 	canvasBB: DOMRect;
 	/** function returning the position ({@see {Point2D}}) of the specified dataset sample */
@@ -72,10 +69,8 @@ export type GenericDragTestParams = {
 	/** whether the Y axis is categorical; in reality, this means that regardless of `draggableAxis`, tests should expect
 	 * the point not to move on the Y axis if this is `true` */
 	isCategoricalY?: boolean;
-	/** whether to test screenshots */
-	assertScreenshots?: boolean;
-	/** controls when to take screenshots for testing ; applicable only when `assertScreenshots` is `true`; all occasions are allowed by default (provided `assertScreenshots` is enabled) */
-	whenToTakeScreenshots?: Whitelist<"afterMouseDown" | "afterMouseUp">;
+	/** finds the {@see {Point2D}} on screen for a given chart value */
+	getCoordinateOnScaleForAxis: GetCoordinateOnScaleForAxisFunc;
 } & (
 	| {
 			/** whether to assert the result at all - **overrides all other expectation parameters**  */
@@ -94,13 +89,10 @@ export type GenericDragTestParams = {
 				magnet: MagnetVariant;
 				/** finds the {@see {ChartData}} for a given position on screen */
 				getDataFromPointOnScreen: GetDataFromPointOnScreenFunc;
-				/** finds the {@see {Point2D}} on screen for a given chart value */
-				getCoordinateOnScaleForAxis: GetCoordinateOnScaleForAxisFunc;
 		  }
 		| {
 				magnet?: never;
 				getDataFromPointOnScreen?: never;
-				getCoordinateOnScaleForAxis?: never;
 		  }
 	);
 
@@ -123,8 +115,6 @@ export async function _genericTestDrag({
 	magnet,
 	getDataFromPointOnScreen,
 	getCoordinateOnScaleForAxis,
-	assertScreenshots = false,
-	whenToTakeScreenshots = new Whitelist(null),
 }: GenericDragTestParams) {
 	await initFunc?.();
 
@@ -136,6 +126,21 @@ export async function _genericTestDrag({
 			height: chartScales.y.bottom - chartScales.y.top,
 		};
 
+	/** represents the scale that needs to be applied to a point carrying
+	 * values in chart-values (values of the data samples) to produce
+	 * a point in screen-pixel values (relative, not absolute) that
+	 * correspond to the delta of these data-sample-unit values,
+	 * for both axes
+	 *
+	 * **NOTE**: this also takes into account the case when any axis is categorical
+	 * and in such case +N means moving forward by N labels and -N means moving backward by N labels
+	 */
+	let canvasDragDestPointSpecChartValueToPxScale =
+		await calculateChartValueToPxScale(
+			chartScales,
+			getCoordinateOnScaleForAxis,
+		);
+
 	let dragStartPoint: Point2D = await getDatasetPointLocationOnScreen(
 			getChartDatasetSamplePixelPosition,
 			dragPointSpec,
@@ -144,11 +149,18 @@ export async function _genericTestDrag({
 		dragDesiredDestPoint: Point2D =
 			dragDestPointSpecOrStartPointOffset instanceof Offset2D
 				? dragDestPointSpecOrStartPointOffset.translatePoint(dragStartPoint)
-				: await getDatasetPointLocationOnScreen(
-						getChartDatasetSamplePixelPosition,
-						dragDestPointSpecOrStartPointOffset,
-						canvasBB,
-					),
+				: (
+						dragDestPointSpecOrStartPointOffset.additionalOffset?.scaledCopy(
+							canvasDragDestPointSpecChartValueToPxScale,
+						) ?? new Offset2D({ x: 0, y: 0 })
+					) // by default, no offset
+						.translatePoint(
+							await getDatasetPointLocationOnScreen(
+								getChartDatasetSamplePixelPosition,
+								dragDestPointSpecOrStartPointOffset,
+								canvasBB,
+							),
+						),
 		dragDestPoint = calcDragTargetPosition(
 			dragStartPoint,
 			dragDesiredDestPoint,
@@ -168,8 +180,6 @@ export async function _genericTestDrag({
 	await performDrag({
 		dragStartPoint,
 		dragDestPoint,
-		assertScreenshots,
-		whenToTakeScreenshots,
 	});
 
 	// check if the values match after dragging
@@ -303,25 +313,13 @@ export async function _genericTestDrag({
 					 * thus to overcome this issue we want to allow for a bigger maximum distance
 					 */
 
-					// ensure the point would be on-screen by specifying the middle of the chart
-					const middleCoordX = (chartScales.x.min + chartScales.x.max) / 2,
-						middleCoordY = (chartScales.y.min + chartScales.y.max) / 2;
-
 					// calculate the differences in pixels for values different by the value error caused by the magnet
-					let magnetEstimatedErrorOnScreenX = Math.abs(
-							(await getCoordinateOnScaleForAxis(middleCoordX, "x")) -
-								(await getCoordinateOnScaleForAxis(
-									middleCoordX + magnetEstimatedError,
-									"x",
-								)),
-						),
-						magnetEstimatedErrorOnScreenY = Math.abs(
-							(await getCoordinateOnScaleForAxis(middleCoordY, "y")) -
-								(await getCoordinateOnScaleForAxis(
-									middleCoordY + magnetEstimatedError,
-									"y",
-								)),
-						);
+					let magnetEstimatedErrorOnScreenX =
+							canvasDragDestPointSpecChartValueToPxScale.x *
+							magnetEstimatedError,
+						magnetEstimatedErrorOnScreenY =
+							canvasDragDestPointSpecChartValueToPxScale.y *
+							magnetEstimatedError;
 
 					// calculate the euclidean distance between points differing by the estimated max error on each of the axes
 					pointDistanceTolerance = euclideanDistance(
@@ -372,4 +370,24 @@ function applyMagnet<Data extends number | Point2D>(
 	}
 
 	return data;
+}
+
+async function calculateChartValueToPxScale(
+	chartScales: Awaited<ReturnType<GetChartScalesFunc>>,
+	getCoordinateOnScaleForAxis: GetCoordinateOnScaleForAxisFunc,
+): Promise<Offset2DScale> {
+	// ensure the point would be on-screen by specifying the middle of the chart
+	const middleValueX = (chartScales.x.min + chartScales.x.max) / 2,
+		middleValueY = (chartScales.y.min + chartScales.y.max) / 2;
+
+	return {
+		x: Math.abs(
+			(await getCoordinateOnScaleForAxis(middleValueX, "x")) -
+				(await getCoordinateOnScaleForAxis(middleValueX + 1, "x")),
+		),
+		y: Math.abs(
+			(await getCoordinateOnScaleForAxis(middleValueY, "y")) -
+				(await getCoordinateOnScaleForAxis(middleValueY + 1, "y")),
+		),
+	};
 }

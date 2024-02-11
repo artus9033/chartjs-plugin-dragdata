@@ -121,6 +121,16 @@
 						.getContext("2d");
 					window.testedChart = new Chart(ctx, configuration);
 
+					let originalTestedChartData = _.cloneDeep(window.testedChart.data);
+					window.resetData = function resetData() {
+						console.log(
+							"[resetData] Resetting data to original data passed to setupTest()",
+						);
+
+						window.testedChart.data = originalTestedChartData;
+						window.testedChart.update();
+					};
+
 					window.isTestReady = true;
 				}
 

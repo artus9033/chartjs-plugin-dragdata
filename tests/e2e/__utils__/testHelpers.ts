@@ -28,3 +28,10 @@ export function describeEachChartType(
 		});
 	}
 }
+
+export function hasGUI() {
+	if (process.argv.includes("--headed") || process.argv.includes("--ui"))
+		process.env.HEADED_MODE = "1";
+
+	return Boolean(process.env.HEADED_MODE);
+}

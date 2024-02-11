@@ -5,13 +5,7 @@ import path from "path";
 import { Project, defineConfig, devices } from "@playwright/test";
 
 import { isTestsConfigWhitelistItemAllowed } from "./tests/__utils__/testsConfig";
-
-function hasGUI() {
-	if (process.argv.includes("--headed") || process.argv.includes("--ui"))
-		process.env.HEADED_MODE = "1";
-
-	return Boolean(process.env.HEADED_MODE);
-}
+import { hasGUI } from "./tests/e2e/__utils__/testHelpers";
 
 if (hasGUI()) {
 	console.log(
@@ -19,38 +13,37 @@ if (hasGUI()) {
 	);
 }
 
-const chromeRunner: Project = {
+const allAvailableRunners: Project[] = [
+	{
 		name: "Chrome",
 		use: { ...devices["Desktop Chrome"], channel: "chrome" },
 	},
-	allAvailableRunners = [
-		chromeRunner,
-		{
-			name: "Firefox",
-			use: { ...devices["Desktop Firefox"] },
-		},
-		{
-			name: "Safari",
-			use: { ...devices["Desktop Safari"] },
-		},
-		{
-			name: "Microsoft Edge",
-			use: { ...devices["Desktop Edge"], channel: "msedge" },
-		},
-		{
-			name: "Mobile Chrome",
-			use: { ...devices["Pixel 5"] },
-		},
-		{
-			name: "Mobile Safari",
-			use: { ...devices["iPhone 12"] },
-		},
-	];
+	{
+		name: "Firefox",
+		use: { ...devices["Desktop Firefox"] },
+	},
+	{
+		name: "Safari",
+		use: { ...devices["Desktop Safari"] },
+	},
+	{
+		name: "Microsoft Edge",
+		use: { ...devices["Desktop Edge"], channel: "msedge" },
+	},
+	{
+		name: "Mobile Chrome",
+		use: { ...devices["Pixel 5"] },
+	},
+	{
+		name: "Mobile Safari",
+		use: { ...devices["iPhone 12"] },
+	},
+];
 
 export default defineConfig({
 	use: {
 		launchOptions: {
-			slowMo: hasGUI() ? 550 : undefined,
+			slowMo: hasGUI() ? 300 : undefined,
 		},
 		video: "retain-on-failure",
 		trace: "off",
@@ -60,16 +53,9 @@ export default defineConfig({
 	retries: 2,
 	projects:
 		/* Test against desktop browsers */
-		(hasGUI()
-			? [chromeRunner]
-			: allAvailableRunners.filter(({ name }) =>
-					isTestsConfigWhitelistItemAllowed(
-						"e2e",
-						"whitelistedBrowsers",
-						name!,
-					),
-				)
-		).map((project) => ({ ...project, fullyParallel: true })),
+		allAvailableRunners.filter(({ name }) =>
+			isTestsConfigWhitelistItemAllowed("e2e", "whitelistedBrowsers", name!),
+		),
 	testMatch: path.join(path.dirname(__filename), "tests", "e2e", "*.spec.ts"),
 	globalSetup: path.join(
 		path.dirname(__filename),

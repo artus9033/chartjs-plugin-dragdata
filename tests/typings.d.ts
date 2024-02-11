@@ -26,6 +26,7 @@ declare global {
 		testedChart: Chart;
 		isTestReady?: boolean;
 		setupTest: (options: TestChartSetupOptions) => void;
+		resetData(): void;
 	}
 
 	// augment Jest matchers

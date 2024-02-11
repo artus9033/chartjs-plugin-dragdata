@@ -1,6 +1,6 @@
 import path from "path";
 
-import { test } from "@playwright/test";
+import { type Page, type TestInfo, test } from "@playwright/test";
 
 import { TestScenarios } from "../../__data__/data";
 import { MagnetImplementations, MagnetVariant } from "../../__utils__/magnet";
@@ -17,57 +17,58 @@ export type SetupTestOptions = {
 	magnet?: MagnetVariant;
 };
 
-export async function setupEachTest(options: SetupTestOptions) {
-	test.beforeEach(async ({ page }, testInfo) => {
-		testInfo.snapshotSuffix = ""; // disable per-platform screenshot snapshots
+export async function setupE2ETest(
+	options: SetupTestOptions,
+	page: Page,
+	testInfo: TestInfo,
+) {
+	testInfo.snapshotSuffix = ""; // disable per-platform screenshot snapshots
 
-		options.disablePlugin = options.disablePlugin ?? false;
+	options.disablePlugin = options.disablePlugin ?? false;
 
-		const scenario = TestScenarios[options.fileName];
+	const scenario = TestScenarios[options.fileName];
 
-		const testChartSetupOptions: TestChartSetupOptions = {
-			...options,
-			isTest: true,
-			configurationOverrides: scenario.configuration,
-			roundingPrecision: scenario.roundingPrecision,
-		};
+	const testChartSetupOptions: TestChartSetupOptions = {
+		...options,
+		isTest: true,
+		configurationOverrides: scenario.configuration,
+		roundingPrecision: scenario.roundingPrecision,
+	};
 
-		for (const key of Object.keys(options) as (keyof SetupTestOptions)[]) {
-			switch (key) {
-				case "fileName":
-				default:
-					// skip these properties - they are spread to testChartSetupOptions above but do not have any side effects
-					continue;
+	for (const key of Object.keys(options) as (keyof SetupTestOptions)[]) {
+		switch (key) {
+			case "fileName":
+			default:
+				// skip these properties - they are spread to testChartSetupOptions above but do not have any side effects
+				continue;
 
-				case "magnet":
-					if (options.magnet) {
-						const magnetImpl = MagnetImplementations[options.magnet];
+			case "magnet":
+				if (options.magnet) {
+					const magnetImpl = MagnetImplementations[options.magnet];
 
-						if (magnetImpl) {
-							testChartSetupOptions.magnetImplSerialized =
-								magnetImpl.toString();
-						}
+					if (magnetImpl) {
+						testChartSetupOptions.magnetImplSerialized = magnetImpl.toString();
 					}
+				}
 
-					break;
-			}
+				break;
 		}
+	}
 
-		await page.goto(
-			`file://${path.dirname(__filename)}/../../../demos/dist/${options.fileName}`,
-		);
-		await page.waitForLoadState("load");
+	await page.goto(
+		`file://${path.dirname(__filename)}/../../../demos/dist/${options.fileName}`,
+	);
+	await page.waitForLoadState("load");
 
-		// run the actual setup function in browser context
-		await page.evaluate(
-			({ testChartSetupOptions }) => {
-				window.setupTest(testChartSetupOptions);
-			},
-			{ testChartSetupOptions: testChartSetupOptions as any },
-		);
+	// run the actual setup function in browser context
+	await page.evaluate(
+		({ testChartSetupOptions }) => {
+			window.setupTest(testChartSetupOptions);
+		},
+		{ testChartSetupOptions: testChartSetupOptions as any },
+	);
 
-		// since the plugin script is lazily loaded based on URL search params,
-		// the below is to stably check whether the page is ready for real
-		await page.waitForFunction(() => window.isTestReady);
-	});
+	// since the plugin script is lazily loaded based on URL search params,
+	// the below is to stably check whether the page is ready for real
+	await page.waitForFunction(() => window.isTestReady);
 }

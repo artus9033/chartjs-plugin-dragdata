@@ -11,7 +11,7 @@ import testsConfig, {
 	isTestsConfigWhitelistItemAllowed,
 } from "../__utils__/testsConfig";
 import Offset2D from "../__utils__/structures/Offset2D";
-import { ALL_AXES_SPECS } from "../__utils__/structures/axisSpec";
+import { ALL_AXES_SPECS, AxisSpec } from "../__utils__/structures/axisSpec";
 
 export const TestChartOptions: ChartOptions = {
 	plugins: {
@@ -37,8 +37,23 @@ function conditionallySkipInteractionForGroupOfSteps(
 	};
 }
 
-export const simpleChartScenarioBase = {
-	roundingPrecision: 2,
+function generateStepGroupConfigurationApplicator(axisSpec: AxisSpec) {
+	return (group: TestScenarioStepsGroup<E2EInteraction>) => ({
+		...group,
+		shouldBeSkipped: testsConfig.e2e.testedAxes.includes(axisSpec)
+			? group.shouldBeSkipped
+			: true,
+	});
+}
+
+export const commonChartScenarioBase = {
+	roundingPrecision: 4,
+	configuration: {
+		options: {},
+	},
+} satisfies Partial<TestScenario<E2EInteraction>>;
+
+export const simpleChartScenarioBase = _.merge({}, commonChartScenarioBase, {
 	configuration: {
 		data: {
 			labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
@@ -61,7 +76,6 @@ export const simpleChartScenarioBase = {
 				},
 			],
 		},
-		options: {},
 	},
 	stepGroups: ALL_AXES_SPECS.flatMap((axisSpec) =>
 		[
@@ -74,18 +88,16 @@ export const simpleChartScenarioBase = {
 						datasetIndex: 0,
 						index: 1,
 					},
-					shouldTakeScreenshot: true,
 				},
 				{
-					// dataset index 0 point index 2 -> point position offset by +10.45px on x and +4.675px on y
+					// dataset index 0 point index 2 -> point position offset by +0.8 of a single unit on x and +1.25 of a single unit on y
 					// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
 					axisSpec,
 					dragPointSpec: { datasetIndex: 0, index: 2 },
 					dragDestPointSpecOrStartPointOffset: new Offset2D({
-						x: 60.45,
-						y: 90.675,
+						x: 0.8, // in chart-value units
+						y: 1.25, // in chart-value units
 					}),
-					shouldTakeScreenshot: true,
 				},
 				{
 					// dataset index 0 point index 2 -> dataset index 0 point index 2
@@ -98,21 +110,25 @@ export const simpleChartScenarioBase = {
 					},
 				},
 				{
-					// dataset index 1 point index 3 -> dataset index 0 point index 3
+					// dataset index 1 point index 3 -> dataset index 0 point index 3 offset by -0.1 of a single unit on x and +0.1 of a single unit on y
 					axisSpec,
 					dragPointSpec: { datasetIndex: 1, index: 3 },
 					dragDestPointSpecOrStartPointOffset: {
 						datasetIndex: 0,
 						index: 3,
+						additionalOffset: new Offset2D({
+							x: -0.1, // in chart-value units
+							y: 0.1, // in chart-value units
+						}),
 					},
 				},
 				{
-					// dataset index 1 point index 2 -> point position offset by +20px on x and +40.5px on y
+					// dataset index 1 point index 2 -> point position offset by +0.18 of a single unit on x and +0.5 of a single unit on y
 					axisSpec,
 					dragPointSpec: { datasetIndex: 1, index: 2 },
 					dragDestPointSpecOrStartPointOffset: new Offset2D({
-						x: 20,
-						y: 40.5,
+						x: 0.18, // in chart-value units
+						y: 0.5, // in chart-value units
 					}),
 				},
 			]),
@@ -136,7 +152,6 @@ export const simpleChartScenarioBase = {
 							xRelative: 1.5,
 							yRelative: 0,
 						}),
-						shouldTakeScreenshot: true,
 					},
 				],
 			),
@@ -160,19 +175,12 @@ export const simpleChartScenarioBase = {
 							xRelative: 0,
 							yRelative: 1.5,
 						}),
-						shouldTakeScreenshot: true,
 					},
 				],
 			),
-		].map((group) => ({
-			...group,
-			shouldBeSkipped: testsConfig.e2e.testedAxes.includes(axisSpec)
-				? group.shouldBeSkipped
-				: true,
-			shouldTakeScreenshot: axisSpec === "both",
-		})),
+		].map(generateStepGroupConfigurationApplicator(axisSpec)),
 	),
-} satisfies TestScenario<E2EInteraction>;
+} satisfies Partial<TestScenario<E2EInteraction>>);
 
 export const simpleCategoricalChartScenario = _.merge(
 	{},
@@ -278,7 +286,7 @@ export const TestScenarios = postprocessScenariosRegistry({
 	/** "Simple" dataset scenarios */
 	"line-categorical.html": simpleCategoricalChartScenario,
 	"line-linear.html": simpleLinearChartScenario,
-	// "bar.html": simpleCategoricalChartScenario,
+	"bar.html": simpleCategoricalChartScenario,
 	// "horizontalBar.html": simpleCategoricalChartScenario,
 	// "polar.html": simpleCategoricalChartScenario,
 	// "radar.html": simpleCategoricalChartScenario,

@@ -1,5 +1,10 @@
 import Point2D from "./Point2D";
 
+export type Offset2DScale = { x: number; y: number };
+
+/**
+ * Represents a 2D offset (relative to the values of a given point or absolute in an arbitrary unit) in a cartesian plane
+ */
 class Offset2D {
 	public readonly x: number | undefined;
 	public readonly y: number | undefined;
@@ -13,9 +18,9 @@ class Offset2D {
 		yRelative,
 	}:
 		| {
-				/** absolute offset in px on the X axis */
+				/** absolute offset in px (or other unit, e.g. value of chart) on the X axis */
 				x: number;
-				/** absolute offset in px on the Y axis */
+				/** absolute offset in px (or other unit, e.g. value of chart) on the Y axis */
 				y: number;
 				xRelative?: never;
 				yRelative?: never;
@@ -49,6 +54,10 @@ class Offset2D {
 		});
 	}
 
+	/**
+	 * Returns a plain object (POJO) representation of this instance
+	 * @returns the POJO
+	 */
 	toObject() {
 		return {
 			x: this.x,
@@ -56,6 +65,25 @@ class Offset2D {
 			xRelative: this.xRelative,
 			yRelative: this.yRelative,
 		};
+	}
+
+	/**
+	 * Returns a new `Offset2D` instance with the same values, but scaled by the given `scale`
+	 * @param scale the scale to apply
+	 * @returns the scaled offset (new instance)
+	 */
+	scaledCopy(scale: Offset2DScale): Offset2D {
+		if (this.x !== undefined) {
+			return new Offset2D({
+				x: this.x * scale.x,
+				y: this.y! * scale.x,
+			});
+		} else {
+			return new Offset2D({
+				x: this.xRelative! * scale.x,
+				y: this.yRelative! * scale.y,
+			});
+		}
 	}
 
 	toString() {
