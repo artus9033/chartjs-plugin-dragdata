@@ -103,7 +103,9 @@ for (const disablePlugin of [false, true]) {
 													draggingDisabledForInteraction
 														? "does not move"
 														: "moves"
-												} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} upon dragging on ${getAxisDescription(step.axisSpec)}`, async () => {
+												} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} upon dragging on ${getAxisDescription(step.axisSpec)}`, async ({}, testInfo) => {
+													testInfo.snapshotSuffix = ""; // disable per-platform screenshot snapshots
+
 													// perform the interaction
 													await playwrightTestDrag({
 														...step,

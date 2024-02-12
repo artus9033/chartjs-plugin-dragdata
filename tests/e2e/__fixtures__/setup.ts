@@ -22,8 +22,6 @@ export async function setupE2ETest(
 	page: Page,
 	testInfo: TestInfo,
 ) {
-	testInfo.snapshotSuffix = ""; // disable per-platform screenshot snapshots
-
 	options.disablePlugin = options.disablePlugin ?? false;
 
 	const scenario = TestScenarios[options.fileName];
