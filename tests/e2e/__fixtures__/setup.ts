@@ -1,6 +1,6 @@
 import path from "path";
 
-import { type Page, type TestInfo, test } from "@playwright/test";
+import { type Page } from "@playwright/test";
 
 import { TestScenarios } from "../../__data__/data";
 import { MagnetImplementations, MagnetVariant } from "../../__utils__/magnet";
@@ -17,11 +17,7 @@ export type SetupTestOptions = {
 	magnet?: MagnetVariant;
 };
 
-export async function setupE2ETest(
-	options: SetupTestOptions,
-	page: Page,
-	testInfo: TestInfo,
-) {
+export async function setupE2ETest(options: SetupTestOptions, page: Page) {
 	options.disablePlugin = options.disablePlugin ?? false;
 
 	const scenario = TestScenarios[options.fileName];
@@ -29,7 +25,6 @@ export async function setupE2ETest(
 	const testChartSetupOptions: TestChartSetupOptions = {
 		...options,
 		isTest: true,
-		configurationOverrides: scenario.configuration,
 		roundingPrecision: scenario.roundingPrecision,
 	};
 
@@ -54,7 +49,7 @@ export async function setupE2ETest(
 	}
 
 	await page.goto(
-		`file://${path.dirname(__filename)}/../../../demos/dist/${options.fileName}`,
+		`file://${path.dirname(__filename)}/../../../demos/dist/${options.fileName}?isTest=true`,
 	);
 	await page.waitForLoadState("load");
 

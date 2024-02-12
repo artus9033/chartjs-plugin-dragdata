@@ -20,8 +20,6 @@ Each demo exposes various global variables (see [/tests/typings.d.ts](/tests/typ
 
 - `roundingPrecision`: An optional `number` that specifies the number of decimal places to which values should be rounded after they have been adjusted by the magnet function.
 
-- `configurationOverrides`: A `Partial<ChartConfiguration>` object that can be used to override the default configuration of the chart for the test.
-
 - `resetData`: a function that resets the data to the original shape passed in to `setupTest()`; invoked in-between groups of test steps
 
 The key files in this module are located in the `src` directory, as follows:

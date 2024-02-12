@@ -20,6 +20,14 @@ export const TestChartOptions: ChartOptions = {
 	animation: false,
 };
 
+function mergeScenarioPartialConfigurations(
+	...partials: Array<DeepPartial<TestScenario<E2EInteraction>>>
+): TestScenario<E2EInteraction> {
+	const [object, ...other] = partials;
+
+	return _.merge(object, ...other) as TestScenario<E2EInteraction>;
+}
+
 function conditionallySkipInteractionForGroupOfSteps(
 	category: E2EInteraction,
 	steps: Array<TestScenarioStep>,
@@ -132,58 +140,52 @@ export const simpleChartScenarioBase = _.merge({}, commonChartScenarioBase, {
 					}),
 				},
 			]),
-			conditionallySkipInteractionForGroupOfSteps(
-				"draggingOutOfCanvasBoundsX",
-				[
-					{
-						// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart width on x (out of bounds of the chart to the left)
-						axisSpec,
-						dragPointSpec: { datasetIndex: 0, index: 2 },
-						dragDestPointSpecOrStartPointOffset: new Offset2D({
-							xRelative: -1.5,
-							yRelative: 0,
-						}),
-					},
-					{
-						// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart width on x (out of bounds of the chart to the right)
-						axisSpec,
-						dragPointSpec: { datasetIndex: 0, index: 3 },
-						dragDestPointSpecOrStartPointOffset: new Offset2D({
-							xRelative: 1.5,
-							yRelative: 0,
-						}),
-					},
-				],
-			),
-			conditionallySkipInteractionForGroupOfSteps(
-				"draggingOutOfCanvasBoundsY",
-				[
-					{
-						// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the top)
-						axisSpec,
-						dragPointSpec: { datasetIndex: 0, index: 2 },
-						dragDestPointSpecOrStartPointOffset: new Offset2D({
-							xRelative: 0,
-							yRelative: -1.5,
-						}),
-					},
-					{
-						// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the bottom)
-						axisSpec,
-						dragPointSpec: { datasetIndex: 0, index: 3 },
-						dragDestPointSpecOrStartPointOffset: new Offset2D({
-							xRelative: 0,
-							yRelative: 1.5,
-						}),
-					},
-				],
-			),
+			conditionallySkipInteractionForGroupOfSteps("draggingToCanvasBoundsX", [
+				{
+					// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart width on x (to the bounds of the chart to the left)
+					axisSpec,
+					dragPointSpec: { datasetIndex: 0, index: 2 },
+					dragDestPointSpecOrStartPointOffset: new Offset2D({
+						xRelative: -1.5,
+						yRelative: 0,
+					}),
+				},
+				{
+					// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart width on x (to the bounds of the chart to the right)
+					axisSpec,
+					dragPointSpec: { datasetIndex: 0, index: 3 },
+					dragDestPointSpecOrStartPointOffset: new Offset2D({
+						xRelative: 1.5,
+						yRelative: 0,
+					}),
+				},
+			]),
+			conditionallySkipInteractionForGroupOfSteps("draggingToCanvasBoundsY", [
+				{
+					// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart height on y (to the bounds of the chart to the top)
+					axisSpec,
+					dragPointSpec: { datasetIndex: 0, index: 2 },
+					dragDestPointSpecOrStartPointOffset: new Offset2D({
+						xRelative: 0,
+						yRelative: -1.5,
+					}),
+				},
+				{
+					// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart height on y (to the bounds of the chart to the bottom)
+					axisSpec,
+					dragPointSpec: { datasetIndex: 0, index: 3 },
+					dragDestPointSpecOrStartPointOffset: new Offset2D({
+						xRelative: 0,
+						yRelative: 1.5,
+					}),
+				},
+			]),
 		].map(generateStepGroupConfigurationApplicator(axisSpec)),
 	),
 } satisfies Partial<TestScenario<E2EInteraction>>);
 
-export const simpleCategoricalChartScenario = _.merge(
-	{},
+export const categoricalLineChartScenario = mergeScenarioPartialConfigurations(
+	{ configuration: { type: "line" } },
 	simpleChartScenarioBase,
 	{
 		isCategoricalX: true,
@@ -191,30 +193,41 @@ export const simpleCategoricalChartScenario = _.merge(
 	},
 ) satisfies TestScenario<E2EInteraction>;
 
-export const simpleLinearChartScenario = _.merge({}, simpleChartScenarioBase, {
-	configuration: {
-		data: {
-			datasets: simpleChartScenarioBase.configuration.data.datasets.map(
-				(dataset) => ({
-					...dataset,
-					data: dataset.data.map((value, index) => ({
-						x: index,
-						y: value,
-					})),
-				}),
-			),
-		},
-		options: {
-			scales: {
-				x: {
-					type: "linear",
+export const linearLineChartScenario = mergeScenarioPartialConfigurations(
+	{ configuration: { type: "line" } },
+	simpleChartScenarioBase,
+	{
+		configuration: {
+			data: {
+				datasets: simpleChartScenarioBase.configuration.data.datasets.map(
+					(dataset) => ({
+						...dataset,
+						data: dataset.data.map((value, index) => ({
+							x: index,
+							y: value,
+						})),
+					}),
+				),
+			},
+			options: {
+				scales: {
+					x: {
+						type: "linear",
+					},
 				},
 			},
 		},
 	},
-} satisfies {
-	configuration: DeepPartial<TestScenario<E2EInteraction>["configuration"]>;
-}) as TestScenario<E2EInteraction>;
+) as TestScenario<E2EInteraction>;
+
+export const barChartScenario = mergeScenarioPartialConfigurations(
+	{ configuration: { type: "bar" } },
+	simpleChartScenarioBase,
+	{
+		isCategoricalX: true,
+		isCategoricalY: false,
+	},
+) as TestScenario<E2EInteraction>;
 
 export type TestScenariosRegistry = Record<
 	string,
@@ -284,9 +297,9 @@ function postprocessScenariosRegistry<
 
 export const TestScenarios = postprocessScenariosRegistry({
 	/** "Simple" dataset scenarios */
-	"line-categorical.html": simpleCategoricalChartScenario,
-	"line-linear.html": simpleLinearChartScenario,
-	"bar.html": simpleCategoricalChartScenario,
+	"line-categorical.html": categoricalLineChartScenario,
+	"line-linear.html": linearLineChartScenario,
+	"bar.html": barChartScenario,
 	// "horizontalBar.html": simpleCategoricalChartScenario,
 	// "polar.html": simpleCategoricalChartScenario,
 	// "radar.html": simpleCategoricalChartScenario,

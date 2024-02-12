@@ -54,7 +54,7 @@ for (const disablePlugin of [false, true]) {
 								() => {
 									test.describe.configure({ mode: "serial" }); // in this context, we want tests to run serially since they will reuse that same page
 
-									test.beforeAll(async ({ browser }, testInfo) => {
+									test.beforeAll(async ({ browser }) => {
 										page = await browser.newPage();
 
 										await setupE2ETest(
@@ -65,7 +65,6 @@ for (const disablePlugin of [false, true]) {
 												magnet,
 											},
 											page,
-											testInfo,
 										);
 									});
 

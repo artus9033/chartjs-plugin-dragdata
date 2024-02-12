@@ -3,7 +3,10 @@ import path from "path";
 
 import ejs from "ejs";
 
-import type { TestScenarios as TestScenariosType } from "../../tests/__data__/data";
+import {
+	TestScenarios,
+	type TestScenarios as TestScenariosType,
+} from "../../tests/__data__/data";
 import { BundledPage } from "./types";
 
 export function requireUncached(module: string) {
@@ -23,12 +26,14 @@ export function renderPage({
 	fileName: keyof typeof TestScenariosType;
 }): BundledPage {
 	const template = ejsFileToTemplate(
-		path.join(path.dirname(__filename), "templates", "layout.html.ejs"),
-	);
+			path.join(path.dirname(__filename), "templates", "layout.html.ejs"),
+		),
+		scenario = TestScenarios[fileName];
 
 	return {
 		html: template({
 			title: `${title} demo`,
+			scenarioConfiguration: JSON.stringify(scenario.configuration),
 		}),
 		outputFileName: fileName as string,
 	};

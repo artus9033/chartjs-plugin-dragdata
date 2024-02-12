@@ -27,7 +27,10 @@
 		<canvas id="chartJSContainer" style="height: 90%; width: 90%"></canvas>
 
 		<script>
+			const scenarioConfiguration = JSON.parse(`<%- scenarioConfiguration %>`);
+
 			window.isTestReady = false;
+			window.isPluginLoaded = false;
 
 			window.setupTest = function setupTest(options) {
 				const {
@@ -36,7 +39,6 @@
 					draggableAxis,
 					magnetImplSerialized,
 					roundingPrecision,
-					configurationOverrides,
 				} = options;
 
 				if (isTest) {
@@ -52,7 +54,8 @@
 				}
 
 				function onPluginScriptLoaded() {
-					console.log("Plugin script loaded");
+					if (!window.isPluginLoaded) console.log("Plugin script loaded");
+					window.isPluginLoaded = true;
 
 					const bothAxesDraggable = draggableAxis === "both",
 						xAxisDraggable =
@@ -72,7 +75,6 @@
 
 					const configuration = _.merge(
 						{
-							type: "line",
 							options: {
 								animation: !isTest,
 								plugins: {
@@ -111,7 +113,7 @@
 								},
 							},
 						},
-						configurationOverrides,
+						scenarioConfiguration,
 					);
 
 					console.log("Constructed chart configuration:", configuration);
@@ -134,16 +136,40 @@
 					window.isTestReady = true;
 				}
 
-				// load the plugin script dynamically - either with IstanbulJS's coverage statements or not, depending on the value of isTest
-				let scriptElement = document.createElement("script");
-				scriptElement.src = isTest
-					? "assets/chartjs-plugin-dragdata-test-browser.js"
-					: "assets/chartjs-plugin-dragdata.min.js";
+				if (window.isPluginLoaded) {
+					onPluginScriptLoaded();
+				} else {
+					// load the plugin script dynamically - either with IstanbulJS's coverage statements or not, depending on the value of isTest
+					let scriptElement = document.createElement("script");
+					scriptElement.src = isTest
+						? "assets/chartjs-plugin-dragdata-test-browser.js"
+						: "assets/chartjs-plugin-dragdata.min.js";
 
-				console.log("Loading plugin script from:", scriptElement.src);
+					console.log("Loading plugin script from:", scriptElement.src);
 
-				scriptElement.onload = onPluginScriptLoaded;
-				document.head.appendChild(scriptElement);
+					scriptElement.onload = onPluginScriptLoaded;
+					document.head.appendChild(scriptElement);
+				}
+			};
+
+			document.body.onload = function onBodyLoaded() {
+				let urlSearchParams = new URLSearchParams(window.location.search);
+
+				if (
+					!urlSearchParams.has("isTest") ||
+					urlSearchParams.get("isTest") !== "true"
+				) {
+					console.log(
+						"Not running in test mode - setting up chart automatically with default options",
+					);
+
+					setupTest({
+						isTest: false,
+						disablePlugin: false,
+						draggableAxis: "both",
+						roundingPrecision: 2,
+					});
+				}
 			};
 		</script>
 	</body>

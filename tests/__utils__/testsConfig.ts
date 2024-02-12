@@ -156,8 +156,8 @@ integration.whitelistedIntegrations = loadWhitelistFromConfig(
 
 export type E2EInteraction =
 	| "standardDragging"
-	| "draggingOutOfCanvasBoundsX"
-	| "draggingOutOfCanvasBoundsY";
+	| "draggingToCanvasBoundsX"
+	| "draggingToCanvasBoundsY";
 
 export type E2EConfig = {
 	testedAxes: AxisSpec[];

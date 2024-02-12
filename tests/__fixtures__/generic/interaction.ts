@@ -71,6 +71,8 @@ export type GenericDragTestParams = {
 	isCategoricalY?: boolean;
 	/** finds the {@see {Point2D}} on screen for a given chart value */
 	getCoordinateOnScaleForAxis: GetCoordinateOnScaleForAxisFunc;
+	/** the comment to be shown when drag assertion fails (helps identify which step does it link to) */
+	additionalInfo?: string;
 } & (
 	| {
 			/** whether to assert the result at all - **overrides all other expectation parameters**  */
@@ -115,6 +117,7 @@ export async function _genericTestDrag({
 	magnet,
 	getDataFromPointOnScreen,
 	getCoordinateOnScaleForAxis,
+	additionalInfo,
 }: GenericDragTestParams) {
 	await initFunc?.();
 
@@ -254,6 +257,7 @@ export async function _genericTestDrag({
 								new Point2D({ x: 0, y: 0 }),
 								new Point2D({ x: 0 + 1e-6, y: 0 + 1e-6 }), // tolerance up to 1e-6
 							),
+							`${additionalInfo} (with magnet ${magnet})`,
 						);
 					}
 
@@ -336,10 +340,15 @@ export async function _genericTestDrag({
 			expect?.(actualNewDraggedPointLocation).pointsToBeClose(
 				expectedDestPoint,
 				pointDistanceTolerance,
+				additionalInfo,
 			);
 		} else {
 			// if plugin is disabled, then the new position should not have changed at all
-			expect?.(actualNewDraggedPointLocation).pointsToBeClose(dragStartPoint);
+			expect?.(actualNewDraggedPointLocation).pointsToBeClose(
+				dragStartPoint,
+				undefined,
+				`${additionalInfo} (plugin disabled)`,
+			);
 		}
 	}
 }

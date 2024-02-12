@@ -4,11 +4,11 @@ import type Point2D from "./tests/__utils__/Point2D";
 import type { AxisSpec } from "./__utils__/structures/axisSpec";
 
 interface CustomMatchers<R = unknown> {
-	pointsToBeClose(p2: Point2D, maxDistance?: number): R;
-}
-
-interface CustomMatchersJest<R = unknown> {
-	pointsToBeClose(p2: Point2D, maxDistance?: number): R;
+	pointsToBeClose(
+		p2: Point2D,
+		maxDistance?: number,
+		additionalInfo?: string,
+	): R;
 }
 
 declare global {
@@ -18,13 +18,13 @@ declare global {
 		draggableAxis: AxisSpec;
 		magnetImplSerialized?: string;
 		roundingPrecision?: number;
-		configurationOverrides: Partial<ChartConfiguration>;
 	}
 
 	// the test instance exposed by all test pages - typing for tests' code
 	interface Window {
 		testedChart: Chart;
 		isTestReady?: boolean;
+		isPluginLoaded?: boolean;
 		setupTest: (options: TestChartSetupOptions) => void;
 		resetData(): void;
 	}

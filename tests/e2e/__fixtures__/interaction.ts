@@ -7,6 +7,8 @@ import {
 } from "../../__fixtures__/generic/interaction";
 import Offset2D from "../../__utils__/structures/Offset2D";
 import Point2D, { BoundingBox } from "../../__utils__/structures/Point2D";
+import { getAxisDescription } from "../../__utils__/structures/axisSpec";
+import { describeDatasetPointSpecOrPoint } from "../../__utils__/structures/scenario";
 import {
 	playwrightCalcCanvasBB,
 	playwrightGetChartDatasetSamplePixelPosition,
@@ -17,6 +19,7 @@ import { hasGUI } from "../__utils__/testHelpers";
 export type PlaywrightTestDragParams = {
 	page: Page;
 	isDragDataPluginDisabled?: boolean;
+	additionalInfo?: string;
 } & Pick<
 	GenericDragTestParams,
 	| "dragPointSpec"
@@ -34,6 +37,7 @@ export async function playwrightTestDrag({
 	page,
 	isDragDataPluginDisabled = false,
 	magnet,
+	additionalInfo,
 	...parameters
 }: PlaywrightTestDragParams) {
 	const canvasBB = await playwrightCalcCanvasBB(page),
@@ -47,6 +51,7 @@ export async function playwrightTestDrag({
 	return await _genericTestDrag({
 		...parameters,
 		canvasBB,
+		additionalInfo: `${describeDatasetPointSpecOrPoint(parameters.dragPointSpec)} -> ${describeDatasetPointSpecOrPoint(parameters.dragDestPointSpecOrStartPointOffset)} on ${getAxisDescription(parameters.whichAxis)}${additionalInfo ?? ""}`,
 		performDrag: async ({ dragStartPoint, dragDestPoint }) => {
 			// playwright "loops" the cursor when leaving the window bounds, thus we want to clip the coordinates
 			dragStartPoint = dragStartPoint.copyConstrainedTo(windowBB);

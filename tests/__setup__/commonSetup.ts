@@ -29,7 +29,12 @@ type JestExpectExtendMap = Parameters<typeof expect.extend>[0];
 type ExpectExtendMap = JestExpectExtendMap & PlaywrightMatchersDef;
 
 const customMatchers: ExpectExtendMap = {
-	pointsToBeClose(p1: Point2D, p2: Point2D, maxDistancePx: number = 2) {
+	pointsToBeClose(
+		p1: Point2D,
+		p2: Point2D,
+		maxDistancePx: number = 2,
+		additionalInfo?: string,
+	) {
 		const absDistance = Math.abs(euclideanDistance(p1, p2)),
 			pass = absDistance <= maxDistancePx;
 
@@ -38,7 +43,7 @@ const customMatchers: ExpectExtendMap = {
 				message: () =>
 					`Expected the points to be absolutely-distant by at most: ${this.utils.printExpected(
 						maxDistancePx,
-					)}\nActual distance: ${this.utils.printReceived(absDistance)}`,
+					)}\n` + `Actual distance: ${this.utils.printReceived(absDistance)}`,
 				pass: true,
 			};
 		}
@@ -47,7 +52,10 @@ const customMatchers: ExpectExtendMap = {
 			message: () =>
 				`Expected the points to be absolutely-distant by at most: ${this.utils.printExpected(
 					maxDistancePx,
-				)}\nActual distance: ${this.utils.printReceived(absDistance)}\n\nThe points:\n\t> expected: ${this.utils.printExpected(p2.toString())}\n\t> actual: ${this.utils.printExpected(p1.toString())}`,
+				)}\n` +
+				`Actual distance: ${this.utils.printReceived(absDistance)}\n\n` +
+				`The points:\n\t> expected: ${this.utils.printExpected(p2.toString())}\n\t> actual: ${this.utils.printExpected(p1.toString())}` +
+				`${additionalInfo ? `\n\nAdditional information:\n${additionalInfo}` : ""}`,
 			pass: false,
 		};
 	},

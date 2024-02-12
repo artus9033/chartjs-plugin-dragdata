@@ -26,124 +26,125 @@ test.describe.configure({ mode: "parallel" });
 describeEachChartType(async function testGenerator(fileName, scenario) {
 	test.describe.configure({ mode: "parallel" });
 
-	for (let enablerLocationSpec of ALL_ENABLER_LOCATION_SPECS) {
-		test.beforeEach(async ({ page }, testInfo) => {
-			await setupE2ETest({ fileName, draggableAxis: "both" }, page, testInfo);
-		});
-
-		// to configure drag data to be disabled for a given data sample, we need to pass an object specifying that sample
-		// on the other hand, when one of the axes is categorical, then the sample is scalar (number), thus such a test case is impossible to be carried out
-		if (
+	for (let enablerLocationSpec of ALL_ENABLER_LOCATION_SPECS.filter(
+		(enablerLocationSpec) =>
+			// to configure drag data to be disabled just for a given data sample, we need to pass an object specifying that sample
+			// on the other hand, when one of the axes is categorical, then the sample is scalar (number), thus such a test case is impossible to be carried out
 			!(
 				enablerLocationSpec === "data sample config" &&
 				(scenario.isCategoricalX || scenario.isCategoricalY)
-			)
-		) {
-			test(`data dragging behaviour changes appropriately upon ${enablerLocationSpec} dragData configuration property changes`, async ({
-				page,
-			}) => {
-				const dragPointSpec: DatasetPointSpec = {
-						datasetIndex: 0,
-						index: 0,
-					},
-					dragDestPointSpecOrStartPointOffset: DatasetPointSpec = {
-						datasetIndex: 1,
-						index: 3,
-					},
-					commonDragParams: Omit<
-						PlaywrightTestDragParams,
-						"isDragDataPluginDisabled"
-					> = {
-						dragPointSpec,
-						dragDestPointSpecOrStartPointOffset,
-						whichAxis: "both",
-						page,
-						draggableAxis: "both",
-						isCategoricalX: scenario.isCategoricalX,
-						isCategoricalY: scenario.isCategoricalY,
-					};
+			),
+	)) {
+		test.beforeEach(async ({ page }) => {
+			await setupE2ETest({ fileName, draggableAxis: "both" }, page);
+		});
 
-				async function updateChartDragDataEnabledConfig(bEnabled: boolean) {
-					await page.evaluate(
-						({ enablerLocationSpec, bEnabled, dragPointSpec }) => {
-							switch (enablerLocationSpec) {
-								case "dataset config":
-									window.testedChart.data.datasets =
-										window.testedChart.data.datasets.map((dataset) => ({
-											...dataset,
-											dragData: bEnabled,
-										}));
-									break;
+		test(`data dragging behaviour changes appropriately upon ${enablerLocationSpec} dragData configuration property changes`, async ({
+			page,
+		}) => {
+			const dragPointSpec: DatasetPointSpec = {
+					datasetIndex: 0,
+					index: 0,
+				},
+				dragDestPointSpecOrStartPointOffset: DatasetPointSpec = {
+					datasetIndex: 1,
+					index: 3,
+				},
+				commonDragParams: Omit<
+					PlaywrightTestDragParams,
+					"isDragDataPluginDisabled"
+				> = {
+					dragPointSpec,
+					dragDestPointSpecOrStartPointOffset,
+					whichAxis: "both",
+					page,
+					draggableAxis: "both",
+					isCategoricalX: scenario.isCategoricalX,
+					isCategoricalY: scenario.isCategoricalY,
+				};
 
-								case "data sample config":
-									{
-										const dataSample =
-											window.testedChart.data.datasets[
-												dragPointSpec.datasetIndex
-											].data[dragPointSpec.datasetIndex];
+			async function updateChartDragDataEnabledConfig(bEnabled: boolean) {
+				await page.evaluate(
+					({ enablerLocationSpec, bEnabled, dragPointSpec }) => {
+						switch (enablerLocationSpec) {
+							case "dataset config":
+								window.testedChart.data.datasets =
+									window.testedChart.data.datasets.map((dataset) => ({
+										...dataset,
+										dragData: bEnabled,
+									}));
+								break;
 
-										if (typeof dataSample === "number") {
-											throw new Error(
-												"updateChartDragDataEnabledConfig: data sample config dragData enabler location specifier is incompatible with charts using a categorical axis",
-											);
-										}
+							case "data sample config":
+								{
+									const dataSample =
+										window.testedChart.data.datasets[dragPointSpec.datasetIndex]
+											.data[dragPointSpec.datasetIndex];
 
-										window.testedChart.data.datasets[
-											dragPointSpec.datasetIndex
-										].data[dragPointSpec.datasetIndex] = Array.isArray(
-											dataSample,
-										)
-											? {
-													x: dataSample[0],
-													y: dataSample[1],
-													// TODO: fix this later with proper TS typings
-													// @ts-ignore
-													dragData: bEnabled,
-												}
-											: {
-													...dataSample,
-													// TODO: fix this later with proper TS typings
-													// @ts-ignore
-													dragData: bEnabled,
-												};
+									if (typeof dataSample === "number") {
+										// note: this should never happen
+										throw new Error(
+											"updateChartDragDataEnabledConfig: 'data sample config' dragData enabler location specifier is incompatible with charts using a categorical axis",
+										);
 									}
-									break;
 
-								case "x-scale":
-								case "y-scale":
-									window.testedChart.config.options!.scales![
-										enablerLocationSpec === "x-scale" ? "x" : "y"
-										// TODO: fix this later with proper TS typings
-										// @ts-ignore
-									]!.dragData = bEnabled;
-									break;
-							}
+									window.testedChart.data.datasets[
+										dragPointSpec.datasetIndex
+									].data[dragPointSpec.datasetIndex] = Array.isArray(dataSample)
+										? {
+												x: dataSample[0],
+												y: dataSample[1],
+												// TODO: fix this later with proper TS typings
+												// @ts-ignore
+												dragData: bEnabled,
+											}
+										: {
+												...dataSample,
+												// TODO: fix this later with proper TS typings
+												// @ts-ignore
+												dragData: bEnabled,
+											};
+								}
+								break;
 
-							window.testedChart.update();
-						},
-						{
-							enablerLocationSpec,
-							bEnabled,
-							dragPointSpec,
-						},
-					);
-				}
+							case "x-scale":
+							case "y-scale":
+								window.testedChart.config.options!.scales![
+									enablerLocationSpec === "x-scale" ? "x" : "y"
+									// TODO: fix this later with proper TS typings
+									// @ts-ignore
+								]!.dragData = bEnabled;
+								break;
+						}
 
-				// disable dragData for a given axis
-				await updateChartDragDataEnabledConfig(false);
+						window.testedChart.update();
+					},
+					{
+						enablerLocationSpec,
+						bEnabled,
+						dragPointSpec,
+					},
+				);
+			}
 
-				// assert that no drag occurs when the plugin is disabled
-				await playwrightTestDrag({
-					...commonDragParams,
-					isDragDataPluginDisabled: true,
-				});
+			// disable dragData for a given axis
+			await updateChartDragDataEnabledConfig(false);
 
-				// update the configuration to enable dragData again for the axis
-				await updateChartDragDataEnabledConfig(true);
-
-				// assert that the drag occurs after configuration allows for dragging again
-				await playwrightTestDrag(commonDragParams);
+			// assert that no drag occurs when the plugin is disabled
+			await playwrightTestDrag({
+				...commonDragParams,
+				isDragDataPluginDisabled: true,
+				additionalInfo: " (dragging disabled)",
 			});
-		}
+
+			// update the configuration to enable dragData again for the axis
+			await updateChartDragDataEnabledConfig(true);
+
+			// assert that the drag occurs after configuration allows for dragging again
+			await playwrightTestDrag({
+				...commonDragParams,
+				additionalInfo: " (dragging enabled)",
+			});
+		});
 	}
 });
