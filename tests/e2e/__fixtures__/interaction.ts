@@ -51,7 +51,16 @@ export async function playwrightTestDrag({
 	return await _genericTestDrag({
 		...parameters,
 		canvasBB,
-		additionalInfo: `${describeDatasetPointSpecOrPoint(parameters.dragPointSpec)} -> ${describeDatasetPointSpecOrPoint(parameters.dragDestPointSpecOrStartPointOffset)} on ${getAxisDescription(parameters.whichAxis)}${additionalInfo ?? ""}`,
+		additionalInfo:
+			`${describeDatasetPointSpecOrPoint(parameters.dragPointSpec)} -> ${describeDatasetPointSpecOrPoint(parameters.dragDestPointSpecOrStartPointOffset)} on ${getAxisDescription(parameters.whichAxis)}${additionalInfo ?? ""}\n` +
+			JSON.stringify(
+				{
+					isCategoricalX: parameters.isCategoricalX,
+					isCategoricalY: parameters.isCategoricalY,
+				},
+				undefined,
+				4,
+			),
 		performDrag: async ({ dragStartPoint, dragDestPoint }) => {
 			// playwright "loops" the cursor when leaving the window bounds, thus we want to clip the coordinates
 			dragStartPoint = dragStartPoint.copyConstrainedTo(windowBB);
@@ -63,10 +72,14 @@ export async function playwrightTestDrag({
 				);
 			}
 
-			await page.mouse.move(...dragStartPoint.toArray());
+			await page.mouse.move(...dragStartPoint.toArray(), {
+				steps: hasGUI() ? 8 : undefined,
+			});
 			await page.mouse.down();
 
-			await page.mouse.move(...dragDestPoint.toArray());
+			await page.mouse.move(...dragDestPoint.toArray(), {
+				steps: hasGUI() ? 8 : undefined,
+			});
 			await page.mouse.up();
 		},
 		getChartDatasetSamplePixelPosition: (datasetIndex, sampleIndex) =>
@@ -84,8 +97,8 @@ export async function playwrightTestDrag({
 					magnet,
 					getDataFromPointOnScreen: async (pointOnScreen, canvasBB) => {
 						pointOnScreen = new Offset2D({
-							x: -canvasBB.x,
-							y: -canvasBB.y,
+							xAbs: -canvasBB.x,
+							yAbs: -canvasBB.y,
 						}).translatePoint(pointOnScreen);
 
 						const { x, y } = await page.evaluate(

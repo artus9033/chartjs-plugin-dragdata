@@ -1,11 +1,13 @@
 import { test } from "playwright-test-coverage";
 
+import Offset2D from "../__utils__/structures/Offset2D";
 import { DatasetPointSpec } from "../__utils__/testTypes";
 import { setupE2ETest } from "./__fixtures__";
 import {
 	PlaywrightTestDragParams,
 	playwrightTestDrag,
 } from "./__fixtures__/interaction";
+import { BAR_SAFETY_HIT_MARGIN } from "./__utils__/constants";
 import { describeEachChartType } from "./__utils__/testHelpers";
 
 type PluginEnablerLocationSpec =
@@ -41,10 +43,25 @@ describeEachChartType(async function testGenerator(fileName, scenario) {
 
 		test(`data dragging behaviour changes appropriately upon ${enablerLocationSpec} dragData configuration property changes`, async ({
 			page,
+			browserName,
 		}) => {
+			test.skip(
+				!!scenario.unsupportedBrowsers?.includes(browserName),
+				"Browser not supported by this test scenario",
+			);
+
 			const dragPointSpec: DatasetPointSpec = {
 					datasetIndex: 0,
 					index: 0,
+					additionalOffset:
+						// since the bar chart does not support hit radius extension, we need to be precise
+						// and as testing is not perfectly precise, we want a safety margin: we start
+						// dragging from a bit lower than the edge to make sure we hit the bar
+						new Offset2D({
+							yAbs: -BAR_SAFETY_HIT_MARGIN,
+							scalable: false,
+							shouldBeLogged: false,
+						}),
 				},
 				dragDestPointSpecOrStartPointOffset: DatasetPointSpec = {
 					datasetIndex: 1,
@@ -117,7 +134,12 @@ describeEachChartType(async function testGenerator(fileName, scenario) {
 								break;
 						}
 
-						window.testedChart.update();
+						window.testedChart.update("none");
+
+						console.log(
+							"[updateChartDragDataEnabledConfig] Updated configuration:",
+							JSON.stringify(window.testedChart.config),
+						);
 					},
 					{
 						enablerLocationSpec,

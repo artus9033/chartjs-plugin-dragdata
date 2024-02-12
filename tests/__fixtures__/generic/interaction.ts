@@ -155,21 +155,20 @@ export async function _genericTestDrag({
 				: (
 						dragDestPointSpecOrStartPointOffset.additionalOffset?.scaledCopy(
 							canvasDragDestPointSpecChartValueToPxScale,
-						) ?? new Offset2D({ x: 0, y: 0 })
-					) // by default, no offset
-						.translatePoint(
-							await getDatasetPointLocationOnScreen(
-								getChartDatasetSamplePixelPosition,
-								dragDestPointSpecOrStartPointOffset,
-								canvasBB,
-							),
+						) ?? new Offset2D({ xAbs: 0, yAbs: 0 })
+					).translatePoint(
+						await getDatasetPointLocationOnScreen(
+							getChartDatasetSamplePixelPosition,
+							dragDestPointSpecOrStartPointOffset,
+							canvasBB,
 						),
+					),
 		dragDestPoint = calcDragTargetPosition(
 			dragStartPoint,
 			dragDesiredDestPoint,
 			whichAxis,
 			"both", // pretend all axes are draggable for interaction
-			undefined, // on purpose we don't want to constrain the point here - some tests may want to drag the point outside canvas bounds
+			chartAreaBB,
 		),
 		expectedDestPointOverride = expectedDestPointSpecOverride
 			? await getDatasetPointLocationOnScreen(
@@ -181,7 +180,9 @@ export async function _genericTestDrag({
 
 	// simulate a drag event
 	await performDrag({
-		dragStartPoint,
+		dragStartPoint: (
+			dragPointSpec.additionalOffset ?? new Offset2D({ xAbs: 0, yAbs: 0 })
+		).translatePoint(dragStartPoint),
 		dragDestPoint,
 	});
 
@@ -251,13 +252,15 @@ export async function _genericTestDrag({
 							6,
 						); // tolerance up to 1e-6
 					} else {
+						additionalInfo = (additionalInfo ?? "") + `\nWith magnet ${magnet}`;
+
 						expect?.(actualData as number).pointsToBeClose(
 							actualDataAfterMagnet,
 							euclideanDistance(
 								new Point2D({ x: 0, y: 0 }),
 								new Point2D({ x: 0 + 1e-6, y: 0 + 1e-6 }), // tolerance up to 1e-6
 							),
-							`${additionalInfo} (with magnet ${magnet})`,
+							additionalInfo,
 						);
 					}
 
@@ -293,19 +296,36 @@ export async function _genericTestDrag({
 							}
 						} else {
 							expectedDestPoint = new Offset2D({
-								x: canvasBB.left,
-								y: canvasBB.top,
+								xAbs: canvasBB.left,
+								yAbs: canvasBB.top,
 							}).translatePoint(
-								new Point2D({
-									x: await getCoordinateOnScaleForAxis(
-										expectedValueAfterMagnet.x,
-										"x",
-									),
-									y: await getCoordinateOnScaleForAxis(
-										expectedValueAfterMagnet.y,
-										"y",
-									),
-								}),
+								isCategoricalX
+									? new Point2D({
+											x: expectedDestPoint.x,
+											y: await getCoordinateOnScaleForAxis(
+												expectedValueAfterMagnet.y,
+												"y",
+											),
+										})
+									: isCategoricalY
+										? new Point2D({
+												x: await getCoordinateOnScaleForAxis(
+													expectedValueAfterMagnet.x,
+													"x",
+												),
+												y: expectedDestPoint.y,
+											})
+										: // no categorical axes
+											new Point2D({
+												x: await getCoordinateOnScaleForAxis(
+													expectedValueAfterMagnet.x,
+													"x",
+												),
+												y: await getCoordinateOnScaleForAxis(
+													expectedValueAfterMagnet.y,
+													"y",
+												),
+											}),
 							);
 						}
 					}
@@ -347,7 +367,7 @@ export async function _genericTestDrag({
 			expect?.(actualNewDraggedPointLocation).pointsToBeClose(
 				dragStartPoint,
 				undefined,
-				`${additionalInfo} (plugin disabled)`,
+				`${additionalInfo}${additionalInfo ? "\n" : ""}Plugin disabled`,
 			);
 		}
 	}

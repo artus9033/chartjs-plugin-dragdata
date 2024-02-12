@@ -43,7 +43,7 @@ const allAvailableRunners: Project[] = [
 export default defineConfig({
 	use: {
 		launchOptions: {
-			slowMo: hasGUI() ? 300 : undefined,
+			slowMo: hasGUI() ? 550 : undefined,
 		},
 		video: "retain-on-failure",
 		trace: "off",

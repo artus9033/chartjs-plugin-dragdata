@@ -13,6 +13,8 @@ export type TestScenarioStepsGroup<GroupNameType> = {
 	steps: TestScenarioStep[];
 	/** whether this group of interactions should be skipped */
 	shouldBeSkipped: boolean;
+	/** whether tests in this group should involve screenshot snapshot testing */
+	shouldAssertScreenshot: boolean;
 };
 
 export type TestScenarioStep = {
@@ -35,6 +37,7 @@ export type TestScenario<GroupNameType> = {
 	isCategoricalX?: boolean;
 	/** whether y is categorical (not linear, thus not draggable) */
 	isCategoricalY?: boolean;
+	unsupportedBrowsers?: Array<"chromium" | "firefox" | "webkit">;
 };
 
 export function describeDatasetPointSpecOrPoint(
@@ -46,6 +49,6 @@ export function describeDatasetPointSpecOrPoint(
 	) {
 		return datasetPointSpecOrPoint.toString();
 	} else {
-		return `dataset #${datasetPointSpecOrPoint.datasetIndex} point #${datasetPointSpecOrPoint.index}${datasetPointSpecOrPoint.additionalOffset ? ` (with ${datasetPointSpecOrPoint.additionalOffset.toString()})` : ""}`;
+		return `dataset #${datasetPointSpecOrPoint.datasetIndex} point #${datasetPointSpecOrPoint.index}${datasetPointSpecOrPoint.additionalOffset?.shouldBeLogged ? ` (with ${datasetPointSpecOrPoint.additionalOffset.toString()})` : ""}`;
 	}
 }

@@ -31,7 +31,7 @@ export async function getDatasetPointLocationOnScreen(
 	);
 
 	return new Offset2D({
-		x: canvasBB?.left ?? 0,
-		y: canvasBB?.top ?? 0,
+		xAbs: canvasBB?.left ?? 0,
+		yAbs: canvasBB?.top ?? 0,
 	}).translatePoint(positionOnCanvas);
 }

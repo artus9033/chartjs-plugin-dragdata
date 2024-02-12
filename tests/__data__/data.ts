@@ -12,6 +12,7 @@ import testsConfig, {
 } from "../__utils__/testsConfig";
 import Offset2D from "../__utils__/structures/Offset2D";
 import { ALL_AXES_SPECS, AxisSpec } from "../__utils__/structures/axisSpec";
+import { BAR_SAFETY_HIT_MARGIN } from "../e2e/__utils__/constants";
 
 export const TestChartOptions: ChartOptions = {
 	plugins: {
@@ -31,6 +32,7 @@ function mergeScenarioPartialConfigurations(
 function conditionallySkipInteractionForGroupOfSteps(
 	category: E2EInteraction,
 	steps: Array<TestScenarioStep>,
+	shouldAssertScreenshot: boolean,
 ): TestScenarioStepsGroup<E2EInteraction> {
 	let isInteractionAllowed = isTestsConfigWhitelistItemAllowed(
 		"e2e",
@@ -42,6 +44,7 @@ function conditionallySkipInteractionForGroupOfSteps(
 		groupName: category,
 		steps,
 		shouldBeSkipped: !isInteractionAllowed,
+		shouldAssertScreenshot,
 	};
 }
 
@@ -85,103 +88,117 @@ export const simpleChartScenarioBase = _.merge({}, commonChartScenarioBase, {
 			],
 		},
 	},
-	stepGroups: ALL_AXES_SPECS.flatMap((axisSpec) =>
-		[
-			conditionallySkipInteractionForGroupOfSteps("standardDragging", [
-				{
-					// dataset index 0 point index 0 -> dataset index 0 point index 1
-					axisSpec,
-					dragPointSpec: { datasetIndex: 0, index: 0 },
-					dragDestPointSpecOrStartPointOffset: {
-						datasetIndex: 0,
-						index: 1,
+	stepGroups: ALL_AXES_SPECS.flatMap((axisSpec) => {
+		const shouldAssertScreenshot = axisSpec === "both";
+
+		return [
+			conditionallySkipInteractionForGroupOfSteps(
+				"standardDragging",
+				[
+					{
+						// dataset index 0 point index 0 -> dataset index 0 point index 1
+						axisSpec,
+						dragPointSpec: { datasetIndex: 0, index: 0 },
+						dragDestPointSpecOrStartPointOffset: {
+							datasetIndex: 0,
+							index: 1,
+						},
 					},
-				},
-				{
-					// dataset index 0 point index 2 -> point position offset by +0.8 of a single unit on x and +1.25 of a single unit on y
-					// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
-					axisSpec,
-					dragPointSpec: { datasetIndex: 0, index: 2 },
-					dragDestPointSpecOrStartPointOffset: new Offset2D({
-						x: 0.8, // in chart-value units
-						y: 1.25, // in chart-value units
-					}),
-				},
-				{
-					// dataset index 0 point index 2 -> dataset index 0 point index 2
-					// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
-					axisSpec,
-					dragPointSpec: { datasetIndex: 0, index: 2 },
-					dragDestPointSpecOrStartPointOffset: {
-						datasetIndex: 0,
-						index: 2,
-					},
-				},
-				{
-					// dataset index 1 point index 3 -> dataset index 0 point index 3 offset by -0.1 of a single unit on x and +0.1 of a single unit on y
-					axisSpec,
-					dragPointSpec: { datasetIndex: 1, index: 3 },
-					dragDestPointSpecOrStartPointOffset: {
-						datasetIndex: 0,
-						index: 3,
-						additionalOffset: new Offset2D({
-							x: -0.1, // in chart-value units
-							y: 0.1, // in chart-value units
+					{
+						// dataset index 0 point index 2 -> point position offset by +0.8 of a single unit on x and +1.25 of a single unit on y
+						// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
+						axisSpec,
+						dragPointSpec: { datasetIndex: 0, index: 2 },
+						dragDestPointSpecOrStartPointOffset: new Offset2D({
+							xAbs: 0.8, // in chart-value units
+							yAbs: 1.25, // in chart-value units
 						}),
 					},
-				},
-				{
-					// dataset index 1 point index 2 -> point position offset by +0.18 of a single unit on x and +0.5 of a single unit on y
-					axisSpec,
-					dragPointSpec: { datasetIndex: 1, index: 2 },
-					dragDestPointSpecOrStartPointOffset: new Offset2D({
-						x: 0.18, // in chart-value units
-						y: 0.5, // in chart-value units
-					}),
-				},
-			]),
-			conditionallySkipInteractionForGroupOfSteps("draggingToCanvasBoundsX", [
-				{
-					// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart width on x (to the bounds of the chart to the left)
-					axisSpec,
-					dragPointSpec: { datasetIndex: 0, index: 2 },
-					dragDestPointSpecOrStartPointOffset: new Offset2D({
-						xRelative: -1.5,
-						yRelative: 0,
-					}),
-				},
-				{
-					// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart width on x (to the bounds of the chart to the right)
-					axisSpec,
-					dragPointSpec: { datasetIndex: 0, index: 3 },
-					dragDestPointSpecOrStartPointOffset: new Offset2D({
-						xRelative: 1.5,
-						yRelative: 0,
-					}),
-				},
-			]),
-			conditionallySkipInteractionForGroupOfSteps("draggingToCanvasBoundsY", [
-				{
-					// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart height on y (to the bounds of the chart to the top)
-					axisSpec,
-					dragPointSpec: { datasetIndex: 0, index: 2 },
-					dragDestPointSpecOrStartPointOffset: new Offset2D({
-						xRelative: 0,
-						yRelative: -1.5,
-					}),
-				},
-				{
-					// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart height on y (to the bounds of the chart to the bottom)
-					axisSpec,
-					dragPointSpec: { datasetIndex: 0, index: 3 },
-					dragDestPointSpecOrStartPointOffset: new Offset2D({
-						xRelative: 0,
-						yRelative: 1.5,
-					}),
-				},
-			]),
-		].map(generateStepGroupConfigurationApplicator(axisSpec)),
-	),
+					{
+						// dataset index 0 point index 2 -> dataset index 0 point index 2
+						// tests moving to that point's coordinates themselves, asserts that the position is not modified (except for the magnet, if applicable)
+						axisSpec,
+						dragPointSpec: { datasetIndex: 0, index: 2 },
+						dragDestPointSpecOrStartPointOffset: {
+							datasetIndex: 0,
+							index: 2,
+						},
+					},
+					{
+						// dataset index 1 point index 3 -> dataset index 0 point index 3 offset by -0.1 of a single unit on x and +0.1 of a single unit on y
+						axisSpec,
+						dragPointSpec: { datasetIndex: 1, index: 3 },
+						dragDestPointSpecOrStartPointOffset: {
+							datasetIndex: 0,
+							index: 3,
+							additionalOffset: new Offset2D({
+								xAbs: -0.1, // in chart-value units
+								yAbs: 0.1, // in chart-value units
+							}),
+						},
+					},
+					{
+						// dataset index 1 point index 2 -> point position offset by +0.18 of a single unit on x and +0.5 of a single unit on y
+						axisSpec,
+						dragPointSpec: { datasetIndex: 1, index: 2 },
+						dragDestPointSpecOrStartPointOffset: new Offset2D({
+							xAbs: 0.18, // in chart-value units
+							yAbs: 0.5, // in chart-value units
+						}),
+					},
+				],
+				shouldAssertScreenshot,
+			),
+			conditionallySkipInteractionForGroupOfSteps(
+				"draggingToCanvasBoundsX",
+				[
+					{
+						// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart width on x (to the bounds of the chart to the left)
+						axisSpec,
+						dragPointSpec: { datasetIndex: 0, index: 2 },
+						dragDestPointSpecOrStartPointOffset: new Offset2D({
+							xRelative: -1.5,
+							yRelative: 0,
+						}),
+					},
+					{
+						// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart width on x (to the bounds of the chart to the right)
+						axisSpec,
+						dragPointSpec: { datasetIndex: 0, index: 3 },
+						dragDestPointSpecOrStartPointOffset: new Offset2D({
+							xRelative: 1.5,
+							yRelative: 0,
+						}),
+					},
+				],
+				shouldAssertScreenshot,
+			),
+			conditionallySkipInteractionForGroupOfSteps(
+				"draggingToCanvasBoundsY",
+				[
+					{
+						// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart height on y (to the bounds of the chart to the top)
+						axisSpec,
+						dragPointSpec: { datasetIndex: 0, index: 2 },
+						dragDestPointSpecOrStartPointOffset: new Offset2D({
+							xRelative: 0,
+							yRelative: -1.5,
+						}),
+					},
+					{
+						// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart height on y (to the bounds of the chart to the bottom)
+						axisSpec,
+						dragPointSpec: { datasetIndex: 0, index: 3 },
+						dragDestPointSpecOrStartPointOffset: new Offset2D({
+							xRelative: 0,
+							yRelative: 1.5,
+						}),
+					},
+				],
+				shouldAssertScreenshot,
+			),
+		].map(generateStepGroupConfigurationApplicator(axisSpec));
+	}),
 } satisfies Partial<TestScenario<E2EInteraction>>);
 
 export const categoricalLineChartScenario = mergeScenarioPartialConfigurations(
@@ -220,9 +237,37 @@ export const linearLineChartScenario = mergeScenarioPartialConfigurations(
 	},
 ) as TestScenario<E2EInteraction>;
 
+export const barChartScenarioBase = {
+	configuration: { type: "bar" },
+} satisfies Partial<TestScenario<E2EInteraction>>;
+
 export const barChartScenario = mergeScenarioPartialConfigurations(
-	{ configuration: { type: "bar" } },
-	simpleChartScenarioBase,
+	barChartScenarioBase,
+	{
+		...simpleChartScenarioBase,
+		stepGroups: simpleChartScenarioBase.stepGroups.map((group) => ({
+			...group,
+			steps: group.steps.map((step) => ({
+				...step,
+				dragPointSpec: {
+					...step.dragPointSpec,
+					additionalOffset: (
+						step.dragPointSpec.additionalOffset ??
+						new Offset2D({ xAbs: 0, yAbs: 0, shouldBeLogged: false })
+					).summedCopy(
+						// since the bar chart does not support hit radius extension, we need to be precise
+						// and as testing is not perfectly precise, we want a safety margin: we start
+						// dragging from a bit lower than the edge to make sure we hit the bar
+						new Offset2D({
+							yAbs: -BAR_SAFETY_HIT_MARGIN,
+							scalable: false,
+							shouldBeLogged: false,
+						}),
+					),
+				},
+			})),
+		})),
+	},
 	{
 		isCategoricalX: true,
 		isCategoricalY: false,

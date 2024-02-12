@@ -1,5 +1,4 @@
 import { test, expect } from "playwright-test-coverage";
-import path from "path";
 import {
 	ALL_AXES_SPECS,
 	AxisSpec,
@@ -11,15 +10,13 @@ import testsConfig, {
 	isTestsConfigWhitelistItemAllowed,
 } from "../__utils__/testsConfig";
 import { describeEachChartType, hasGUI } from "./__utils__/testHelpers";
+import { ALL_TESTED_MAGNET_VARIANTS, MagnetVariant } from "../__utils__/magnet";
 import {
-	ALL_TESTED_MAGNET_VARIANTS,
-	MagnetImplementations,
-	MagnetVariant,
-} from "../__utils__/magnet";
-import { SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT } from "./__utils__/constants";
+	SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_DESKTOP,
+	SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_MOBILE,
+} from "./__utils__/constants";
 import type { Page } from "playwright";
 import { setupE2ETest } from "./__fixtures__";
-import Offset2D from "../__utils__/structures/Offset2D";
 
 test.describe.configure({ mode: "parallel" });
 
@@ -86,24 +83,37 @@ for (const disablePlugin of [false, true]) {
 											for (const {
 												step,
 												isLastStepInGroup,
-												draggingDisabledForInteraction,
+												exactDraggingImpossible,
+												partialDraggingPossible,
 											} of (disablePlugin
 												? stepsGroup.steps.slice(0, 1)
 												: stepsGroup.steps
 											).map((step, index, { length }) => ({
 												step,
 												isLastStepInGroup: index === length - 1,
-												draggingDisabledForInteraction:
+												exactDraggingImpossible:
 													disablePlugin ||
-													(step.axisSpec !== "both" &&
+													(draggableAxis !== "both" &&
 														step.axisSpec !== draggableAxis),
+												partialDraggingPossible: step.axisSpec === "both",
 											}))) {
 												test(`${
-													draggingDisabledForInteraction
-														? "does not move"
+													exactDraggingImpossible
+														? partialDraggingPossible
+															? "partially moves"
+															: "does not move"
 														: "moves"
-												} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} upon dragging on ${getAxisDescription(step.axisSpec)}`, async ({}, testInfo) => {
+												} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} upon dragging on ${getAxisDescription(step.axisSpec)}`, async ({
+													browserName,
+												}, testInfo) => {
 													testInfo.snapshotSuffix = ""; // disable per-platform screenshot snapshots
+
+													test.skip(
+														!!scenario.unsupportedBrowsers?.includes(
+															browserName,
+														),
+														"Browser not supported by this test scenario",
+													);
 
 													// perform the interaction
 													await playwrightTestDrag({
@@ -117,15 +127,21 @@ for (const disablePlugin of [false, true]) {
 														magnet,
 													});
 
-													if (isLastStepInGroup) {
+													if (
+														stepsGroup.shouldAssertScreenshot &&
+														isLastStepInGroup
+													) {
 														// after each group: (conditionally) compare screenshot snapshots
 														// note: so as not to produce an enormous amount of screenshots, we only compare
 														// screenshot snapshots if both axes are not prohibited from being draggable
 														// by config (although they can still be categorical, thus not draggable)
 														if (draggableAxis === "both" && !hasGUI()) {
 															await expect(page).toHaveScreenshot({
-																maxDiffPixelRatio:
-																	SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT,
+																maxDiffPixelRatio: testInfo.project.name
+																	.toLowerCase()
+																	.includes("mobile")
+																	? SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_MOBILE
+																	: SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_DESKTOP,
 															});
 														}
 

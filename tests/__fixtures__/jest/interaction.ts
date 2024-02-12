@@ -71,8 +71,8 @@ export async function performDragWithoutTesting({
 					magnet,
 					getDataFromPointOnScreen: async (pointOnScreen, canvasBB) => {
 						pointOnScreen = new Offset2D({
-							x: -canvasBB.x,
-							y: -canvasBB.y,
+							xAbs: -canvasBB.x,
+							yAbs: -canvasBB.y,
 						}).translatePoint(pointOnScreen);
 
 						const { x, y } = {

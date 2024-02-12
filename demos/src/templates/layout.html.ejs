@@ -27,7 +27,16 @@
 		<canvas id="chartJSContainer" style="height: 90%; width: 90%"></canvas>
 
 		<script>
-			const scenarioConfiguration = JSON.parse(`<%- scenarioConfiguration %>`);
+			const isFirefox = navigator.userAgent.match(/firefox|fxios/i),
+				scenarioConfiguration = JSON.parse(`<%- scenarioConfiguration %>`);
+
+			function displayForPlaywright(obj) {
+				if (isFirefox) {
+					return JSON.stringify(obj, undefined, 4);
+				} else {
+					return obj;
+				}
+			}
 
 			window.isTestReady = false;
 			window.isPluginLoaded = false;
@@ -49,7 +58,7 @@
 
 					console.log(
 						"[setupTest] Stringified options passed in (for test debugging purposes):",
-						JSON.stringify(options),
+						displayForPlaywright(options),
 					);
 				}
 
@@ -71,7 +80,26 @@
 						yAxisDraggable,
 						magnet: !!magnetImplSerialized,
 					};
-					console.table(receivedConfigForLogging);
+
+					if (isFirefox) {
+						console.log(JSON.stringify(receivedConfigForLogging, undefined, 4));
+					} else {
+						console.table(receivedConfigForLogging);
+					}
+
+					function drawDragMarker(e) {
+						const canvas = window.testedChart.canvas,
+							context = canvas.getContext("2d");
+
+						var radius = Math.min(canvas.width, canvas.height) / 40;
+
+						setTimeout(() => {
+							context.beginPath();
+							context.arc(e.clientX, e.clientY, radius, 0, 2 * Math.PI);
+							context.stroke();
+							context.closePath();
+						}, 0);
+					}
 
 					const configuration = _.merge(
 						{
@@ -85,13 +113,20 @@
 												dragY: yAxisDraggable,
 												round: roundingPrecision,
 												showTooltip: true,
+												onDragStart: function (e) {
+													drawDragMarker(e);
+												},
 												onDrag: function (e) {
 													if (e.target?.style)
 														e.target.style.cursor = "grabbing";
+
+													drawDragMarker(e);
 												},
 												onDragEnd: function (e) {
 													if (e.target?.style)
 														e.target.style.cursor = "default";
+
+													drawDragMarker(e);
 												},
 												magnet: magnetImplSerialized
 													? {
@@ -116,7 +151,10 @@
 						scenarioConfiguration,
 					);
 
-					console.log("Constructed chart configuration:", configuration);
+					console.log(
+						"Constructed chart configuration:",
+						displayForPlaywright(configuration),
+					);
 
 					var ctx = document
 						.getElementById("chartJSContainer")
@@ -127,10 +165,11 @@
 					window.resetData = function resetData() {
 						console.log(
 							"[resetData] Resetting data to original data passed to setupTest()",
+							originalTestedChartData,
 						);
 
-						window.testedChart.data = originalTestedChartData;
-						window.testedChart.update();
+						window.testedChart.data = _.cloneDeep(originalTestedChartData);
+						window.testedChart.update("none");
 					};
 
 					window.isTestReady = true;
