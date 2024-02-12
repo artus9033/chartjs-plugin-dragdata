@@ -136,18 +136,18 @@ export const simpleChartScenarioBase = _.merge({}, commonChartScenarioBase, {
 				"draggingOutOfCanvasBoundsX",
 				[
 					{
-						// dataset index 1 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart width on x (out of bounds of the chart to the left)
+						// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart width on x (out of bounds of the chart to the left)
 						axisSpec,
-						dragPointSpec: { datasetIndex: 1, index: 2 },
+						dragPointSpec: { datasetIndex: 0, index: 2 },
 						dragDestPointSpecOrStartPointOffset: new Offset2D({
 							xRelative: -1.5,
 							yRelative: 0,
 						}),
 					},
 					{
-						// dataset index 1 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart width on x (out of bounds of the chart to the right)
+						// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart width on x (out of bounds of the chart to the right)
 						axisSpec,
-						dragPointSpec: { datasetIndex: 1, index: 3 },
+						dragPointSpec: { datasetIndex: 0, index: 3 },
 						dragDestPointSpecOrStartPointOffset: new Offset2D({
 							xRelative: 1.5,
 							yRelative: 0,
@@ -159,18 +159,18 @@ export const simpleChartScenarioBase = _.merge({}, commonChartScenarioBase, {
 				"draggingOutOfCanvasBoundsY",
 				[
 					{
-						// dataset index 1 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the top)
+						// dataset index 0 point index 2 -> -150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the top)
 						axisSpec,
-						dragPointSpec: { datasetIndex: 1, index: 2 },
+						dragPointSpec: { datasetIndex: 0, index: 2 },
 						dragDestPointSpecOrStartPointOffset: new Offset2D({
 							xRelative: 0,
 							yRelative: -1.5,
 						}),
 					},
 					{
-						// dataset index 1 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the bottom)
+						// dataset index 0 point index 3 -> +150% (up to this value, clipped to window size in drag fixture) of the chart height on y (out of bounds of the chart to the bottom)
 						axisSpec,
-						dragPointSpec: { datasetIndex: 1, index: 3 },
+						dragPointSpec: { datasetIndex: 0, index: 3 },
 						dragDestPointSpecOrStartPointOffset: new Offset2D({
 							xRelative: 0,
 							yRelative: 1.5,
