@@ -51,7 +51,7 @@ for (const disablePlugin of [false, true]) {
 								() => {
 									test.describe.configure({ mode: "serial" }); // in this context, we want tests to run serially since they will reuse that same page
 
-									test.beforeAll(async ({ browser }) => {
+									test.beforeAll(async ({ browser, isMobile }) => {
 										page = await browser.newPage();
 
 										await setupE2ETest(
@@ -62,6 +62,7 @@ for (const disablePlugin of [false, true]) {
 												magnet,
 											},
 											page,
+											isMobile,
 										);
 									});
 
@@ -77,82 +78,95 @@ for (const disablePlugin of [false, true]) {
 											(letter) => ` ${letter.toLowerCase()}`,
 										);
 
-										(stepsGroup.shouldBeSkipped
-											? test.describe.skip
-											: test.describe)(groupNameSpaceCase, async () => {
-											for (const {
-												step,
-												isLastStepInGroup,
-												exactDraggingImpossible,
-												partialDraggingPossible,
-											} of (disablePlugin
-												? stepsGroup.steps.slice(0, 1)
-												: stepsGroup.steps
-											).map((step, index, { length }) => ({
-												step,
-												isLastStepInGroup: index === length - 1,
-												exactDraggingImpossible:
-													disablePlugin ||
-													(draggableAxis !== "both" &&
-														step.axisSpec !== draggableAxis),
-												partialDraggingPossible: step.axisSpec === "both",
-											}))) {
-												test(`${
-													exactDraggingImpossible
-														? partialDraggingPossible
-															? "partially moves"
-															: "does not move"
-														: "moves"
-												} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} upon dragging on ${getAxisDescription(step.axisSpec)}`, async ({
-													browserName,
-												}, testInfo) => {
-													testInfo.snapshotSuffix = ""; // disable per-platform screenshot snapshots
+										if (
+											!(
+												stepsGroup.groupName === "standardDragging" &&
+												draggableAxis === "both"
+											)
+										) {
+											(stepsGroup.shouldBeSkipped
+												? test.describe.skip
+												: test.describe)(groupNameSpaceCase, async () => {
+												for (const {
+													step,
+													isLastStepInGroup,
+													exactDraggingImpossible,
+													partialDraggingPossible,
+												} of (disablePlugin
+													? stepsGroup.steps.slice(0, 1)
+													: stepsGroup.steps
+												).map((step, index, { length }) => ({
+													step,
+													isLastStepInGroup: index === length - 1,
+													exactDraggingImpossible:
+														disablePlugin ||
+														(draggableAxis !== "both" &&
+															step.axisSpec !== draggableAxis),
+													partialDraggingPossible: step.axisSpec === "both",
+												}))) {
+													test(`${
+														exactDraggingImpossible
+															? partialDraggingPossible
+																? "partially moves"
+																: "does not move"
+															: "moves"
+													} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} with dragging constrained to ${getAxisDescription(step.axisSpec)}`, async ({
+														browserName,
+														isMobile,
+													}, testInfo) => {
+														testInfo.snapshotSuffix = ""; // disable per-platform screenshot snapshots
 
-													test.skip(
-														!!scenario.unsupportedBrowsers?.includes(
-															browserName,
-														),
-														"Browser not supported by this test scenario",
-													);
+														test.skip(
+															!!scenario.unsupportedBrowsers?.includes(
+																browserName,
+															) ||
+																(isMobile &&
+																	(scenario.unsupportedBrowsers?.includes(
+																		"mobile",
+																	) ??
+																		false)),
+															"Browser not supported by this test scenario",
+														);
 
-													// perform the interaction
-													await playwrightTestDrag({
-														...step,
-														whichAxis: step.axisSpec,
-														page,
-														draggableAxis,
-														isDragDataPluginDisabled: disablePlugin,
-														isCategoricalX: scenario.isCategoricalX,
-														isCategoricalY: scenario.isCategoricalY,
-														magnet,
-													});
+														// perform the interaction
+														await playwrightTestDrag({
+															...step,
+															whichAxis: step.axisSpec,
+															page,
+															draggableAxis,
+															isDragDataPluginDisabled: disablePlugin,
+															isCategoricalX: scenario.isCategoricalX,
+															isCategoricalY: scenario.isCategoricalY,
+															magnet,
+														});
 
-													if (
-														stepsGroup.shouldAssertScreenshot &&
-														isLastStepInGroup
-													) {
-														// after each group: (conditionally) compare screenshot snapshots
-														// note: so as not to produce an enormous amount of screenshots, we only compare
-														// screenshot snapshots if both axes are not prohibited from being draggable
-														// by config (although they can still be categorical, thus not draggable)
-														if (draggableAxis === "both" && !hasGUI()) {
-															await expect(page).toHaveScreenshot({
-																maxDiffPixelRatio: testInfo.project.name
-																	.toLowerCase()
-																	.includes("mobile")
-																	? SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_MOBILE
-																	: SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_DESKTOP,
+														if (
+															stepsGroup.shouldAssertScreenshot &&
+															isLastStepInGroup
+														) {
+															// after each group: (conditionally) compare screenshot snapshots
+															// note: so as not to produce an enormous amount of screenshots, we only compare
+															// screenshot snapshots if both axes are not prohibited from being draggable
+															// by config (although they can still be categorical, thus not draggable)
+															if (draggableAxis === "both" && !hasGUI()) {
+																await expect(page).toHaveScreenshot({
+																	maxDiffPixelRatio: testInfo.project.name
+																		.toLowerCase()
+																		.includes("mobile")
+																		? SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_MOBILE
+																		: SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_DESKTOP,
+																});
+															}
+
+															// after each group & (optionally) screenshot comparison, force reload the original dataset so as not to influence the next group
+															await page.evaluate(() => {
+																window.resetData();
 															});
 														}
-
-														// after each group & (optionally) screenshot comparison, force reload the original dataset so as not to influence the next group
-														await page.evaluate(() => {
-															window.resetData();
-														});
-													}
-												});
-											}
-										});
+													});
+												}
+											});
+										}
 									}
 								},
 							);

@@ -1,6 +1,9 @@
 import { Chart, ChartTypeRegistry } from "chart.js";
 
-import { TestChartOptions, simpleChartScenarioBase } from "../../__data__/data";
+import {
+	TestChartOptions,
+	genericChartScenarioBase,
+} from "../../__data__/data";
 import {
 	UnitTestCategory,
 	isTestsConfigWhitelistItemAllowed,
@@ -18,7 +21,7 @@ export function setupChartInstance<T extends keyof ChartTypeRegistry>(
 
 	return new Chart<T>(ctx, {
 		type: chartType,
-		data: simpleChartScenarioBase.configuration.data as any,
+		data: genericChartScenarioBase.configuration.data as any,
 		options: TestChartOptions as any,
 	});
 }

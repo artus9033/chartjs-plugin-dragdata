@@ -4,7 +4,7 @@ import path from "path";
 
 import chokidar from "chokidar";
 
-import { assetSpecs, bundle } from "./bundle";
+import { requireUncached } from "./utils";
 
 const demosSrcDirPath = path.dirname(__filename),
 	testsDataDefFilePath = path.join(
@@ -29,6 +29,10 @@ function logBundlerResult(success: boolean) {
 }
 
 (async function main() {
+	const { assetSpecs, bundle } = requireUncached(
+		"./bundle",
+	) as typeof import("./bundle");
+
 	console.log(`[Watcher] Watching for changes in ${demosSrcDirPath}`);
 	console.log();
 

@@ -17,7 +17,11 @@ export type SetupTestOptions = {
 	magnet?: MagnetVariant;
 };
 
-export async function setupE2ETest(options: SetupTestOptions, page: Page) {
+export async function setupE2ETest(
+	options: SetupTestOptions,
+	page: Page,
+	isMobile: boolean,
+) {
 	options.disablePlugin = options.disablePlugin ?? false;
 
 	const scenario = TestScenarios[options.fileName];
@@ -27,6 +31,20 @@ export async function setupE2ETest(options: SetupTestOptions, page: Page) {
 		isTest: true,
 		roundingPrecision: scenario.roundingPrecision,
 	};
+
+	if (isMobile) {
+		let viewport = page.viewportSize();
+
+		// switch portrait to landscape if needed
+		if (viewport?.width && viewport.height) {
+			if (scenario.needsHorizontalMobileScreen) {
+				page.setViewportSize({
+					width: viewport!.height,
+					height: viewport!.width,
+				});
+			}
+		}
+	}
 
 	for (const key of Object.keys(options) as (keyof SetupTestOptions)[]) {
 		switch (key) {

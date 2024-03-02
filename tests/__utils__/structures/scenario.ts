@@ -37,7 +37,12 @@ export type TestScenario<GroupNameType> = {
 	isCategoricalX?: boolean;
 	/** whether y is categorical (not linear, thus not draggable) */
 	isCategoricalY?: boolean;
-	unsupportedBrowsers?: Array<"chromium" | "firefox" | "webkit">;
+	/** browsers that are not supported by this test scenario */
+	unsupportedBrowsers?: Array<"chromium" | "firefox" | "webkit" | "mobile">;
+	/** whether to skip E2E testing and just use the scenario as data source for HTML demo */
+	skipE2ETesting?: boolean;
+	/** whether this scenario wants a horizontal viewport on mobile browsers */
+	needsHorizontalMobileScreen?: boolean;
 };
 
 export function describeDatasetPointSpecOrPoint(

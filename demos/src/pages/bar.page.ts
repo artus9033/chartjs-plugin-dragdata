@@ -6,4 +6,8 @@ export default [
 		title: "Bar",
 		fileName: "bar.html",
 	}),
+	renderPage({
+		title: "Horizontal Bar",
+		fileName: "horizontalBar.html",
+	}),
 ] as TestPageBundle;

@@ -151,7 +151,12 @@ export async function _genericTestDrag({
 		),
 		dragDesiredDestPoint: Point2D =
 			dragDestPointSpecOrStartPointOffset instanceof Offset2D
-				? dragDestPointSpecOrStartPointOffset.translatePoint(dragStartPoint)
+				? dragDestPointSpecOrStartPointOffset
+						.scaledCopy({
+							x: canvasBB.width,
+							y: canvasBB.height,
+						})
+						.translatePoint(dragStartPoint)
 				: (
 						dragDestPointSpecOrStartPointOffset.additionalOffset?.scaledCopy(
 							canvasDragDestPointSpecChartValueToPxScale,
@@ -182,7 +187,9 @@ export async function _genericTestDrag({
 	await performDrag({
 		dragStartPoint: (
 			dragPointSpec.additionalOffset ?? new Offset2D({ xAbs: 0, yAbs: 0 })
-		).translatePoint(dragStartPoint),
+		)
+			.translatePoint(dragStartPoint)
+			.copyConstrainedTo(chartAreaBB),
 		dragDestPoint,
 	});
 

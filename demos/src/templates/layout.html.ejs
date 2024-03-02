@@ -19,12 +19,14 @@
 			canvas {
 				background-color: #eee;
 				position: absolute;
+				max-width: 100vw;
+				max-height: 100vh;
 			}
 		</style>
 	</head>
 
 	<body>
-		<canvas id="chartJSContainer" style="height: 90%; width: 90%"></canvas>
+		<canvas id="chartJSContainer"></canvas>
 
 		<script>
 			const isFirefox = navigator.userAgent.match(/firefox|fxios/i),
@@ -48,6 +50,7 @@
 					draggableAxis,
 					magnetImplSerialized,
 					roundingPrecision,
+					renderOnHoverCirclesTrail = false,
 				} = options;
 
 				if (isTest) {
@@ -79,6 +82,7 @@
 						xAxisDraggable,
 						yAxisDraggable,
 						magnet: !!magnetImplSerialized,
+						renderOnHoverCirclesTrail,
 					};
 
 					if (isFirefox) {
@@ -95,7 +99,13 @@
 
 						setTimeout(() => {
 							context.beginPath();
-							context.arc(e.clientX, e.clientY, radius, 0, 2 * Math.PI);
+							context.arc(
+								e.clientX ?? e.x,
+								e.clientY ?? e.y,
+								radius,
+								0,
+								2 * Math.PI,
+							);
 							context.stroke();
 							context.closePath();
 						}, 0);
@@ -145,6 +155,8 @@
 									);
 									if (point.length) e.native.target.style.cursor = "grab";
 									else e.native.target.style.cursor = "default";
+
+									if (renderOnHoverCirclesTrail) drawDragMarker(e);
 								},
 							},
 						},

@@ -2,6 +2,7 @@ import { test } from "playwright-test-coverage";
 
 import Offset2D from "../__utils__/structures/Offset2D";
 import { DatasetPointSpec } from "../__utils__/testTypes";
+import IncompatibleTestConfiguration from "../errors/IncompatibleTestConfiguration";
 import { setupE2ETest } from "./__fixtures__";
 import {
 	PlaywrightTestDragParams,
@@ -37,16 +38,19 @@ describeEachChartType(async function testGenerator(fileName, scenario) {
 				(scenario.isCategoricalX || scenario.isCategoricalY)
 			),
 	)) {
-		test.beforeEach(async ({ page }) => {
-			await setupE2ETest({ fileName, draggableAxis: "both" }, page);
+		test.beforeEach(async ({ page, isMobile }) => {
+			await setupE2ETest({ fileName, draggableAxis: "both" }, page, isMobile);
 		});
 
 		test(`data dragging behaviour changes appropriately upon ${enablerLocationSpec} dragData configuration property changes`, async ({
 			page,
 			browserName,
+			isMobile,
 		}) => {
 			test.skip(
-				!!scenario.unsupportedBrowsers?.includes(browserName),
+				!!scenario.unsupportedBrowsers?.includes(browserName) ||
+					(isMobile &&
+						(scenario.unsupportedBrowsers?.includes("mobile") ?? false)),
 				"Browser not supported by this test scenario",
 			);
 
@@ -99,8 +103,7 @@ describeEachChartType(async function testGenerator(fileName, scenario) {
 											.data[dragPointSpec.datasetIndex];
 
 									if (typeof dataSample === "number") {
-										// note: this should never happen
-										throw new Error(
+										throw new IncompatibleTestConfiguration(
 											"updateChartDragDataEnabledConfig: 'data sample config' dragData enabler location specifier is incompatible with charts using a categorical axis",
 										);
 									}

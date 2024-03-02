@@ -19,7 +19,12 @@ export function describeEachChartType(
 			(file) => !fs.lstatSync(path.join(demosDistDirPath, file)).isDirectory(),
 		) as (keyof typeof TestScenarios)[]) {
 		(path.extname(fileName) === ".html" &&
-			isTestsConfigWhitelistItemAllowed("e2e", "whitelistedHTMLFiles", fileName)
+			isTestsConfigWhitelistItemAllowed(
+				"e2e",
+				"whitelistedHTMLFiles",
+				fileName,
+			) &&
+			TestScenarios[fileName].skipE2ETesting !== true
 			? test.describe
 			: test.describe.skip)(`${fileName.split(".")[0]} chart`, async () => {
 			const scenario = TestScenarios[fileName];

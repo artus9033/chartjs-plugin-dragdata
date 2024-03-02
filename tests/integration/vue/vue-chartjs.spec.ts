@@ -3,7 +3,10 @@ import { Line } from "vue-chartjs";
 
 import { cleanup, render } from "@testing-library/vue";
 
-import { TestChartOptions, simpleChartScenarioBase } from "../../__data__/data";
+import {
+	TestChartOptions,
+	genericChartScenarioBase,
+} from "../../__data__/data";
 import { integrationAllowed } from "../__utils__/utils";
 
 ChartJS.register(...registerables);
@@ -16,7 +19,7 @@ afterEach(() => {
 	test("renders chart canvas in the document", () => {
 		const wrapper = render(Line, {
 			props: {
-				data: simpleChartScenarioBase.configuration.data,
+				data: genericChartScenarioBase.configuration.data,
 				options: TestChartOptions,
 			},
 		});

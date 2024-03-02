@@ -51,11 +51,9 @@ export default defineConfig({
 	workers: "50%",
 	maxFailures: process.env.ci ? undefined : 10,
 	retries: 2,
-	projects:
-		/* Test against desktop browsers */
-		allAvailableRunners.filter(({ name }) =>
-			isTestsConfigWhitelistItemAllowed("e2e", "whitelistedBrowsers", name!),
-		),
+	projects: allAvailableRunners.filter(({ name }) =>
+		isTestsConfigWhitelistItemAllowed("e2e", "whitelistedBrowsers", name!),
+	),
 	testMatch: path.join(path.dirname(__filename), "tests", "e2e", "*.spec.ts"),
 	globalSetup: path.join(
 		path.dirname(__filename),
