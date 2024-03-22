@@ -26,13 +26,15 @@ export type TestScenarioStep = {
 	| "expectedDestPointSpecOverride"
 >;
 
-export type TestScenario<GroupNameType> = {
+export type TestScenario<GroupNameType, bSealed extends boolean = false> = {
 	/** the configuration to pass to the tested chart instance */
 	configuration: Partial<ChartConfiguration>;
 	/** definitions of groups of interaction steps */
 	stepGroups: TestScenarioStepsGroup<GroupNameType>[];
 	/** precision for rounding the values on the grid */
 	roundingPrecision: number;
+	/** whether data.ts should run post-processing on the 'configuration' object (e.g. calculate min/max limits for scales) */
+	postprocessConfiguration?: boolean;
 	/** whether x is categorical (not linear, thus not draggable) */
 	isCategoricalX?: boolean;
 	/** whether y is categorical (not linear, thus not draggable) */
@@ -41,8 +43,15 @@ export type TestScenario<GroupNameType> = {
 	unsupportedBrowsers?: Array<"chromium" | "firefox" | "webkit" | "mobile">;
 	/** whether to skip E2E testing and just use the scenario as data source for HTML demo */
 	skipE2ETesting?: boolean;
-	/** whether this scenario wants a horizontal viewport on mobile browsers */
-	needsHorizontalMobileScreen?: boolean;
+	/** a custom onDrag callback to be stringified & eval-ed on page side */
+	onDrag?: bSealed extends true
+		? string
+		: (
+				e: MouseEvent,
+				datasetIndex: number,
+				index: number,
+				value: [number, number],
+			) => void;
 };
 
 export function describeDatasetPointSpecOrPoint(

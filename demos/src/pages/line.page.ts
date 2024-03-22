@@ -10,4 +10,8 @@ export default [
 		title: "Line (categorical)",
 		fileName: "line-categorical.html",
 	}),
+	renderPage({
+		title: "Line (dual y-axis)",
+		fileName: "line-dual-y-axis.html",
+	}),
 ] as TestPageBundle;

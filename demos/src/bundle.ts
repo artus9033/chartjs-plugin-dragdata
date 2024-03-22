@@ -43,6 +43,30 @@ export const assetSpecs: AssetSpec[] = [
 			"..",
 			"..",
 			"node_modules",
+			"chartjs-plugin-datalabels",
+			"dist",
+			"chartjs-plugin-datalabels.min.js",
+		),
+		destFileName: "chartjs-plugin-datalabels.min.js",
+	},
+	{
+		sourcePath: path.join(
+			path.dirname(__filename),
+			"..",
+			"..",
+			"node_modules",
+			"chartjs-adapter-date-fns",
+			"dist",
+			"chartjs-adapter-date-fns.bundle.min.js",
+		),
+		destFileName: "chartjs-adapter-date-fns.bundle.min.js",
+	},
+	{
+		sourcePath: path.join(
+			path.dirname(__filename),
+			"..",
+			"..",
+			"node_modules",
 			"chart.js",
 			"dist",
 			"chart.umd.js",
@@ -116,7 +140,7 @@ export async function bundle(): Promise<boolean> {
 				);
 			}
 		} catch (e) {
-			console.error(`${LOG_TAG} Error rendering: ${e}`);
+			console.error(`${LOG_TAG} Error rendering: ${e}`, (e as any).stack);
 
 			success = false;
 		}
@@ -126,5 +150,8 @@ export async function bundle(): Promise<boolean> {
 }
 
 if (require.main === module) {
-	bundle();
+	// eslint-disable-next-line promise/prefer-await-to-then -- this is the entrypoint, so no need to await
+	bundle().catch((e) => {
+		console.error(`${LOG_TAG} Bundling has failed: ${e}`, (e as any).stack);
+	});
 }

@@ -1,4 +1,4 @@
-import type { Chart, ChartConfiguration } from "chart.js";
+import type { Chart } from "chart.js";
 import type Point2D from "./tests/__utils__/Point2D";
 
 import type { AxisSpec } from "./__utils__/structures/axisSpec";
@@ -18,6 +18,7 @@ declare global {
 		draggableAxis: AxisSpec;
 		magnetImplSerialized?: string;
 		roundingPrecision?: number;
+		onDrag?: string;
 	}
 
 	// the test instance exposed by all test pages - typing for tests' code

@@ -9,6 +9,9 @@
 		/>
 		<script src="assets/chart.min.js"></script>
 		<script src="assets/lodash.min.js"></script>
+		<script src="assets/chartjs-plugin-datalabels.min.js"></script>
+		<script src="assets/chartjs-adapter-date-fns.bundle.min.js"></script>
+		<script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
 		<style>
 			html,
 			body {
@@ -50,8 +53,13 @@
 					draggableAxis,
 					magnetImplSerialized,
 					roundingPrecision,
+					onDrag,
 					renderOnHoverCirclesTrail = false,
 				} = options;
+
+				if (typeof onDrag === "string") {
+					onDrag = eval(onDrag); // parse the stringified function
+				}
 
 				if (isTest) {
 					console.log(
@@ -126,10 +134,12 @@
 												onDragStart: function (e) {
 													drawDragMarker(e);
 												},
-												onDrag: function (e) {
+												onDrag: function (...args) {
+													const [e] = args;
 													if (e.target?.style)
 														e.target.style.cursor = "grabbing";
 
+													onDrag?.(...args);
 													drawDragMarker(e);
 												},
 												onDragEnd: function (e) {
@@ -160,7 +170,44 @@
 								},
 							},
 						},
-						scenarioConfiguration,
+						{
+							...scenarioConfiguration,
+							options: {
+								...scenarioConfiguration.options,
+								plugins: {
+									...(scenarioConfiguration.options.plugins ?? {}),
+									datalabels: {
+										...(scenarioConfiguration.options.plugins?.datalabels ??
+											{}),
+										...(scenarioConfiguration.options.plugins?.datalabels
+											?.display
+											? {
+													formatter: function (value, context) {
+														return (
+															dateFns.differenceInDays(value[1], value[0]) + "d"
+														);
+													},
+												}
+											: {}),
+									},
+								},
+							},
+							data: {
+								...scenarioConfiguration.data,
+								...(scenarioConfiguration.scales?.x?.type === "time"
+									? {
+											datasets: scenarioConfiguration.data.datasets.map(
+												(d) => ({
+													...d,
+													data: d.data.map((darr) =>
+														darr.map((date) => new Date(date)),
+													),
+												}),
+											),
+										}
+									: {}),
+							},
+						},
 					);
 
 					console.log(
@@ -171,6 +218,7 @@
 					var ctx = document
 						.getElementById("chartJSContainer")
 						.getContext("2d");
+					Chart.register(ChartDataLabels);
 					window.testedChart = new Chart(ctx, configuration);
 
 					let originalTestedChartData = _.cloneDeep(window.testedChart.data);

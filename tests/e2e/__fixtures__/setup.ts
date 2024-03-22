@@ -30,19 +30,18 @@ export async function setupE2ETest(
 		...options,
 		isTest: true,
 		roundingPrecision: scenario.roundingPrecision,
+		onDrag: scenario.onDrag,
 	};
 
 	if (isMobile) {
 		let viewport = page.viewportSize();
 
-		// switch portrait to landscape if needed
-		if (viewport?.width && viewport.height) {
-			if (scenario.needsHorizontalMobileScreen) {
-				page.setViewportSize({
-					width: viewport!.height,
-					height: viewport!.width,
-				});
-			}
+		// switch to landscape so that the chart takes full screen size
+		if (viewport?.width && viewport.width < viewport.height) {
+			await page.setViewportSize({
+				width: viewport!.height,
+				height: viewport!.width,
+			});
 		}
 	}
 

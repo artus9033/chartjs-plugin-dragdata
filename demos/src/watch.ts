@@ -28,6 +28,7 @@ function logBundlerResult(success: boolean) {
 	console.log();
 }
 
+// eslint-disable-next-line @typescript-eslint/no-floating-promises -- this is the entrypoint
 (async function main() {
 	const { assetSpecs, bundle } = requireUncached(
 		"./bundle",
@@ -49,7 +50,7 @@ function logBundlerResult(success: boolean) {
 			],
 			{ ignoreInitial: true },
 		)
-		.on("all", (event, path) => {
+		.on("all", async (event, path) => {
 			console.log("[Watcher] Event:", event, path);
 
 			if (bundlerRunning) {
@@ -63,10 +64,9 @@ function logBundlerResult(success: boolean) {
 
 			bundlerRunning = true;
 
-			bundle().then((success) => {
-				logBundlerResult(success);
+			const success = await bundle();
+			logBundlerResult(success);
 
-				bundlerRunning = false;
-			});
+			bundlerRunning = false;
 		});
 })();
