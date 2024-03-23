@@ -1,10 +1,17 @@
 # Reference: https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
 
 pre-push:
+  parallel: true
   commands:
     packages-audit:
       tags: security
       run: npm audit
+    test-unit:
+      tags: test
+      run: npm test:unit
+    test-integration:
+      tags: test
+      run: npm test:integration
 
 pre-commit:
   parallel: true

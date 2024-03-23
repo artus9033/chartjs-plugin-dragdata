@@ -1,6 +1,5 @@
 import "chartjs-plugin-datalabels";
 import { ChartConfiguration, ChartOptions } from "chart.js";
-import { DeepPartial } from "chart.js/dist/types/utils";
 import _ from "lodash";
 import {
 	TestScenario,
@@ -14,6 +13,7 @@ import testsConfig, {
 import Offset2D from "../__utils__/structures/Offset2D";
 import { ALL_AXES_SPECS, AxisSpec } from "../__utils__/structures/axisSpec";
 import { BAR_SAFETY_HIT_MARGIN } from "../e2e/__utils__/constants";
+import { DeepPartial } from "../__utils__/types";
 import { ganttChartScenario } from "./gantt";
 import { scatterChartScenario } from "./scatter";
 
@@ -285,7 +285,8 @@ export const standardBarChartScenarioBase = {
 } satisfies Partial<TestScenario<E2EInteraction>>;
 
 export const barChartScenario = mergeScenarioPartialConfigurations(
-	_.cloneDeep(barChartScenarioBase),
+	_.cloneDeep(genericChartScenarioBase),
+	barChartScenarioBase,
 	standardBarChartScenarioBase,
 	{
 		isCategoricalX: true,
@@ -294,7 +295,8 @@ export const barChartScenario = mergeScenarioPartialConfigurations(
 ) as TestScenario<E2EInteraction>;
 
 export const horizontalBarChartScenario = mergeScenarioPartialConfigurations(
-	_.cloneDeep(barChartScenarioBase),
+	_.cloneDeep(genericChartScenarioBase),
+	barChartScenarioBase,
 	{
 		stepGroups: standardBarChartScenarioBase.stepGroups.map((group) => ({
 			...group,
@@ -486,7 +488,7 @@ export const floatingBarChartScenarioBase = {
 						return [value - half, value + half];
 					}),
 				}),
-			),
+			) as any,
 		},
 	},
 } satisfies Partial<TestScenario<E2EInteraction>>;

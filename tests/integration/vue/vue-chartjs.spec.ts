@@ -1,4 +1,5 @@
-import { Chart as ChartJS, registerables } from "chart.js";
+import "chart.js/auto";
+
 import { Line } from "vue-chartjs";
 
 import { cleanup, render } from "@testing-library/vue";
@@ -8,8 +9,6 @@ import {
 	genericChartScenarioBase,
 } from "../../__data__/data";
 import { integrationAllowed } from "../__utils__/utils";
-
-ChartJS.register(...registerables);
 
 afterEach(() => {
 	cleanup();

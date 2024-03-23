@@ -1,4 +1,4 @@
-import { Chart as ChartJS, registerables } from "chart.js";
+import ChartJS from "chart.js/auto";
 import React from "react";
 import { Chart } from "react-chartjs-2";
 
@@ -10,8 +10,6 @@ import {
 	genericChartScenarioBase,
 } from "../../__data__/data";
 import { integrationAllowed } from "../__utils__/utils";
-
-ChartJS.register(...registerables);
 
 let chartInstance: ChartJS | null = null;
 

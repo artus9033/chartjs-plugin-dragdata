@@ -53,12 +53,12 @@
 					draggableAxis,
 					magnetImplSerialized,
 					roundingPrecision,
-					onDrag,
 					renderOnHoverCirclesTrail = false,
 				} = options;
 
-				if (typeof onDrag === "string") {
-					onDrag = eval(onDrag); // parse the stringified function
+				let onDrag = undefined;
+				if (typeof options.onDrag === "string") {
+					onDrag = eval(options.onDrag); // parse the stringified function
 				}
 
 				if (isTest) {

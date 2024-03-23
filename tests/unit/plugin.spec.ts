@@ -1,10 +1,9 @@
+/* eslint-disable jest/no-standalone-expect */
 import { Chart } from "chart.js";
 import d3Drag from "d3-drag";
 import d3Selection from "d3-selection";
 
-import ChartJSdragDataPlugin, {
-	exportsForTesting,
-} from "../../dist/chartjs-plugin-dragdata-test";
+import ChartJSdragDataPlugin from "../../dist/chartjs-plugin-dragdata-test";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { UNIT_TEST_CHART_TYPES } from "./__utils__/constants";
 import { setupChartInstance, unitTestCategoryAllowed } from "./__utils__/utils";
@@ -68,7 +67,7 @@ describe("plugin", () => {
 
 			(unitTestCategoryAllowed("pluginRegistration") ? test : test.skip)(
 				"should register canvas via d3's select & pass in drag() handler instance",
-				async () => {
+				() => {
 					expect(d3Selection.select).toHaveBeenCalledWith(chartInstance.canvas);
 
 					expect(d3Selection.call).toHaveBeenCalledTimes(1);

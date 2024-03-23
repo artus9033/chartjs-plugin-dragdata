@@ -110,12 +110,8 @@ export const ganttChartScenario = {
 				// console.log(i);
 				// console.log(window.testedChart.data.datasets[i - 1]);
 				const prevEnd = new Date(
-					(
-						window.testedChart.data.datasets[i - 1].data[index] as [
-							number,
-							number,
-						]
-					)[1],
+					// @ts-ignore: this is valid since chartjs-adapter-date-fns is used
+					window.testedChart.data.datasets[i - 1].data[index][1],
 				);
 				if (thisStart !== prevEnd) {
 					// retain current segment length
