@@ -8,10 +8,10 @@ pre-push:
       run: npm audit
     test-unit:
       tags: test
-      run: npm test:unit
+      run: npm run test:unit
     test-integration:
       tags: test
-      run: npm test:integration
+      run: npm run test:integration
 
 pre-commit:
   parallel: true
