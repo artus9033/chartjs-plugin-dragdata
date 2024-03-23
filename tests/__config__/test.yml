@@ -1,0 +1,2 @@
+# this file is only for CI not to show a warning that "NODE_ENV value of 'test' did not match any deployment config file names."
+# by default, we fall back to contents of default.yml and override these settings in local-test.yml that should be a copy of default.yml

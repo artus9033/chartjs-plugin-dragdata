@@ -1,0 +1,42 @@
+name: Continuous Integration
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+jobs:
+  assemble-release:
+    name: Run tests & report coverage
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20.9.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.9.0
+          cache: "npm"
+
+      - name: Install npm dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Install playwright dependency libraries
+        run: npx playwright install-deps
+
+      - name: Build plugin bundles
+        run: npm run build
+
+      - name: Build demos
+        run: npm run build:demos
+
+      - name: Run tests
+        run: npm test
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          fail_ci_if_error: true
+          files: ./coverage/e2e/coverage-final.json,./coverage/unit/coverage-final.json,./coverage/integration/coverage-final.json
+          token: ${{ secrets.CODECOV_TOKEN }}
