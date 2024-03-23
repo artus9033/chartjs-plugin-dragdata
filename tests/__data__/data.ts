@@ -592,10 +592,13 @@ function postprocessScenariosRegistry<
 ): TestScenariosRegistry<true, keyof SpecializedRegistry> {
 	return Object.fromEntries(
 		Object.entries(registry).map(([fileName, scenario]) => {
-			let originalScales = scenario.configuration.options?.scales ?? {
-				x: {},
-				y: {},
-			};
+			let originalScales = _.merge(
+				_.cloneDeep(scenario.configuration.options?.scales),
+				{
+					x: {},
+					y: {},
+				},
+			);
 
 			return [
 				fileName,
