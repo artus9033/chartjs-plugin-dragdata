@@ -1,0 +1,27 @@
+# Reference: https://github.com/evilmartians/lefthook/blob/master/docs/configuration.md
+
+pre-push:
+  parallel: true
+  commands:
+    packages-audit:
+      tags: security
+      run: npm audit
+    test-unit:
+      tags: test
+      run: npm run test:unit
+    test-integration:
+      tags: test
+      run: npm run test:integration
+
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: npx eslint {staged_files}
+
+commit-msg:
+  parallel: true
+  commands:
+    commitlint:
+      run: npx commitlint --edit
