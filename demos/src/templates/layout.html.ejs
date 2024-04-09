@@ -33,7 +33,7 @@
 
 	<script>
 		const isFirefox = navigator.userAgent.match(/firefox|fxios/i),
-			scenarioConfiguration = JSON.parse(`<%- scenarioConfiguration %>`);
+			chartConfiguration = <%- scenarioConfiguration %>;
 
 		function displayForPlaywright(obj) {
 			if (isFirefox) {
@@ -171,15 +171,15 @@
 						},
 					},
 					{
-						...scenarioConfiguration,
+						...chartConfiguration,
 						options: {
-							...scenarioConfiguration.options,
+							...chartConfiguration.options,
 							plugins: {
-								...(scenarioConfiguration.options.plugins ?? {}),
+								...(chartConfiguration.options.plugins ?? {}),
 								datalabels: {
-									...(scenarioConfiguration.options.plugins?.datalabels ??
+									...(chartConfiguration.options.plugins?.datalabels ??
 										{}),
-									...(scenarioConfiguration.options.plugins?.datalabels
+									...(chartConfiguration.options.plugins?.datalabels
 										?.display
 										? {
 											formatter: function (value, context) {
@@ -193,10 +193,10 @@
 							},
 						},
 						data: {
-							...scenarioConfiguration.data,
-							...(scenarioConfiguration.scales?.x?.type === "time"
+							...chartConfiguration.data,
+							...(chartConfiguration.scales?.x?.type === "time"
 								? {
-									datasets: scenarioConfiguration.data.datasets.map(
+									datasets: chartConfiguration.data.datasets.map(
 										(d) => ({
 											...d,
 											data: d.data.map((darr) =>
