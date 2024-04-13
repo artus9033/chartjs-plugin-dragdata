@@ -22,9 +22,9 @@ jobs:
         id: cache-node_modules
         with:
           path: "node_modules"
-          key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+          key: ${{ runner.os }}-npm-${{ hashFiles('/package-lock.json') }}
           restore-keys: |
-            ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
+            ${{ runner.os }}-npm-${{ hashFiles('/package-lock.json') }}
             ${{ runner.os }}-npm-
 
       - name: Install npm dependencies
