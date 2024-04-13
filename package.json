@@ -25,7 +25,7 @@
 		"pretest": "npm run build:demos && npm run cleanCoverage && npm run build",
 		"posttest": "npm run collectCoverage",
 		"lint": "npx lint-staged && eslint",
-		"postinstall": "npx playwright install"
+		"postinstall": "npx playwright install && npx lefthook install"
 	},
 	"repository": {
 		"type": "git",
