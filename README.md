@@ -7,46 +7,64 @@
 [![npm (next)](https://img.shields.io/npm/v/chartjs-plugin-zoom/next)](https://www.npmjs.com/package/chartjs-plugin-zoom/v/next)
 <a href="https://github.com/chartjs/awesome"><img src="https://awesome.re/badge-flat2.svg" alt="Awesome"></a>
 
-**Now compatible with Chart.js v4 🎉**  
-**Looking for a version compatible to Chart.js < 2.9.x? Then visit the [v2 branch](https://github.com/artus9033/chartjs-plugin-dragdata/tree/v2)!**
-
 A plugin for Chart.js
 Makes data points draggable. Supports touch events.
 
+**Now compatible with Chart.js v4 🎉**
+**Also compatible with Chart.js v3 & v2.4+**
+
 ![Drag Data Animation](https://user-images.githubusercontent.com/20703207/77322131-8a47f800-6d13-11ea-9ca8-b9fc7f820e85.gif)
 
-### Version compatibility with Chart.js
+### Table of contents
 
-| Chart.js version | chartjs-plugin-dragdata version |
-| :--------------: | :-----------------------------: |
-|       4.x        |               2.x               |
-|       3.x        |               2.x               |
-|  2.4.x ~ 2.9.4   |               1.x               |
+- [chartjs-plugin-dragdata.js](#chartjs-plugin-dragdatajs)
+  - [Table of contents](#table-of-contents)
+  - [Chart.js version compatibility](#chartjs-version-compatibility)
+  - [Online demos](#online-demos)
+  - [Installation](#installation)
+    - [npm](#npm)
+    - [CDN](#cdn)
+  - [Configuration](#configuration)
+    - [Applying a 'magnet'](#applying-a-magnet)
+  - [Touch devices](#touch-devices)
+  - [Gotchas](#gotchas)
+  - [Contributing](#contributing)
+  - [License](#license)
+
+---
+
+### Chart.js version compatibility
+
+| Chart.js version | chartjs-plugin-dragdata version |                                    git branch                                     |
+| :--------------: | :-----------------------------: | :-------------------------------------------------------------------------------: |
+|       4.x        |               2.x               | [master branch](https://github.com/artus9033/chartjs-plugin-dragdata/tree/master) |
+|       3.x        |               2.x               |     [v3 branch](https://github.com/artus9033/chartjs-plugin-dragdata/tree/v3)     |
+|  2.4.x ~ 2.9.4   |               1.x               |     [v2 branch](https://github.com/artus9033/chartjs-plugin-dragdata/tree/v2)     |
 
 ### Online demos
 
-| Chart Type                                                                                                                     | Demo                                                                                     | Source                                                                                                                      |
-| :----------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
-| Bar - simple bar                                                                                                               | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar.html)                     | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar.html)                    |
-| Horizontal Bar - simple horizontal Bar                                                                                         | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-horizontal.html)          | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-horizontal.html)         |
-| Floating bar - simple floating bars                                                                                            | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-floating.html)            | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-floating.html)           |
-| Floating bar - simple floating bars, horizontal                                                                                | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-floating-horizontal.html) | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-stacked-horizontal.html) |
-| Stacked Bar - simple stacked bar                                                                                               | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-stacked.html)             | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-stacked.html)            |
-| Stacked Horizontal Bar - simple stacked horizontal bar                                                                         | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-stacked-horizontal.html)  | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-stacked-horizontal.html) |
-| Stacked Bar - GANTT chart                                                                                                      | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/gantt.html)                   | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/ganttChart.html)             |
-| Bubble - simple bubble                                                                                                         | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bubble.html)                  | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bubble.html)                 |
-| Bubble - draggable x-axis                                                                                                      | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bubble-x-only.html)           | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bubble-x-only.html)          |
-| Line - simple, single y-axis                                                                                                   | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/line-linear.html)             | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/line.html)                   |
-| Line - dual y-axis                                                                                                             | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/line-dual-y-axis.html)        | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/dualAxis.html)               |
-| Line - single y-axis, categorical x-axis                                                                                       | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/line-categorical.html)        | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/dualAxis.html)               |
-| Line - drag multiple points                                                                                                    | [demo](https://jsfiddle.net/45nurh9L/3/)                                                 | [source](https://jsfiddle.net/45nurh9L/3/)                                                                                  |
-| Line - react fiddle                                                                                                            | [demo](https://jsfiddle.net/16kvxd4u/3/)                                                 | [source](https://jsfiddle.net/16kvxd4u/3/)                                                                                  |
-| Line - drag x-, and y-axis (scatter chart)                                                                                     | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/scatter.html)                 | [source](https://artus9033.github.io/chartjs-plugin-dragdata/scatter.html)                                                  |
-| Line - drag dates (x and y axis)                                                                                               | [demo](https://jsfiddle.net/f72kz348/9/)                                                 | [source](https://jsfiddle.net/f72kz348/9/)                                                                                  |
-| Line - zoom, pan, and drag data points (combination with [chartjs-plugin-zoom](https://github.com/chartjs/chartjs-plugin-zoom) | [demo](https://jsfiddle.net/s6xn3q9f/1/)                                                 | [source](https://jsfiddle.net/s6xn3q9f/1/)                                                                                  |
-| Mixed - bar, bubble, and line chart                                                                                            | [demo](https://jsfiddle.net/rqbcs6ep/3/)                                                 | [source](https://jsfiddle.net/rqbcs6ep/3/)                                                                                  |
-| Radar - simple radar                                                                                                           | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/radar.html)                   | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/radar.html)                  |
-| Polar - simple polar area chart                                                                                                | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/polar.html)                   | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/polar.html)                  |
+| Chart Type                                                                                                                     | Demo                                                                                     | Source                                                                                                                       |
+| :----------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------- |
+| Bar - simple bar                                                                                                               | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar.html)                     | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar.html)                     |
+| Horizontal Bar - simple horizontal Bar                                                                                         | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-horizontal.html)          | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-horizontal.html)          |
+| Floating bar - simple floating bars                                                                                            | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-floating.html)            | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-floating.html)            |
+| Floating bar - simple floating bars, horizontal                                                                                | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-floating-horizontal.html) | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-floating-horizontal.html) |
+| Stacked Bar - simple stacked bar                                                                                               | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-stacked.html)             | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-stacked.html)             |
+| Stacked Horizontal Bar - simple stacked horizontal bar                                                                         | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bar-stacked-horizontal.html)  | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bar-stacked-horizontal.html)  |
+| Stacked Bar - GANTT chart                                                                                                      | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/gantt.html)                   | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/gantt.html)                   |
+| Bubble - simple bubble                                                                                                         | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bubble.html)                  | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bubble.html)                  |
+| Bubble - draggable x-axis                                                                                                      | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/bubble-x-only.html)           | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/bubble-x-only.html)           |
+| Line - simple, single y-axis                                                                                                   | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/line-linear.html)             | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/line-linear.html)             |
+| Line - dual y-axis                                                                                                             | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/line-dual-y-axis.html)        | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/line-dual-y-axis.html)        |
+| Line - single y-axis, categorical x-axis                                                                                       | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/line-categorical.html)        | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/line-categorical.html)        |
+| Line - drag multiple points                                                                                                    | [demo](https://jsfiddle.net/45nurh9L/3/)                                                 | [source](https://jsfiddle.net/45nurh9L/3/)                                                                                   |
+| Line - react fiddle                                                                                                            | [demo](https://jsfiddle.net/16kvxd4u/3/)                                                 | [source](https://jsfiddle.net/16kvxd4u/3/)                                                                                   |
+| Line - drag x-, and y-axis (scatter chart)                                                                                     | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/scatter.html)                 | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/scatter.html)                 |
+| Line - drag dates (x and y axis)                                                                                               | [demo](https://jsfiddle.net/f72kz348/9/)                                                 | [source](https://jsfiddle.net/f72kz348/9/)                                                                                   |
+| Line - zoom, pan, and drag data points (combination with [chartjs-plugin-zoom](https://github.com/chartjs/chartjs-plugin-zoom) | [demo](https://jsfiddle.net/s6xn3q9f/1/)                                                 | [source](https://jsfiddle.net/s6xn3q9f/1/)                                                                                   |
+| Mixed - bar, bubble, and line chart                                                                                            | [demo](https://jsfiddle.net/rqbcs6ep/3/)                                                 | [source](https://jsfiddle.net/rqbcs6ep/3/)                                                                                   |
+| Radar - simple radar                                                                                                           | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/radar.html)                   | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/radar.html)                   |
+| Polar - simple polar area chart                                                                                                | [demo](https://artus9033.github.io/chartjs-plugin-dragdata/polar.html)                   | [source](https://raw.githubusercontent.com/artus9033/chartjs-plugin-dragdata/master/demos/dist/polar.html)                   |
 
 Click here to learn [how to use this plugin in an Observable notebook](https://observablehq.com/@chrispahm/draggable-data-charts).
 
@@ -63,7 +81,7 @@ npm install chartjs-plugin-dragdata
 In browsers, you may use the following script tag:
 
 ```
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@2.2.3/dist/chartjs-plugin-dragdata.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@latest/dist/chartjs-plugin-dragdata.min.js"></script>
 ```
 
 Or, download a release archive file from the dist folder.
@@ -191,35 +209,37 @@ Here's a small example for a Vue.js component
     <canvas id="chart"></canvas>
   </div>
 </template>
-<script>
-import { Chart, registerables } from 'chart.js'
-// load the options file externally for better readability of the component.
-// In the chartOptions object, make sure to add "dragData: true" etc.
-import chartOptions from '~/assets/js/labour.js'
-import 'chartjs-plugin-dragdata'
 
-export default {
-  data() {
-    return {
-      chartOptions
-    }
-  },
-  mounted() {
-    Chart.register(...registerables)
-    this.createChart('chart', this.chartOptions)
-  },
-  methods: {
-    createChart(chartId, chartData) {
-      const ctx = document.getElementById(chartId)
-      const myChart = new Chart(ctx, {
-        type: chartData.type,
-        data: chartData.data,
-        options: chartData.options,
-      })
+<script>
+  import { Chart, registerables } from 'chart.js'
+  // load the options file externally for better readability of the component.
+  // In the chartOptions object, make sure to add "dragData: true" etc.
+  import chartOptions from '~/assets/js/labour.js'
+  import 'chartjs-plugin-dragdata'
+
+  export default {
+    data() {
+      return {
+        chartOptions
+      }
+    },
+    mounted() {
+      Chart.register(...registerables)
+      this.createChart('chart', this.chartOptions)
+    },
+    methods: {
+      createChart(chartId, chartData) {
+        const ctx = document.getElementById(chartId)
+        const myChart = new Chart(ctx, {
+          type: chartData.type,
+          data: chartData.data,
+          options: chartData.options,
+        })
+      }
     }
   }
-}
 </script>
+
 <style>
 </style>
 ```
@@ -227,8 +247,13 @@ export default {
 ## Contributing
 
 Please feel free to submit an issue or a pull request!
-If you make changes to the src/index.js file, don't forget to `npm run build` and
-manually test your changes against all demos in the demos/dist folder.
+If you make changes to the `src/index.js` file, don't forget to:
+
+- `npm run build` to build the library (outputs will be written to `dist/`)
+- `npm run build:demos` or `npm run build:demos:watch` to build the demo files (outputs will be written to `demos/dist/`)
+- run unit, integration & E2E tests with `npm run test` (or separately with `npm run test:unit`, `npm run test:integration`, `npm run test:e2e`)
+- if your changes do change the chart's appearance after performing some interaction, update snapshots by running the command `npm run test:e2e:updateSnapshots`
+- manually test your changes to ensure that they do work and don't break existing features
 
 ## License
 
