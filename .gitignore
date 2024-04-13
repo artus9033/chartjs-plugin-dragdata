@@ -1,7 +1,7 @@
 coverage
-dist
+/dist
 docs/assets
-demos/dist
+demos/dist/assets
 node_modules
 .DS_Store
 .rollup.cache

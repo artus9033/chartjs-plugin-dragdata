@@ -1,6 +1,6 @@
 # Demos for chartjs-plugin-dragdata.js
 
-This directory contains scripts & templates for the demos that present the possible configurations and examples of the plugin. They are served alongside the [docs](TODO) for users and are used for testing.
+This directory contains scripts & templates for the demos that present the possible configurations and examples of the plugin. They are served alongside the [docs](TODO) for users and are also used for testing. Please find the compiled files in [/demos/dist/](/demos/dist). To compile the demos locally, run `npm run build:demos` or `build:demos:watch` to run watch-mode development bundler that will observe for changes in files & rebuild when any of them are changed.
 
 Each demo exposes various global variables (see [/tests/typings.d.ts](/tests/typings.d.ts)) that are used by Playwright to perform end-to-end testing on the demos:
 
