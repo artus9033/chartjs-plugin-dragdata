@@ -31,6 +31,13 @@ jobs:
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
         run: npm ci --legacy-peer-deps
 
+      # since playwright installs binaries of browsers with 'npx playwright install' triggered from the 'postinstall' script,
+      # it won't happen when no 'npm install' is run, which is the case for when the '...-npm-...' cache is restored
+      # for that reason, there is a need to run this command here
+      - name: Run 'npm run postinstall' manually if the cache was used instead of npm install
+        if: steps.cache-node_modules.outputs.cache-hit == 'true'
+        run: npm run postinstall
+
       - name: Install playwright dependency libraries
         run: npx playwright install-deps
 
