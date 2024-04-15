@@ -41,7 +41,9 @@
 	"author": "Christoph Pahmeyer <christoph.pahmeyer@ilr.uni-bonn.de>",
 	"license": "MIT",
 	"peerDependencies": {
-		"chart.js": "^3.9.1 || ^4.0.1",
+		"chart.js": "^3.9.1 || ^4.0.1"
+	},
+	"dependencies": {
 		"d3-drag": "^3.0.0",
 		"d3-selection": "^3.0.0"
 	},
