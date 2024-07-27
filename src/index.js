@@ -103,7 +103,7 @@ function calcRadar(e, chartInstance) {
 
 function calcPosition(e, chartInstance, data) {
   let x, y
-  const dataPoint = unfreeze(data)
+  const dataPoint = cloneDataPoint(data)
   
   if (e.touches) {
     x = chartInstance.scales[xAxisID].getValueForPixel(e.touches[0].clientX - chartInstance.canvas.getBoundingClientRect().left)
@@ -226,8 +226,8 @@ const dragEndCallback = (e, chartInstance, callback) => {
   }
 }
 
-const unfreeze = (source) => {
-  if (source instanceof Array) return source.map((elem) => elem)
+const cloneDataPoint = (source) => {
+  if (Array.isArray(source)) return source.map((elem) => elem)
   else if (typeof source === 'number') return source
   else if (typeof source === 'object') return {...source}
 }
