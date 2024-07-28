@@ -1,16 +1,18 @@
 # chartjs-plugin-dragdata.js
 
-[![codecov](https://codecov.io/gh/artus9033/chartjs-plugin-dragdata/graph/badge.svg?token=TDRWG9LKG4)](https://codecov.io/gh/artus9033/chartjs-plugin-dragdata)
+![NPM Downloads](https://img.shields.io/npm/dm/chartjs-plugin-dragdata)
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/artus9033/chartjs-plugin-dragdata/ci.yml)](https://github.com/artus9033/chartjs-plugin-dragdata/actions/workflows/ci.yml)
 [![release](https://img.shields.io/github/v/release/artus9033/chartjs-plugin-dragdata?include_prereleases)](https://github.com/artus9033/chartjs-plugin-dragdata/releases)
 [![npm (latest)](https://img.shields.io/npm/v/chartjs-plugin-dragdata/latest)](https://www.npmjs.com/package/chartjs-plugin-dragdata/v/latest)
+![npm bundle size](https://img.shields.io/bundlephobia/minzip/chartjs-plugin-dragdata)
+![npm bundle size](https://img.shields.io/bundlephobia/min/chartjs-plugin-dragdata)
+[![codecov](https://codecov.io/gh/artus9033/chartjs-plugin-dragdata/graph/badge.svg?token=TDRWG9LKG4)](https://codecov.io/gh/artus9033/chartjs-plugin-dragdata)
 <a href="https://github.com/chartjs/awesome"><img src="https://awesome.re/badge-flat2.svg" alt="Awesome"></a>
 
 A plugin for Chart.js
 Makes data points draggable. Supports touch events.
 
-**Now compatible with Chart.js v4 🎉**
-**Also compatible with Chart.js v3 & v2.4+**
+**Compatible with Chart.js v4, v3 & v2.4+ 🎉**
 
 ![Drag Data Animation](https://user-images.githubusercontent.com/20703207/77322131-8a47f800-6d13-11ea-9ca8-b9fc7f820e85.gif)
 
@@ -28,6 +30,7 @@ Makes data points draggable. Supports touch events.
   - [Touch devices](#touch-devices)
   - [Gotchas](#gotchas)
   - [Contributing](#contributing)
+  - [Additional scripts](#additional-scripts)
   - [License](#license)
 
 ---
@@ -246,13 +249,31 @@ Here's a small example for a Vue.js component
 ## Contributing
 
 Please feel free to submit an issue or a pull request!
-If you make changes to the `src/index.js` file, don't forget to:
+If you make changes to the source files, don't forget to:
 
-- `npm run build` to build the library (outputs will be written to `dist/`)
+- `npm run build` to build the library (outputs will be written to `dist/`) or `npm run build:watch` to run the Parcel packager in watch mode and build the library each time the source files change
 - `npm run build:demos` or `npm run build:demos:watch` to build the demo files (outputs will be written to `demos/dist/`)
 - run unit, integration & E2E tests with `npm run test` (or separately with `npm run test:unit`, `npm run test:integration`, `npm run test:e2e`)
 - if your changes do change the chart's appearance after performing some interaction, update snapshots by running the command `npm run test:e2e:updateSnapshots`
 - manually test your changes to ensure that they do work and don't break existing features
+- when committing, please remember that the commit message must match the [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) convention; lefthook will check that for you automatically
+- create a PR
+
+### Additional scripts
+
+The build command comes in four variants:
+
+- `build` which builds bundles for all targets:
+  - `chartjs-plugin-dragdata.esm.js`- ESM production, minified (tersed) bundle
+  - `chartjs-plugin-dragdata.js`- UMD production, non-minified bundle
+  - `chartjs-plugin-dragdata.min.js` - UMD production, minified (tersed) bundle
+  - `chartjs-plugin-dragdata-test.js` - bundle for Jest unit tests with coverage instrumentation code injected by `rollup-istanbul-plugin`
+  - `chartjs-plugin-dragdata-test-browser.js` - bundle for E2E test with additional test-only exports used for automatic tests, allows for injection of urlencoded configuration for Playwright and with coverage instrumentation code injected by `rollup-istanbul-plugin`
+- `build:no-coverage` which works like `build`, but does not include the `rollup-istanbul-plugin`, which may sometimes be helpful when you alter the code and encounter an error when running tests, making the result bundle not contain rubbish code injected by Istanbul
+- `build:watch` which works as `build`, but watches source files for changes and triggers a rebuild whenever they change
+- `build:watch:no-coverage` which works like a mix of `build:watch` and `build:no-coverage`
+- `lint` which runs ESLint on the project
+- `lint:fix` which runs ESLint on the project in fix mode
 
 ## License
 
