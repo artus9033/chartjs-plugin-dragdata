@@ -66,7 +66,7 @@ export async function setupE2ETest(
 	}
 
 	await page.goto(
-		`file://${path.dirname(__filename)}/../../../demos/dist/${options.fileName}?isTest=true`,
+		`file://${path.dirname(__filename)}/../../../pages/dist-e2e/${options.fileName}?isTest=true`,
 	);
 	await page.waitForLoadState("load");
 

@@ -8,8 +8,8 @@
 	"scripts": {
 		"rollup:base": "rollup --config rollup.config.js",
 		"build": "npm run rollup:base",
-		"build:demos": "npx tsx demos/src/bundle.ts",
-		"build:demos:watch": "npx tsx demos/src/watch.ts",
+		"build:pages": "npx tsx pages/src/bundle.ts",
+		"build:pages:watch": "npx tsx pages/src/watch.ts",
 		"dev": "npm run rollup:base -- --watch",
 		"cleanCoverage": "npx tsx scripts/cleanCoverage.ts",
 		"collectCoverage": "npx tsx scripts/collectCoverage.ts && npx nyc merge coverage/merged/src coverage/merged/report/merged-coverage.json && npx nyc report -t coverage/merged/report --report-dir coverage/merged/report/html --reporter=html",
@@ -22,7 +22,7 @@
 		"test:e2e:ui": "npm run test:e2e:base -- --ui",
 		"test:e2e:headed": "npm run test:e2e:base --headed",
 		"test:e2e:updateSnapshots": "npm run test:e2e -- -- --update-snapshots",
-		"pretest": "npm run build:demos && npm run cleanCoverage && npm run build",
+		"pretest": "npm run build:pages && npm run cleanCoverage && npm run build",
 		"posttest": "npm run collectCoverage",
 		"lint": "npx lint-staged && eslint",
 		"postinstall": "npx playwright install && npx lefthook install"
