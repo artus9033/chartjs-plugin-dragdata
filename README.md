@@ -78,15 +78,21 @@ Click here to learn [how to use this plugin in an Observable notebook](https://o
 npm install chartjs-plugin-dragdata
 ```
 
+### yarn
+
+```
+yarn add chartjs-plugin-dragdata
+```
+
 ### CDN
 
-In browsers, you may use the following script tag:
+In browsers, you may simply add the following script tag:
 
 ```
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@latest/dist/chartjs-plugin-dragdata.min.js"></script>
 ```
 
-Or, download a release archive file from the dist folder.
+Or, download a release archive file from [releases](https://github.com/artus9033/chartjs-plugin-dragdata/releases).
 
 ## Configuration
 
