@@ -298,7 +298,7 @@ const dragEndCallback = (e, chartInstance, callback) => {
 };
 
 const cloneDataPoint = (source) => {
-	if (Array.isArray(source)) return source.map((elem) => elem);
+	if (Array.isArray(source)) return [...source];
 	else if (typeof source === "number") return source;
 	else if (typeof source === "object") return { ...source };
 };
