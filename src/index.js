@@ -88,12 +88,11 @@ function calcRadar(e, chartInstance, curIndex) {
   cursorY = yCenter - cursorY
   maxX = maxX - xCenter
   maxY = yCenter - maxY
-
   
   let v = 0
   
-  // If the axis is at x = 0, we calculate the distance based on position of the cursor
-  // Otherwise, we will calculate the distance based on the x position of the mouse divided by the consinus of the angle of the axis
+  // if the axis is at x = 0, we calculate the distance based on position of the cursor
+  // otherwise, we will calculate the distance based on the x position of the mouse divided by the cosine of the angle of the axis
   if(maxX === 0) {
     let d = maxY > 0 ? Math.max(0, cursorY) : Math.min(0, cursorY)
     v = rScale.getValueForDistanceFromCenter(Math.abs(d))
