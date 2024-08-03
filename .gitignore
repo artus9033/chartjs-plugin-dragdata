@@ -1,2 +1,9 @@
+coverage
+/dist
+docs/assets
+demos/dist/assets
 node_modules
 .DS_Store
+.rollup.cache
+.nyc_output
+.vscode
