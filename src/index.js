@@ -1,7 +1,7 @@
-import {Chart} from 'chart.js'
-import { getRelativePosition } from 'chart.js/helpers'
-import {drag} from 'd3-drag'
-import {select} from 'd3-selection'
+import { Chart } from "chart.js";
+import { getRelativePosition } from "chart.js/helpers";
+import { drag } from "d3-drag";
+import { select } from "d3-selection";
 
 let element,
 	yAxisID,
@@ -105,29 +105,39 @@ function roundValue(value, pos) {
 }
 
 function calcRadar(e, chartInstance, curIndex) {
-  let { x: cursorX, y: cursorY } = Chart.helpers.getRelativePosition(e, chartInstance)
-  const rScale = chartInstance.scales[rAxisID]
-  let { x: maxX, y: maxY, angle } = rScale.getPointPositionForValue(curIndex, chartInstance.scales[rAxisID].max)
-  const { xCenter, yCenter } = rScale
-  
-  // make cursor and axis max value positons relative to the center of the radar chart
-  // so that we can calculate easily cosnius
-  cursorX = cursorX - xCenter
-  cursorY = yCenter - cursorY
-  maxX = maxX - xCenter
-  maxY = yCenter - maxY
-  
-  let v = 0
-  
-  // if the axis is at x = 0, we calculate the distance based on position of the cursor
-  // otherwise, we will calculate the distance based on the x position of the mouse divided by the cosine of the angle of the axis
-  if(maxX === 0) {
-    let d = maxY > 0 ? Math.max(0, cursorY) : Math.min(0, cursorY)
-    v = rScale.getValueForDistanceFromCenter(Math.abs(d))
-  } else {
-    let d = Math.max(0, cursorX / Math.cos(angle))
-    v = rScale.getValueForDistanceFromCenter(d)
-  }
+	let { x: cursorX, y: cursorY } = getRelativePosition(
+		e,
+		chartInstance,
+	);
+	const rScale = chartInstance.scales[rAxisID];
+	let {
+		x: maxX,
+		y: maxY,
+		angle,
+	} = rScale.getPointPositionForValue(
+		curIndex,
+		chartInstance.scales[rAxisID].max,
+	);
+	const { xCenter, yCenter } = rScale;
+
+	// make cursor and axis max value positons relative to the center of the radar chart
+	// so that we can calculate easily cosnius
+	cursorX = cursorX - xCenter;
+	cursorY = yCenter - cursorY;
+	maxX = maxX - xCenter;
+	maxY = yCenter - maxY;
+
+	let v = 0;
+
+	// if the axis is at x = 0, we calculate the distance based on position of the cursor
+	// otherwise, we will calculate the distance based on the x position of the mouse divided by the cosine of the angle of the axis
+	if (maxX === 0) {
+		let d = maxY > 0 ? Math.max(0, cursorY) : Math.min(0, cursorY);
+		v = rScale.getValueForDistanceFromCenter(Math.abs(d));
+	} else {
+		let d = Math.max(0, cursorX / Math.cos(angle));
+		v = rScale.getValueForDistanceFromCenter(d);
+	}
 
 	v = roundValue(v, chartInstance.config.options.plugins.dragData.round);
 
