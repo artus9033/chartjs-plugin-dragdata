@@ -105,38 +105,43 @@ function roundValue(value, pos) {
 }
 
 function calcRadar(e, chartInstance, curIndex) {
-	let { x: cursorX, y: cursorY } = getRelativePosition(
-		e,
-		chartInstance,
-	);
+	let { x: cursorX, y: cursorY } = getRelativePosition(e, chartInstance);
 	const rScale = chartInstance.scales[rAxisID];
-	let {
-		x: maxX,
-		y: maxY,
-		angle,
-	} = rScale.getPointPositionForValue(
-		curIndex,
+	let { angle: axisAngleRad } = rScale.getPointPositionForValue(
+		// the radar chart has points draggable along primary axes that are aligned with
+		// scales' lines; the polarArea chart, however, is draggable along lines placed in the center
+		// between major lines, thus the +0.5 of index is added for the helper to calculate the angle
+		// of this center guide line (the helper accept a continuous argument, in spite of the name "index")
+		curIndex + (chartInstance.config.type === "polarArea" ? 0.5 : 0),
 		chartInstance.scales[rAxisID].max,
 	);
 	const { xCenter, yCenter } = rScale;
 
-	// make cursor and axis max value positons relative to the center of the radar chart
-	// so that we can calculate easily cosnius
-	cursorX = cursorX - xCenter;
-	cursorY = yCenter - cursorY;
-	maxX = maxX - xCenter;
-	maxY = yCenter - maxY;
+	// we calculate the dot product of the vector from center to cursor & the axis direction vector
+	// center-to-cursor vector v
+	let vx = cursorX - xCenter;
+	let vy = cursorY - yCenter;
+	// axis direction vector d
+	let dx = Math.cos(axisAngleRad);
+	let dy = Math.sin(axisAngleRad);
+	// dot product: v @ d
+	let dotProduct = vx * dx + vy * dy;
+	let d =
+		// if dot product <= 0, then the point is on the opposite side of the center than the direction of the axis
+		dotProduct > 0
+			? // Euclidean distance between cursor & center
+				Math.sqrt(
+					Math.pow(cursorX - xCenter, 2) + Math.pow(cursorY - yCenter, 2),
+				)
+			: 0;
 
+	// calculate the value, applying correction by chart scaling factor
 	let v = 0;
-
-	// if the axis is at x = 0, we calculate the distance based on position of the cursor
-	// otherwise, we will calculate the distance based on the x position of the mouse divided by the cosine of the angle of the axis
-	if (maxX === 0) {
-		let d = maxY > 0 ? Math.max(0, cursorY) : Math.min(0, cursorY);
-		v = rScale.getValueForDistanceFromCenter(Math.abs(d));
+	let scalingFactor = rScale.drawingArea / (rScale.max - rScale.min);
+	if (rScale.options.ticks.reverse) {
+		v = rScale.max - d / scalingFactor;
 	} else {
-		let d = Math.max(0, cursorX / Math.cos(angle));
-		v = rScale.getValueForDistanceFromCenter(d);
+		v = rScale.min + d / scalingFactor;
 	}
 
 	v = roundValue(v, chartInstance.config.options.plugins.dragData.round);
