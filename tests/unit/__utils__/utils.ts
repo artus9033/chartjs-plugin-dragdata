@@ -1,4 +1,4 @@
-import { Chart, ChartTypeRegistry } from "chart.js";
+import { Chart, ChartOptions, ChartTypeRegistry } from "chart.js";
 
 import {
 	TestChartOptions,
@@ -8,9 +8,11 @@ import {
 	UnitTestCategory,
 	isTestsConfigWhitelistItemAllowed,
 } from "../../__utils__/testsConfig";
+import _ from "lodash";
 
 export function setupChartInstance<T extends keyof ChartTypeRegistry>(
 	chartType: T,
+	additionalOptions: Partial<ChartOptions>,
 ): Chart<T> {
 	const canvas = document.createElement("canvas");
 	canvas.width = 800;
@@ -22,7 +24,7 @@ export function setupChartInstance<T extends keyof ChartTypeRegistry>(
 	return new Chart<T>(ctx, {
 		type: chartType,
 		data: genericChartScenarioBase.configuration.data as any,
-		options: TestChartOptions as any,
+		options: _.merge(_.cloneDeep(TestChartOptions as any), additionalOptions),
 	});
 }
 
