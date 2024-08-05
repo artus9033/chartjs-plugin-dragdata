@@ -104,7 +104,7 @@ function roundValue(value, pos) {
 	return value;
 }
 
-function calcRadar(e, chartInstance, curIndex) {
+function calcRadar(e, chartInstance, curIndex, rAxisID) {
 	let { x: cursorX, y: cursorY } = getRelativePosition(e, chartInstance);
 	const rScale = chartInstance.scales[rAxisID];
 	let { angle: axisAngleRad } = rScale.getPointPositionForValue(
@@ -124,7 +124,7 @@ function calcRadar(e, chartInstance, curIndex) {
 	// axis direction vector d
 	let dx = Math.cos(axisAngleRad);
 	let dy = Math.sin(axisAngleRad);
-	// dot product: v @ d
+	// dot product of v & d
 	let dotProduct = vx * dx + vy * dy;
 	let d =
 		// if dot product <= 0, then the point is on the opposite side of the center than the direction of the axis
@@ -138,7 +138,7 @@ function calcRadar(e, chartInstance, curIndex) {
 	// calculate the value, applying correction by chart scaling factor
 	let v = 0;
 	let scalingFactor = rScale.drawingArea / (rScale.max - rScale.min);
-	if (rScale.options.ticks.reverse) {
+	if (rScale.options.reverse) {
 		v = rScale.max - d / scalingFactor;
 	} else {
 		v = rScale.min + d / scalingFactor;
@@ -261,7 +261,7 @@ const updateData = (e, chartInstance, pluginOptions, callback) => {
 		let dataPoint = chartInstance.data.datasets[curDatasetIndex].data[curIndex];
 
 		if (type === "radar" || type === "polarArea") {
-			dataPoint = calcRadar(e, chartInstance, curIndex);
+			dataPoint = calcRadar(e, chartInstance, curIndex, rAxisID);
 		} else if (stacked) {
 			let cursorPos = calcPosition(
 				e,
