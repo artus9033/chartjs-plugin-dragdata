@@ -25,12 +25,17 @@ export type RenderPageOptions = {
 	 * operations to parse E2E test data in Playwright) or as docs demo
 	 */
 	isE2ETest: boolean;
+	/**
+	 * Whether to include scripts loading date-fns & date-fns chart.js adapter
+	 */
+	includeDateFns?: boolean;
 };
 
 export function renderPage({
 	title,
 	fileName,
 	isE2ETest,
+	includeDateFns = false,
 }: RenderPageOptions): BundledPage {
 	const { TestScenarios } = requireUncached(
 		"../../tests/__data__/data",
@@ -46,6 +51,7 @@ export function renderPage({
 			title: `${title} demo`,
 			scenarioConfiguration: JSON.stringify(scenario.configuration),
 			isE2ETest,
+			includeDateFns,
 		}),
 		outputFileName: fileName as string,
 	};
