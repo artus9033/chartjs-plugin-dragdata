@@ -177,15 +177,3 @@ for (const disablePlugin of [false, true]) {
 		});
 	});
 }
-
-// // bar chart
-// await runTests("bar", indexTestSettings);
-
-// // dual axis
-// const dualAxisSettings = new TestSettings();
-// dragPointSpec.datasetIndex = 1; // use second dataset instead
-// dragPointSpec.index = 3;
-// await runTests("dualAxis", dualAxisSettings);
-// // small chart
-// dragPointSpec.index = 1;
-// await runTests("smallChart", dualAxisSettings);
