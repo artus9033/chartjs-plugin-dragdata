@@ -13,9 +13,6 @@ A plugin for Chart.js that makes data points draggable. Supports touch events.
 
 **Compatible with Chart.js v4, v3 & v2.4+ 🎉**
 
-**Now compatible with Chart.js v4 🎉**
-**Also compatible with Chart.js v3 & v2.4+**
-
 ![Drag Data Animation](https://user-images.githubusercontent.com/20703207/77322131-8a47f800-6d13-11ea-9ca8-b9fc7f820e85.gif)
 
 ### Table of contents

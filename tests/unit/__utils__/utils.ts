@@ -153,7 +153,7 @@ export function dataPointCompatToPoint2D(
 			y: (point as [number, number])[1],
 		};
 	} else {
-		// scalar; this has no interpretation, so
+		// scalar; this has no interpretation, so it is treated as a Point2DObject with the same value in both properties
 		return { x: point as number, y: point as number };
 	}
 }
