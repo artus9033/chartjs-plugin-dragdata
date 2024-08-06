@@ -2,8 +2,8 @@ import path from "path";
 
 import config from "config";
 
-import { TestChartTypes } from "../unit/__utils__/constants";
 import { DeepFinalPropertiesOf } from "./types";
+import { TestChartTypes } from "../unit/__utils__/constants";
 import Whitelist from "./structures/Whitelist";
 import { ALL_AXES_SPECS, AxisSpec } from "./structures/axisSpec";
 import { MagnetVariant } from "./magnet";
