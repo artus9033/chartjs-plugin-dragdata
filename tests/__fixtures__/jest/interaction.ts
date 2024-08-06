@@ -69,6 +69,7 @@ export async function performDragWithoutTesting({
 		...(magnet
 			? {
 					magnet,
+					// eslint-disable-next-line require-await
 					getDataFromPointOnScreen: async (pointOnScreen, canvasBB) => {
 						pointOnScreen = new Offset2D({
 							xAbs: -canvasBB.x,
@@ -94,6 +95,7 @@ export async function performDragWithoutTesting({
 					},
 				}
 			: { magnet: undefined, getDataFromPointOnScreen: undefined }),
+		// eslint-disable-next-line require-await
 		getCoordinateOnScaleForAxis: async (data, axis) =>
 			isNaN(data) ? NaN : chart.scales[axis].getPixelForValue(data),
 	});
