@@ -2,8 +2,8 @@ import path from "path";
 
 import config from "config";
 
-import { DeepFinalPropertiesOf } from "./types";
 import { TestChartTypes } from "../unit/__utils__/constants";
+import { DeepFinalPropertiesOf } from "./types";
 import Whitelist from "./structures/Whitelist";
 import { ALL_AXES_SPECS, AxisSpec } from "./structures/axisSpec";
 import { MagnetVariant } from "./magnet";
@@ -38,6 +38,7 @@ export function isTestsConfigWhitelistItemAllowed<
 function maybeLoadEntryFromConfig<RawConfigValueType>(
 	key: DeepFinalPropertiesOf<TestsConfig>,
 ): RawConfigValueType | undefined;
+// eslint-disable-next-line no-redeclare -- this is a false positive
 function maybeLoadEntryFromConfig<
 	RawConfigValueType,
 	FinalValueType,
@@ -48,6 +49,7 @@ function maybeLoadEntryFromConfig<
 	key: DeepFinalPropertiesOf<TestsConfig>,
 	valueMapperIfValuePresent: ValueMapper,
 ): FinalValueType | undefined;
+// eslint-disable-next-line no-redeclare -- this is a false positive
 function maybeLoadEntryFromConfig(...args: any[]) {
 	if (args.length === 1) {
 		const [key] = args;
