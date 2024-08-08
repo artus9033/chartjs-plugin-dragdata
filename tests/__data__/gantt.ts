@@ -2,12 +2,6 @@ import dateFns from "date-fns";
 import { TestScenario } from "../__utils__/structures/scenario";
 import { E2EInteraction } from "../__utils__/testsConfig";
 
-function getRandomInt(min: number, max: number) {
-	min = Math.ceil(min);
-	max = Math.floor(max);
-	return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 const projectSteps = [
 	"Hypothesis",
 	"Researching",
@@ -20,12 +14,11 @@ const colors = ["#69d2e7", "#a7dbd8", "#e0e4cc", "#f38630", "#fa6900"];
 
 const DEMO_START_DATE_STR = "2024-04-09T21:05:48.060Z";
 
-function createNewProject(daysFromNow: number) {
+function createNewProject(daysFromNow: number, daysPerStepProj: number[]) {
 	const startProject = dateFns.addDays(
 		new Date(DEMO_START_DATE_STR),
 		daysFromNow,
 	);
-	const daysPerStepProj = projectSteps.map(() => getRandomInt(5, 40));
 
 	const datesProj = projectSteps.reduce<[Date, Date][]>((arr, s, i) => {
 		if (!arr.length) {
@@ -44,8 +37,18 @@ function createNewProject(daysFromNow: number) {
 }
 
 const projectsStartDates = [0, 10, 40, 50, 55, 70, 90, 94];
-const dataPerProject = projectsStartDates.map((daysFromStart) =>
-	createNewProject(daysFromStart),
+const projectsTasksLengths = [
+	[19, 6, 25, 11, 39],
+	[40, 9, 38, 21, 22],
+	[39, 32, 10, 11, 25],
+	[21, 26, 10, 32, 25],
+	[28, 19, 26, 14, 16],
+	[18, 9, 6, 40, 40],
+	[7, 19, 34, 30, 39],
+	[36, 26, 21, 18, 29],
+];
+const dataPerProject = projectsStartDates.map((daysFromStart, projectIndex) =>
+	createNewProject(daysFromStart, projectsTasksLengths[projectIndex]),
 );
 
 export const ganttChartScenario = {
