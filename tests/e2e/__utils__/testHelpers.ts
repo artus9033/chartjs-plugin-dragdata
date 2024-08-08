@@ -5,7 +5,7 @@ import { test } from "playwright-test-coverage";
 
 import { TestScenarios } from "../../__data__/data";
 import { isTestsConfigWhitelistItemAllowed } from "../../__utils__/testsConfig";
-import { demosDistDirPath } from "./paths";
+import { e2ePagesDistDirPath } from "./paths";
 
 export function describeEachChartType(
 	testGenerator: (
@@ -14,9 +14,10 @@ export function describeEachChartType(
 	) => void | Promise<void>,
 ) {
 	for (const fileName of fs
-		.readdirSync(demosDistDirPath)
+		.readdirSync(e2ePagesDistDirPath)
 		.filter(
-			(file) => !fs.lstatSync(path.join(demosDistDirPath, file)).isDirectory(),
+			(file) =>
+				!fs.lstatSync(path.join(e2ePagesDistDirPath, file)).isDirectory(),
 		) as (keyof typeof TestScenarios)[]) {
 		(path.extname(fileName) === ".html" &&
 			isTestsConfigWhitelistItemAllowed(
