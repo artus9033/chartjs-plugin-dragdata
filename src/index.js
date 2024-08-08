@@ -1,4 +1,5 @@
 import { Chart } from "chart.js";
+import { getRelativePosition } from "chart.js/helpers";
 import { drag } from "d3-drag";
 import { select } from "d3-selection";
 
@@ -71,10 +72,10 @@ const getElement = (e, chartInstance, callback) => {
 			floatingBar =
 				samplePoint !== null &&
 				Array.isArray(samplePoint) &&
-				samplePoint.length == 2;
+				samplePoint.length >= 2;
 
-			let data = {};
-			let newPos = calcPosition(e, chartInstance, datasetIndex, index, data);
+			let dataPoint = chartInstance.data.datasets[datasetIndex].data[index];
+			let newPos = calcPosition(e, chartInstance, dataPoint);
 			initValue = newPos - curValue;
 		}
 
@@ -103,27 +104,41 @@ function roundValue(value, pos) {
 	return value;
 }
 
-function calcRadar(e, chartInstance) {
-	let x, y, v;
-	if (e.touches) {
-		x =
-			e.touches[0].clientX - chartInstance.canvas.getBoundingClientRect().left;
-		y = e.touches[0].clientY - chartInstance.canvas.getBoundingClientRect().top;
-	} else {
-		x = e.clientX - chartInstance.canvas.getBoundingClientRect().left;
-		y = e.clientY - chartInstance.canvas.getBoundingClientRect().top;
-	}
-	let rScale = chartInstance.scales[rAxisID];
-	let d = Math.sqrt(
-		Math.pow(x - rScale.xCenter, 2) + Math.pow(y - rScale.yCenter, 2),
+function calcRadar(e, chartInstance, curIndex, rAxisID) {
+	let { x: cursorX, y: cursorY } = getRelativePosition(e, chartInstance);
+	const rScale = chartInstance.scales[rAxisID];
+	let { angle: axisAngleRad } = rScale.getPointPositionForValue(
+		// the radar chart has points draggable along primary axes that are aligned with
+		// scales' lines; the polarArea chart, however, is draggable along lines placed in the center
+		// between major lines, thus the +0.5 of index is added for the helper to calculate the angle
+		// of this center guide line (the helper accept a continuous argument, in spite of the name "index")
+		curIndex + (chartInstance.config.type === "polarArea" ? 0.5 : 0),
+		chartInstance.scales[rAxisID].max,
 	);
-	let scalingFactor = rScale.drawingArea / (rScale.max - rScale.min);
-	if (rScale.options.ticks.reverse) {
-		v = rScale.max - d / scalingFactor;
-	} else {
-		v = rScale.min + d / scalingFactor;
-	}
+	const { xCenter, yCenter } = rScale;
 
+	// we calculate the dot product of the vector from center to cursor & the axis direction vector
+	// center-to-cursor vector v
+	let vx = cursorX - xCenter;
+	let vy = cursorY - yCenter;
+	// axis direction vector d
+	let dx = Math.cos(axisAngleRad);
+	let dy = Math.sin(axisAngleRad);
+	// dot product of v & d
+	let dotProduct = vx * dx + vy * dy;
+	let d =
+		// if dot product <= 0, then the point is on the opposite side of the center than the direction of the axis
+		dotProduct > 0
+			? // Euclidean distance between cursor & center
+				Math.sqrt(
+					Math.pow(cursorX - xCenter, 2) + Math.pow(cursorY - yCenter, 2),
+				)
+			: 0;
+
+	// calculate the value from distance
+	let v = rScale.getValueForDistanceFromCenter(d);
+
+	// apply rounding
 	v = roundValue(v, chartInstance.config.options.plugins.dragData.round);
 
 	v =
@@ -138,9 +153,9 @@ function calcRadar(e, chartInstance) {
 	return v;
 }
 
-function calcPosition(e, chartInstance, datasetIndex, index, data) {
+function calcPosition(e, chartInstance, data) {
 	let x, y;
-	const dataPoint = chartInstance.data.datasets[datasetIndex].data[index];
+	const dataPoint = cloneDataPoint(data);
 
 	if (e.touches) {
 		x = chartInstance.scales[xAxisID].getValueForPixel(
@@ -196,10 +211,12 @@ function calcPosition(e, chartInstance, datasetIndex, index, data) {
 		const diffFromRight = Math.abs(newVal - dataPoint[1]);
 
 		if (diffFromLeft <= diffFromRight) {
-			return [newVal, dataPoint[1]];
+			dataPoint[0] = newVal;
 		} else {
-			return [dataPoint[0], newVal];
+			dataPoint[1] = newVal;
 		}
+
+		return dataPoint;
 	}
 
 	if (
@@ -241,32 +258,14 @@ const updateData = (e, chartInstance, pluginOptions, callback) => {
 		let dataPoint = chartInstance.data.datasets[curDatasetIndex].data[curIndex];
 
 		if (type === "radar" || type === "polarArea") {
-			dataPoint = calcRadar(e, chartInstance);
+			dataPoint = calcRadar(e, chartInstance, curIndex, rAxisID);
 		} else if (stacked) {
-			let cursorPos = calcPosition(
-				e,
-				chartInstance,
-				curDatasetIndex,
-				curIndex,
-				dataPoint,
-			);
+			let cursorPos = calcPosition(e, chartInstance, dataPoint);
 			dataPoint = roundValue(cursorPos - initValue, pluginOptions.round);
 		} else if (floatingBar) {
-			dataPoint = calcPosition(
-				e,
-				chartInstance,
-				curDatasetIndex,
-				curIndex,
-				dataPoint,
-			);
+			dataPoint = calcPosition(e, chartInstance, dataPoint);
 		} else {
-			dataPoint = calcPosition(
-				e,
-				chartInstance,
-				curDatasetIndex,
-				curIndex,
-				dataPoint,
-			);
+			dataPoint = calcPosition(e, chartInstance, dataPoint);
 		}
 
 		if (
@@ -313,6 +312,12 @@ const dragEndCallback = (e, chartInstance, callback) => {
 		let value = applyMagnet(chartInstance, datasetIndex, index);
 		return callback(e, datasetIndex, index, value);
 	}
+};
+
+const cloneDataPoint = (source) => {
+	if (Array.isArray(source)) return [...source];
+	else if (typeof source === "number") return source;
+	else if (typeof source === "object") return { ...source };
 };
 
 const ChartJSdragDataPlugin = {

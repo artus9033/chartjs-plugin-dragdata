@@ -18,8 +18,13 @@ const projectSteps = [
 
 const colors = ["#69d2e7", "#a7dbd8", "#e0e4cc", "#f38630", "#fa6900"];
 
+const DEMO_START_DATE_STR = "2024-04-09T21:05:48.060Z";
+
 function createNewProject(daysFromNow: number) {
-	const startProject = dateFns.addDays(new Date(), daysFromNow);
+	const startProject = dateFns.addDays(
+		new Date(DEMO_START_DATE_STR),
+		daysFromNow,
+	);
 	const daysPerStepProj = projectSteps.map(() => getRandomInt(5, 40));
 
 	const datesProj = projectSteps.reduce<[Date, Date][]>((arr, s, i) => {
@@ -70,7 +75,7 @@ export const ganttChartScenario = {
 				x: {
 					type: "time",
 					// @ts-ignore: this is valid since chartjs-adapter-date-fns is used
-					min: new Date() as any,
+					min: new Date(DEMO_START_DATE_STR) as any,
 				},
 				y: {
 					stacked: true,
