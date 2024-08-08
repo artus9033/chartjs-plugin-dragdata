@@ -59,9 +59,9 @@ describe("plugin", () => {
 			(unitTestCategoryAllowed("pluginRegistration") ? test : test.skip)(
 				`plugin should be accepted by chart.js register() method`,
 				() => {
-					expect(Chart.registry.getPlugin(ChartJSdragDataPlugin.id)).toEqual(
-						ChartJSdragDataPlugin,
-					);
+					expect(
+						Chart.registry.getPlugin(ChartJSdragDataPlugin.id),
+					).toStrictEqual(ChartJSdragDataPlugin);
 				},
 			);
 
