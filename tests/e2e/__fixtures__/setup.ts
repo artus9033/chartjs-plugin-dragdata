@@ -66,14 +66,14 @@ export async function setupE2ETest(
 	}
 
 	await page.goto(
-		`file://${path.dirname(__filename)}/../../../demos/dist/${options.fileName}?isTest=true`,
+		`file://${path.dirname(__filename)}/../../../pages/dist-e2e/${options.fileName}?isTest=true`,
 	);
 	await page.waitForLoadState("load");
 
 	// run the actual setup function in browser context
 	await page.evaluate(
 		({ testChartSetupOptions }) => {
-			window.setupTest(testChartSetupOptions);
+			window.setupChart(testChartSetupOptions);
 		},
 		{ testChartSetupOptions: testChartSetupOptions as any },
 	);
