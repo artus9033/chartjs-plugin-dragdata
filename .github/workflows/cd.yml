@@ -1,0 +1,64 @@
+name: Continuous Delivery
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build-demos:
+    name: Build demos
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20.9.0
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20.9.0
+          cache: "npm"
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v4
+        id: cache-node_modules
+        with:
+          path: "node_modules"
+          key: ${{ runner.os }}-npm-${{ hashFiles('/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-npm-${{ hashFiles('/package-lock.json') }}
+            ${{ runner.os }}-npm-
+
+      - name: Install npm dependencies
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        run: npm ci --legacy-peer-deps
+
+      - name: Build plugin bundles
+        run: npm run build
+
+      - name: Build E2E pages & demos
+        run: npm run build:pages
+
+      - name: Upload demos artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: pages/dist-demos
+
+  publish-demos:
+    name: Publish demos
+    runs-on: ubuntu-latest
+    needs: build-demos
+    environment:
+      name: github-pages
+      url: ${{ steps.publishing.outputs.page_url }}
+
+    # Grant GITHUB_TOKEN the permissions required to make a Pages deployment
+    permissions:
+      pages: write # to deploy to Pages
+      id-token: write # to verify the deployment originates from an appropriate source
+
+    steps:
+      - name: Publish demos to GH Pages
+        id: publishing
+        uses: actions/deploy-pages@v4
