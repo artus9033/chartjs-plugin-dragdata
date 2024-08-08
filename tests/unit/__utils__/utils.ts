@@ -6,8 +6,8 @@ import {
 	ChartType,
 	ChartTypeRegistry,
 } from "chart.js";
-
 import _ from "lodash";
+
 import {
 	TestChartOptions,
 	genericChartScenarioBase,
