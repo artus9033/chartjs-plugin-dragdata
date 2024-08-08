@@ -16,7 +16,6 @@ const { roundValue } = exportsForTesting;
 			expect(roundValue(1.23456, 2)).toBe(1.23);
 			expect(roundValue(1.23456, 3)).toBe(1.235);
 			expect(roundValue(1.23456, 0)).toBe(1);
-			expect(roundValue(1.23456, 0)).toBe(1);
 		},
 	);
 
