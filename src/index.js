@@ -135,15 +135,10 @@ function calcRadar(e, chartInstance, curIndex, rAxisID) {
 				)
 			: 0;
 
-	// calculate the value, applying correction by chart scaling factor
-	let v = 0;
-	let scalingFactor = rScale.drawingArea / (rScale.max - rScale.min);
-	if (rScale.options.reverse) {
-		v = rScale.max - d / scalingFactor;
-	} else {
-		v = rScale.min + d / scalingFactor;
-	}
+	// calculate the value from distance
+	let v = rScale.getValueForDistanceFromCenter(d);
 
+	// apply rounding
 	v = roundValue(v, chartInstance.config.options.plugins.dragData.round);
 
 	v =
