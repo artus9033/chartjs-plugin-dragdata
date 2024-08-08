@@ -71,7 +71,7 @@ const getElement = (e, chartInstance, callback) => {
 			floatingBar =
 				samplePoint !== null &&
 				Array.isArray(samplePoint) &&
-				samplePoint.length == 2;
+				samplePoint.length >= 2;
 
 			let dataPoint = chartInstance.data.datasets[datasetIndex].data[index];
 			let newPos = calcPosition(e, chartInstance, dataPoint);
@@ -196,10 +196,12 @@ function calcPosition(e, chartInstance, data) {
 		const diffFromRight = Math.abs(newVal - dataPoint[1]);
 
 		if (diffFromLeft <= diffFromRight) {
-			return [newVal, dataPoint[1]];
+			dataPoint[0] = newVal;
 		} else {
-			return [dataPoint[0], newVal];
+			dataPoint[1] = newVal;
 		}
+
+		return dataPoint;
 	}
 
 	if (
