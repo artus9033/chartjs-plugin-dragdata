@@ -73,7 +73,7 @@ export async function setupE2ETest(
 	// run the actual setup function in browser context
 	await page.evaluate(
 		({ testChartSetupOptions }) => {
-			window.setupTest(testChartSetupOptions);
+			window.setupChart(testChartSetupOptions);
 		},
 		{ testChartSetupOptions: testChartSetupOptions as any },
 	);

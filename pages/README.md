@@ -8,7 +8,7 @@ Each demo exposes various global variables (see [/tests/typings.d.ts](/tests/typ
 
 - `isTestReady`: This is a `boolean` flag that indicates whether the test setup is complete and the test is ready to be run. If `isTestReady` is `true`, the test can be run. If it is undefined or false, the test setup is not yet complete.
 
-- `setupTest`: This is a function that is used to set up the test environment. It takes an object of type `TestChartSetupOptions` as an argument, which can include the following properties:
+- `setupChart`: This is a function that is used to set up the test environment or demo. It takes an object of type `TestChartSetupOptions` as an argument, which can include the following properties in test environment builds:
 
 - `isTest`: A `boolean` that indicates whether the current environment is a test environment.
 
@@ -20,7 +20,9 @@ Each demo exposes various global variables (see [/tests/typings.d.ts](/tests/typ
 
 - `roundingPrecision`: An optional `number` that specifies the number of decimal places to which values should be rounded after they have been adjusted by the magnet function.
 
-- `resetData`: a function that resets the data to the original shape passed in to `setupTest()`; invoked in-between groups of test steps
+- `resetData`: a function that resets the data to the original shape passed in to `setupChart()`; invoked in-between groups of test steps
+
+Note: from the below properties, only `disablePlugin`, `draggableAxis`, `roundingPrecision` are honored in demo mode. Their values are fixed and passed automatically by the script when the page loads.
 
 The key files in this module are located in the `src` directory, as follows:
 

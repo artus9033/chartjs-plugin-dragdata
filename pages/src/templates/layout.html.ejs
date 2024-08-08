@@ -36,14 +36,6 @@
 	<script>
 		<% if (isE2ETest) { %>
 			// E2E environment build
-			const {
-				isTest,
-				disablePlugin,
-				draggableAxis,
-				magnetImplSerialized,
-				roundingPrecision,
-				renderOnHoverCirclesTrail = false,
-			} = options;
 		<% } else { %>
 			// demo environment build
 		<% } %>
@@ -154,6 +146,10 @@
 							context.stroke();
 							context.closePath();
 						}, 0);
+					}
+				<% } else { %>
+					function drawDragMarker(e) {
+						// demo environment stub
 					}
 				<% } %>
 
