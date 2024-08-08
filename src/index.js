@@ -25,9 +25,12 @@ function getSafe(func) {
 }
 
 const getElement = (e, chartInstance, callback) => {
+	const searchMode =
+		chartInstance.config.options.interaction?.mode ?? "nearest";
+
 	element = chartInstance.getElementsAtEventForMode(
 		e,
-		"nearest",
+		searchMode,
 		{ intersect: true },
 		false,
 	)[0];
