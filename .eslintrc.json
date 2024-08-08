@@ -1,9 +1,0 @@
-{
-	"extends": ["@callstack/eslint-config/react", "prettier"],
-	"plugins": ["prettier", "@typescript-eslint"],
-	"parser": "@typescript-eslint/parser",
-	"rules": {
-		"prettier/prettier": ["error"],
-		"import/no-extraneous-dependencies": ["off"]
-	}
-}

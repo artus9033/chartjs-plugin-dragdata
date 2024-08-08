@@ -1,6 +1,0 @@
-dist
-coverage
-.nyc_output
-.github
-docs
-demos/dist
