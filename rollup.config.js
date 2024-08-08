@@ -51,12 +51,14 @@ function bundleDragDataPlugin(options) {
 				browser: true,
 			}),
 			...(bTestBuild
-				? [
-						// in a test build, inject istanbul and keep testing exports
-						istanbul({
-							exclude: ["node_modules/**/*"],
-						}),
-					]
+				? process.env.DISABLE_ISTANBUL_COVERAGE_AT_BUILD !== "true"
+					? [
+							// in a test build, inject istanbul and keep testing exports
+							istanbul({
+								exclude: ["node_modules/**/*"],
+							}),
+						]
+					: []
 				: [
 						// in a non-test build, strip the testing exports
 						replace({

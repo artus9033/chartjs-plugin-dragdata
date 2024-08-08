@@ -26,7 +26,7 @@ const ALL_ENABLER_LOCATION_SPECS: PluginEnablerLocationSpec[] = [
 
 test.describe.configure({ mode: "parallel" });
 
-describeEachChartType(async function testGenerator(fileName, scenario) {
+describeEachChartType(function testGenerator(fileName, scenario) {
 	test.describe.configure({ mode: "parallel" });
 
 	for (let enablerLocationSpec of ALL_ENABLER_LOCATION_SPECS.filter(

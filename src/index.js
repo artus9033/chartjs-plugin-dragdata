@@ -73,8 +73,8 @@ const getElement = (e, chartInstance, callback) => {
 				Array.isArray(samplePoint) &&
 				samplePoint.length >= 2;
 
-			let data = {};
-			let newPos = calcPosition(e, chartInstance, datasetIndex, index, data);
+			let dataPoint = chartInstance.data.datasets[datasetIndex].data[index];
+			let newPos = calcPosition(e, chartInstance, dataPoint);
 			initValue = newPos - curValue;
 		}
 
@@ -138,9 +138,9 @@ function calcRadar(e, chartInstance) {
 	return v;
 }
 
-function calcPosition(e, chartInstance, datasetIndex, index, data) {
+function calcPosition(e, chartInstance, data) {
 	let x, y;
-	const dataPoint = chartInstance.data.datasets[datasetIndex].data[index];
+	const dataPoint = cloneDataPoint(data);
 
 	if (e.touches) {
 		x = chartInstance.scales[xAxisID].getValueForPixel(
@@ -245,30 +245,12 @@ const updateData = (e, chartInstance, pluginOptions, callback) => {
 		if (type === "radar" || type === "polarArea") {
 			dataPoint = calcRadar(e, chartInstance);
 		} else if (stacked) {
-			let cursorPos = calcPosition(
-				e,
-				chartInstance,
-				curDatasetIndex,
-				curIndex,
-				dataPoint,
-			);
+			let cursorPos = calcPosition(e, chartInstance, dataPoint);
 			dataPoint = roundValue(cursorPos - initValue, pluginOptions.round);
 		} else if (floatingBar) {
-			dataPoint = calcPosition(
-				e,
-				chartInstance,
-				curDatasetIndex,
-				curIndex,
-				dataPoint,
-			);
+			dataPoint = calcPosition(e, chartInstance, dataPoint);
 		} else {
-			dataPoint = calcPosition(
-				e,
-				chartInstance,
-				curDatasetIndex,
-				curIndex,
-				dataPoint,
-			);
+			dataPoint = calcPosition(e, chartInstance, dataPoint);
 		}
 
 		if (
@@ -315,6 +297,12 @@ const dragEndCallback = (e, chartInstance, callback) => {
 		let value = applyMagnet(chartInstance, datasetIndex, index);
 		return callback(e, datasetIndex, index, value);
 	}
+};
+
+const cloneDataPoint = (source) => {
+	if (Array.isArray(source)) return [...source];
+	else if (typeof source === "number") return source;
+	else if (typeof source === "object") return { ...source };
 };
 
 const ChartJSdragDataPlugin = {
