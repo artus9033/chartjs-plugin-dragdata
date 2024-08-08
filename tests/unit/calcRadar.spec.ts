@@ -1,11 +1,6 @@
 import { Chart, ChartType } from "chart.js";
 import _ from "lodash";
-
-import { setupChartInstance } from "./__utils__/utils";
-
-import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test";
-
-const { calcRadar } = exportsForTesting;
+import type { Mock } from "jest-mock";
 
 const CHART_CENTER_POS_X = 75;
 const CHART_CENTER_POS_Y = 80;
@@ -19,8 +14,12 @@ jest.mock("chart.js/helpers", () => ({
 }));
 
 import { getRelativePosition } from "chart.js/helpers";
-import { Mock } from "jest-mock";
+
 import { genericChartScenarioBase } from "../__data__/data";
+import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test";
+import { setupChartInstance } from "./__utils__/utils";
+
+const { calcRadar } = exportsForTesting;
 
 const rAxisID = "y";
 
@@ -46,11 +45,14 @@ describe("calcRadar", () => {
 				});
 
 				// mock the r axis
+				const MOCK_DRAWING_AREA = 2000,
+					MOCK_MAX = 100,
+					MOCK_MIN = 0;
 				chartInstance.scales[rAxisID] = {
-					max: 100,
-					min: 0,
+					max: MOCK_MAX,
+					min: MOCK_MIN,
 					// @ts-ignore next line
-					drawingArea: 2000,
+					drawingArea: MOCK_DRAWING_AREA,
 					// @ts-ignore next line
 					getPointPositionForValue: jest.fn((index, _value) => {
 						let angle =
@@ -69,6 +71,17 @@ describe("calcRadar", () => {
 						return {
 							angle,
 						};
+					}),
+					getValueForDistanceFromCenter: jest.fn((d) => {
+						let v = 0;
+						let scalingFactor = MOCK_DRAWING_AREA / (MOCK_MAX - MOCK_MIN);
+						if (chartInstance.scales[rAxisID].options.reverse) {
+							v = MOCK_MAX - d / scalingFactor;
+						} else {
+							v = MOCK_MIN + d / scalingFactor;
+						}
+
+						return v;
 					}),
 					options: { reverse: false } as any,
 					xCenter: CHART_CENTER_POS_X,
