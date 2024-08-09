@@ -18,7 +18,7 @@ let isDragging = false;
 function getSafe(func) {
 	try {
 		return func();
-	} catch (e) {
+	} catch {
 		return "";
 	}
 }
