@@ -1,10 +1,10 @@
 import path from "path";
 
-export const demosDistDirPath = path.join(
+export const e2ePagesDistDirPath = path.join(
 	path.dirname(__filename),
 	"..",
 	"..",
 	"..",
-	"demos",
-	"dist",
+	"pages",
+	"dist-e2e",
 );

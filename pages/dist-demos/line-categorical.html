@@ -1,0 +1,229 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Line (categorical) demo | Chart.js Drag Data Points Plugin</title>
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, user-scalable=no"
+		/>
+		<script src="assets/chart.min.js"></script>
+		<script src="assets/lodash.min.js"></script>
+		<script src="assets/chartjs-plugin-datalabels.min.js"></script>
+
+		<style>
+			html,
+			body {
+				margin: 0;
+				padding: 0;
+			}
+
+			canvas {
+				background-color: #eee;
+				position: absolute;
+				max-width: 100vw;
+				max-height: 100vh;
+			}
+		</style>
+	</head>
+
+	<body>
+		<canvas id="chartJSContainer"></canvas>
+
+		<script>
+			// demo environment build
+
+			const isFirefox = navigator.userAgent.match(/firefox|fxios/i),
+				chartConfiguration = {
+					type: "line",
+					options: {
+						plugins: { datalabels: { display: false } },
+						scales: { y: { min: 2, max: 19 } },
+					},
+					data: {
+						labels: ["Red", "Blue", "Yellow", "Green", "Purple", "Orange"],
+						datasets: [
+							{
+								label: "# of Votes",
+								data: [12, 19, 3, 5, 2, 3],
+								fill: true,
+								tension: 0.4,
+								borderWidth: 1,
+								pointHitRadius: 25,
+							},
+							{
+								label: "# of Points",
+								data: [7, 11, 5, 8, 3, 7],
+								fill: true,
+								tension: 0.4,
+								borderWidth: 1,
+								pointHitRadius: 25,
+							},
+						],
+					},
+				};
+
+			window.isPluginLoaded = false;
+
+			window.setupChart = function setupChart(options) {
+				// demo config loading
+				const {
+					disablePlugin,
+					draggableAxis,
+					roundingPrecision,
+					renderOnHoverCirclesTrail = false,
+				} = options;
+				const isTest = false;
+
+				let onDrag = undefined;
+
+				function onPluginScriptLoaded() {
+					if (!window.isPluginLoaded) console.log("Plugin script loaded");
+					window.isPluginLoaded = true;
+
+					const bothAxesDraggable = draggableAxis === "both",
+						xAxisDraggable =
+							!draggableAxis || bothAxesDraggable || draggableAxis === "x",
+						yAxisDraggable = bothAxesDraggable || draggableAxis === "y";
+
+					function drawDragMarker(e) {
+						// demo environment stub
+					}
+
+					const configuration = _.merge(
+						{
+							options: {
+								animation: !isTest,
+								plugins: {
+									dragData: disablePlugin
+										? false
+										: {
+												dragX: xAxisDraggable,
+												dragY: yAxisDraggable,
+												round: roundingPrecision,
+												showTooltip: true,
+												onDragStart: function (e) {
+													if (renderOnHoverCirclesTrail) drawDragMarker(e);
+												},
+												onDrag: function (...args) {
+													const [e] = args;
+													if (e.target?.style)
+														e.target.style.cursor = "grabbing";
+
+													onDrag?.(...args);
+													if (renderOnHoverCirclesTrail) drawDragMarker(e);
+												},
+												onDragEnd: function (e) {
+													if (e.target?.style)
+														e.target.style.cursor = "default";
+
+													if (renderOnHoverCirclesTrail) drawDragMarker(e);
+												},
+											},
+								},
+								onHover: function (e) {
+									const point = e.chart.getElementsAtEventForMode(
+										e,
+										"nearest",
+										{ intersect: true },
+										false,
+									);
+									if (point.length) e.native.target.style.cursor = "grab";
+									else e.native.target.style.cursor = "default";
+
+									if (renderOnHoverCirclesTrail) drawDragMarker(e);
+								},
+							},
+						},
+						{
+							...chartConfiguration,
+							options: {
+								...chartConfiguration.options,
+								plugins: {
+									...(chartConfiguration.options.plugins ?? {}),
+									datalabels: {
+										...(chartConfiguration.options.plugins?.datalabels ?? {}),
+										...(chartConfiguration.options.plugins?.datalabels?.display
+											? {
+													formatter: function (value, context) {
+														return (
+															dateFns.differenceInDays(value[1], value[0]) + "d"
+														);
+													},
+												}
+											: {}),
+									},
+								},
+							},
+							data: {
+								...chartConfiguration.data,
+								...(chartConfiguration.scales?.x?.type === "time"
+									? {
+											datasets: chartConfiguration.data.datasets.map((d) => ({
+												...d,
+												data: d.data.map((darr) =>
+													darr.map((date) => new Date(date)),
+												),
+											})),
+										}
+									: {}),
+							},
+						},
+					);
+
+					var ctx = document
+						.getElementById("chartJSContainer")
+						.getContext("2d");
+					Chart.register(ChartDataLabels);
+					window.testedChart = new Chart(ctx, configuration);
+
+					let originalTestedChartData = _.cloneDeep(window.testedChart.data);
+					window.resetData = function resetData() {
+						console.log(
+							"[resetData] Resetting data to original data passed to setupChart()",
+							originalTestedChartData,
+						);
+
+						window.testedChart.data = _.cloneDeep(originalTestedChartData);
+						window.testedChart.update("none");
+					};
+
+					window.isTestReady = true;
+				}
+
+				if (window.isPluginLoaded) {
+					onPluginScriptLoaded();
+				} else {
+					// load the plugin script dynamically - either with IstanbulJS's coverage statements or not, depending on the value of isTest
+					let scriptElement = document.createElement("script");
+					scriptElement.src = isTest
+						? "assets/chartjs-plugin-dragdata-test-browser.js"
+						: "assets/chartjs-plugin-dragdata.min.js";
+
+					console.log("Loading plugin script from:", scriptElement.src);
+
+					scriptElement.onload = onPluginScriptLoaded;
+					document.head.appendChild(scriptElement);
+				}
+			};
+
+			document.body.onload = function onBodyLoaded() {
+				let urlSearchParams = new URLSearchParams(window.location.search);
+
+				if (
+					!urlSearchParams.has("isTest") ||
+					urlSearchParams.get("isTest") !== "true"
+				) {
+					console.log("Demo build running");
+
+					setupChart({
+						isTest: false,
+						disablePlugin: false,
+						draggableAxis: "both",
+						roundingPrecision: 2,
+					});
+				}
+			};
+		</script>
+	</body>
+</html>

@@ -30,6 +30,12 @@ jobs:
             ${{ runner.os }}-npm-${{ hashFiles('/package-lock.json') }}
             ${{ runner.os }}-npm-
 
+      # since npm ci installs only dependencies in package-lock.json, it may be that the package-lock.json pushed
+      # has been generated on non-linux, making the installed node_modules lack packages needed by the linux runner
+      - name: Ensure lefthook-linux-x64 & @rollup/rollup-linux-x64-gnu are installed
+        if: steps.cache-node_modules.outputs.cache-hit != 'true'
+        run: npm i --legacy-peer-deps lefthook-linux-x64 @rollup/rollup-linux-x64-gnu
+
       - name: Install npm dependencies
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
         run: npm ci --legacy-peer-deps
@@ -37,13 +43,13 @@ jobs:
       - name: Build plugin bundles
         run: npm run build
 
-      - name: Build demos
-        run: npm run build:demos
+      - name: Build E2E pages & demos
+        run: npm run build:pages
 
       - name: Upload demos artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: demos/dist
+          path: pages/dist-demos
 
   publish-demos:
     name: Publish demos

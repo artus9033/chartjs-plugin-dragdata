@@ -26,7 +26,7 @@ declare global {
 		testedChart: Chart;
 		isTestReady?: boolean;
 		isPluginLoaded?: boolean;
-		setupTest: (options: TestChartSetupOptions) => void;
+		setupChart: (options: TestChartSetupOptions) => void;
 		resetData(): void;
 	}
 

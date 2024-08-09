@@ -3,5 +3,5 @@
 	// @typescript-eslint/parser needs explicit includes in the file,
 	// even if they are inherited from a higher config, thus this file
 	// is created specifically for ESLint to include all lintable files
-	"include": ["src", "demos", "tests", "scripts", "*.d.ts", "*.config.ts"]
+	"include": ["src", "pages", "tests", "scripts", "*.d.ts", "*.config.ts"]
 }
