@@ -12,6 +12,9 @@ pre-push:
     test-integration:
       tags: test
       run: npm run test:integration
+    eslint:
+      tags: lint
+      run: npm run lint
 
 pre-commit:
   parallel: true

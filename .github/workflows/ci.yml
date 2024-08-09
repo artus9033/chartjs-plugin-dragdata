@@ -47,6 +47,9 @@ jobs:
       - name: Install playwright dependency libraries
         run: npx playwright install-deps
 
+      - name: Run ESLint
+        run: npm run lint
+
       - name: Build plugin bundles
         run: npm run build
 
