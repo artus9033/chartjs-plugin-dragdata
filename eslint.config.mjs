@@ -1,4 +1,4 @@
-import configCK from "@callstack/eslint-config";
+import configCK from "@callstack/eslint-config/react-native.flat.js";
 import tsEslintParser from "@typescript-eslint/parser";
 
 export default [
