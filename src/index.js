@@ -26,12 +26,15 @@ function getSafe(func) {
 
 const getElement = (e, chartInstance, callback) => {
 	const searchMode =
-		chartInstance.config.options.interaction?.mode ?? "nearest";
+			chartInstance.config.options.interaction?.mode ?? "nearest",
+		searchOptions = chartInstance.config.options.interaction ?? {
+			intersect: true,
+		};
 
 	element = chartInstance.getElementsAtEventForMode(
 		e,
 		searchMode,
-		{ intersect: true },
+		searchOptions,
 		false,
 	)[0];
 	type = chartInstance.config.type;
