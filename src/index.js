@@ -57,13 +57,13 @@ const getElement = (e, chartInstance, callback) => {
 
 		// check if dragging the dataset or datapoint is prohibited
 		if (
+			// per-dataset option - disabled
 			dataset.dragData === false ||
-			(chartInstance.config.options.scales[xAxisID] &&
-				chartInstance.config.options.scales[xAxisID].dragData === false) ||
-			(chartInstance.config.options.scales[yAxisID] &&
-				chartInstance.config.options.scales[yAxisID].dragData === false) ||
-			(chartInstance.config.options.scales[rAxisID] &&
-				chartInstance.config.options.scales[rAxisID].rAxisID === false) ||
+			// dragging disabled on all scales
+			(chartInstance.config.options.scales[xAxisID]?.dragData === false &&
+				chartInstance.config.options.scales[yAxisID]?.dragData === false &&
+				chartInstance.config.options.scales[rAxisID]?.dragData === false) ||
+			// per-data-point option - disabled
 			dataset.data[element.index].dragData === false
 		) {
 			element = null;
@@ -227,7 +227,9 @@ function calcPosition(e, chartInstance, data) {
 
 	if (
 		dataPoint.x !== undefined &&
-		chartInstance.config.options.plugins.dragData.dragX
+		// dragging on the x-axis is disabled by default
+		(chartInstance.config.options.plugins.dragData.dragX ||
+			chartInstance.config.options.scales[xAxisID].dragData)
 	) {
 		dataPoint.x = x;
 	}
@@ -239,13 +241,19 @@ function calcPosition(e, chartInstance, data) {
 		return dataPoint;
 	} else {
 		if (chartInstance.config.options.indexAxis === "y") {
-			if (chartInstance.config.options.plugins.dragData.dragX !== false) {
+			if (
+				chartInstance.config.options.plugins.dragData.dragX !== false &&
+				chartInstance.config.options.scales[xAxisID].dragData !== false
+			) {
 				return x;
 			} else {
 				return dataPoint;
 			}
 		} else {
-			if (chartInstance.config.options.plugins.dragData.dragY !== false) {
+			if (
+				chartInstance.config.options.plugins.dragData.dragY !== false &&
+				chartInstance.config.options.scales[yAxisID].dragData !== false
+			) {
 				return y;
 			} else {
 				return dataPoint;
