@@ -27,23 +27,42 @@ export type TestScenarioStep = {
 >;
 
 export type TestScenario<GroupNameType, bSealed extends boolean = false> = {
-	/** the configuration to pass to the tested chart instance */
+	/**
+	 * The configuration to pass to the tested chart instance
+	 */
 	configuration: Partial<ChartConfiguration>;
-	/** definitions of groups of interaction steps */
+	/**
+	 * Definitions of groups of interaction steps
+	 */
 	stepGroups: TestScenarioStepsGroup<GroupNameType>[];
-	/** precision for rounding the values on the grid */
+	/**
+	 * Precision for rounding the values on the grid
+	 */
 	roundingPrecision: number;
-	/** whether data.ts should run post-processing on the 'configuration' object (e.g. calculate min/max limits for scales) */
+	/**
+	 * Whether data.ts should run post-processing on the 'configuration'
+	 * object (e.g. calculate min/max limits for scales)
+	 */
 	postprocessConfiguration?: boolean;
-	/** whether x is categorical (not linear, thus not draggable) */
+	/**
+	 * Whether x is categorical (not linear, thus not draggable)
+	 */
 	isCategoricalX?: boolean;
-	/** whether y is categorical (not linear, thus not draggable) */
+	/**
+	 * Whether y is categorical (not linear, thus not draggable)
+	 */
 	isCategoricalY?: boolean;
-	/** browsers that are not supported by this test scenario */
+	/**
+	 * Browsers that are not supported by this test scenario
+	 */
 	unsupportedBrowsers?: Array<"chromium" | "firefox" | "webkit" | "mobile">;
-	/** whether to skip E2E testing and just use the scenario as data source for HTML demo */
+	/**
+	 * Whether to skip E2E testing and just use the scenario as data source for HTML demo
+	 */
 	skipE2ETesting?: boolean;
-	/** a custom onDrag callback to be stringified & eval-ed on page side */
+	/**
+	 * Custom onDrag callback to be stringified & eval-ed on page side
+	 */
 	onDrag?: bSealed extends true
 		? string
 		: (
@@ -52,6 +71,13 @@ export type TestScenario<GroupNameType, bSealed extends boolean = false> = {
 				index: number,
 				value: [number, number],
 			) => void;
+	/**
+	 * Forces an axis to be the only supported draggable axis, effectively skipping
+	 * all generated test cases when a different / incompatible axis could be tested for.
+	 *
+	 * @default undefined ("both")
+	 */
+	forceDraggableAxis?: AxisSpec;
 };
 
 export function describeDatasetPointSpecOrPoint(

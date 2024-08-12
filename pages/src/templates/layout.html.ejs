@@ -39,7 +39,8 @@
 		<% } else { %>
 			// demo environment build
 		<% } %>
-
+		<%- customJS -%>
+		
 		const isFirefox = navigator.userAgent.match(/firefox|fxios/i),
 			chartConfiguration = <%- scenarioConfiguration %>;
 
@@ -195,8 +196,8 @@
 							onHover: function (e) {
 								const point = e.chart.getElementsAtEventForMode(
 									e,
-									"nearest",
-									{ intersect: true },
+									e.chart.options.interaction.mode,
+									{ intersect: false },
 									false,
 								);
 								if (point.length) e.native.target.style.cursor = "grab";
@@ -310,7 +311,7 @@
 				setupChart({
 					isTest: false,
 					disablePlugin: false,
-					draggableAxis: "both",
+					draggableAxis: "<%- demoOnlyDraggableAxis -%>",
 					roundingPrecision: 2,
 				});
 			}

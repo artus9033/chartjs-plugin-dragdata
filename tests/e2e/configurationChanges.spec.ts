@@ -54,6 +54,13 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 				"Browser not supported by this test scenario",
 			);
 
+			test.skip(
+				scenario.forceDraggableAxis === undefined
+					? false
+					: scenario.forceDraggableAxis !== "both",
+				"forceDraggableAxis forces a value other than 'both'",
+			);
+
 			const dragPointSpec: DatasetPointSpec = {
 					datasetIndex: 0,
 					index: 0,

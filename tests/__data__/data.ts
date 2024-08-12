@@ -254,6 +254,24 @@ export const linearLineChartScenario = mergeScenarioPartialConfigurations(
 	linearLineChartScenarioBase,
 ) as TestScenario<E2EInteraction>;
 
+const linearCustomInteractionLineChartScenario =
+	mergeScenarioPartialConfigurations(
+		{
+			configuration: {
+				type: "line",
+				options: {
+					interaction: {
+						mode: "maxValueCustomMode" as any,
+					},
+				},
+			},
+			// make only the y-axis draggable in demo mode; demo mode is handled in pages/src/pages/line.page.ts
+			forceDraggableAxis: "y",
+		},
+		_.cloneDeep(genericChartScenarioBase),
+		linearLineChartScenarioBase,
+	) as TestScenario<E2EInteraction>;
+
 export const barChartScenarioBase = {
 	configuration: { type: "bar" },
 } satisfies Partial<TestScenario<E2EInteraction>>;
@@ -673,6 +691,8 @@ export const TestScenarios = postprocessScenariosRegistry({
 	/** "Standard" dataset scenarios */
 	"line-categorical.html": categoricalLineChartScenario,
 	"line-linear.html": linearLineChartScenario,
+	"line-linear-custom-interaction.html":
+		linearCustomInteractionLineChartScenario,
 	"line-dual-y-axis.html": dualYAxisLineChartScenario,
 	"bar.html": barChartScenario,
 	"bar-horizontal.html": horizontalBarChartScenario,

@@ -2,7 +2,10 @@
 <html>
 	<head>
 		<meta charset="utf-8" />
-		<title>Stacked Bar demo | Chart.js Drag Data Points Plugin</title>
+		<title>
+			Line (linear, custom interaction mode) demo | Chart.js Drag Data Points
+			Plugin
+		</title>
 		<meta
 			name="viewport"
 			content="width=device-width, initial-scale=1.0, user-scalable=no"
@@ -33,14 +36,43 @@
 		<script>
 			// demo environment build
 
+			Chart.Interaction.modes.maxValueCustomMode = function (
+				chart,
+				e,
+				options,
+				useFinalPosition,
+			) {
+				const nearestItems = Chart.Interaction.modes.nearest(
+					chart,
+					e,
+					{ axis: "x", intersect: false },
+					useFinalPosition,
+				);
+
+				let maxItem = null,
+					maxValue = -Infinity;
+				for (const item of nearestItems) {
+					// console.log(item, chart.data.datasets[item.datasetIndex])
+					const value =
+						chart.data.datasets[item.datasetIndex].data[item.index].y;
+					if (value > maxValue) {
+						maxValue = value;
+						maxItem = item;
+					}
+				}
+
+				return maxItem ? [maxItem] : [];
+			};
+
 			const isFirefox = navigator.userAgent.match(/firefox|fxios/i),
 				chartConfiguration = {
-					type: "bar",
+					type: "line",
 					options: {
+						interaction: { mode: "maxValueCustomMode" },
 						plugins: { datalabels: { display: false } },
 						scales: {
-							x: { stacked: true },
-							y: { stacked: true, min: 2, max: 19 },
+							x: { type: "linear", min: 0, max: 5 },
+							y: { min: 2, max: 19 },
 						},
 					},
 					data: {
@@ -48,7 +80,14 @@
 						datasets: [
 							{
 								label: "# of Votes",
-								data: [12, 19, 3, 5, 2, 3],
+								data: [
+									{ x: 0, y: 12 },
+									{ x: 1, y: 19 },
+									{ x: 2, y: 3 },
+									{ x: 3, y: 5 },
+									{ x: 4, y: 2 },
+									{ x: 5, y: 3 },
+								],
 								fill: true,
 								tension: 0.4,
 								borderWidth: 1,
@@ -56,7 +95,14 @@
 							},
 							{
 								label: "# of Points",
-								data: [7, 11, 5, 8, 3, 7],
+								data: [
+									{ x: 0, y: 7 },
+									{ x: 1, y: 11 },
+									{ x: 2, y: 5 },
+									{ x: 3, y: 8 },
+									{ x: 4, y: 3 },
+									{ x: 5, y: 7 },
+								],
 								fill: true,
 								tension: 0.4,
 								borderWidth: 1,
@@ -222,7 +268,7 @@
 					setupChart({
 						isTest: false,
 						disablePlugin: false,
-						draggableAxis: "both",
+						draggableAxis: "y",
 						roundingPrecision: 2,
 					});
 				}
