@@ -117,7 +117,7 @@ for (const disablePlugin of [false, true]) {
 																? "partially moves"
 																: "does not move"
 															: "moves"
-													} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} with dragging constrained to ${getAxisDescription(step.axisSpec)}`, async ({
+													} ${describeDatasetPointSpecOrPoint(step.dragPointSpec)} towards ${describeDatasetPointSpecOrPoint(step.dragDestPointSpecOrStartPointOffset)} with dragging performed on ${getAxisDescription(step.axisSpec)}`, async ({
 														browserName,
 														isMobile,
 													}, testInfo) => {
@@ -181,6 +181,6 @@ for (const disablePlugin of [false, true]) {
 					},
 				);
 			}
-		});
+		}, "interaction");
 	});
 }

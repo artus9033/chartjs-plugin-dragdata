@@ -165,8 +165,16 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 			// assert that no drag occurs when the plugin is disabled
 			await playwrightTestDrag({
 				...commonDragParams,
-				isDragDataPluginDisabled: true,
-				additionalInfo: " (dragging disabled)",
+				isDragDataPluginDisabled:
+					enablerLocationSpec === "data sample config" ||
+					enablerLocationSpec === "dataset config",
+				draggableAxis:
+					enablerLocationSpec === "x-scale"
+						? "y"
+						: enablerLocationSpec === "y-scale"
+							? "x"
+							: "both",
+				additionalInfo: ` (dragging disabled for ${enablerLocationSpec})`,
 			});
 
 			// update the configuration to enable dragData again for the axis
@@ -175,8 +183,8 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 			// assert that the drag occurs after configuration allows for dragging again
 			await playwrightTestDrag({
 				...commonDragParams,
-				additionalInfo: " (dragging enabled)",
+				additionalInfo: ` (dragging enabled for ${enablerLocationSpec})`,
 			});
 		});
 	}
-});
+}, "configurationChanges");

@@ -105,7 +105,8 @@ export type UnitTestCategory =
 	| "roundValue"
 	| "pluginRegistration"
 	| "dragListenersRegistration"
-	| "calcPosition";
+	| "calcPosition"
+	| "checkDraggingConfiguration";
 
 export type UnitConfig = {
 	whitelistedTestCategories: Whitelist<UnitTestCategory> | undefined;

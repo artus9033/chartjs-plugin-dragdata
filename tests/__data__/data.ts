@@ -267,6 +267,7 @@ const linearCustomInteractionLineChartScenario =
 			},
 			// make only the y-axis draggable in demo mode; demo mode is handled in pages/src/pages/line.page.ts
 			forceDraggableAxis: "y",
+			excludedTestSuites: ["interaction"],
 		},
 		_.cloneDeep(genericChartScenarioBase),
 		linearLineChartScenarioBase,
