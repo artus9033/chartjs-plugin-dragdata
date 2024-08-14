@@ -84,7 +84,14 @@ for (const disablePlugin of [false, true]) {
 												draggableAxis === "both"
 											)
 										) {
-											(stepsGroup.shouldBeSkipped
+											const forceDraggableAxisIncompatibility =
+												scenario.forceDraggableAxis === undefined
+													? false
+													: scenario.forceDraggableAxis !== draggableAxis &&
+														scenario.forceDraggableAxis !== "both";
+
+											(stepsGroup.shouldBeSkipped ||
+												forceDraggableAxisIncompatibility
 												? test.describe.skip
 												: test.describe)(groupNameSpaceCase, () => {
 												for (const {

@@ -1,4 +1,6 @@
 /* eslint-disable jest/no-standalone-expect */
+// above: mitigate ESLint false-positive due to wrapping inside conditional test / test.skip
+
 import { Chart } from "chart.js";
 import d3Drag from "d3-drag";
 import d3Selection from "d3-selection";
@@ -7,32 +9,6 @@ import ChartJSdragDataPlugin from "../../dist/chartjs-plugin-dragdata-test";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { UNIT_TEST_CHART_TYPES } from "./__utils__/constants";
 import { setupChartInstance, unitTestCategoryAllowed } from "./__utils__/utils";
-
-jest.mock("d3-drag", () => ({
-	drag: jest.fn(() => ({
-		container: jest.fn().mockReturnThis(),
-		on: jest.fn().mockReturnThis(),
-		apply: jest.fn().mockReturnThis(),
-	})),
-}));
-
-jest.mock("d3-selection", () => {
-	const callMock = jest
-		.fn((...args: any[]) => {
-			var callback = args[0];
-			args[0] = this;
-			(callback as any).apply(null, args);
-			return this;
-		})
-		.mockReturnThis();
-
-	return {
-		select: jest.fn(() => ({
-			call: callMock,
-		})),
-		call: callMock,
-	};
-});
 
 describe("plugin", () => {
 	for (const chartType of UNIT_TEST_CHART_TYPES) {

@@ -125,8 +125,8 @@
 								onHover: function (e) {
 									const point = e.chart.getElementsAtEventForMode(
 										e,
-										"nearest",
-										{ intersect: true },
+										e.chart.options.interaction.mode,
+										{ intersect: false },
 										false,
 									);
 									if (point.length) e.native.target.style.cursor = "grab";

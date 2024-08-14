@@ -4,6 +4,7 @@ import path from "path";
 import ejs from "ejs";
 
 import type { TestScenarios as TestScenariosType } from "../../tests/__data__/data";
+import { AxisSpec } from "../../tests/__utils__/structures/axisSpec";
 import { BundledPage } from "./types";
 
 export function requireUncached(module: string) {
@@ -29,6 +30,14 @@ export type RenderPageOptions = {
 	 * Whether to include scripts loading date-fns & date-fns chart.js adapter
 	 */
 	includeDateFns?: boolean;
+	/**
+	 * Custom JS code
+	 */
+	customJS?: string;
+	/**
+	 * Value passed to setupChart for draggableAxis option **only in demo mode**
+	 */
+	demoOnlyDraggableAxis?: AxisSpec;
 };
 
 export function renderPage({
@@ -36,6 +45,8 @@ export function renderPage({
 	fileName,
 	isE2ETest,
 	includeDateFns = false,
+	customJS = "",
+	demoOnlyDraggableAxis = "both",
 }: RenderPageOptions): BundledPage {
 	const { TestScenarios } = requireUncached(
 		"../../tests/__data__/data",
@@ -52,6 +63,8 @@ export function renderPage({
 			scenarioConfiguration: JSON.stringify(scenario.configuration),
 			isE2ETest,
 			includeDateFns,
+			customJS,
+			demoOnlyDraggableAxis,
 		}),
 		outputFileName: fileName as string,
 	};
