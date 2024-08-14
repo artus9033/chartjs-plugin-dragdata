@@ -1,11 +1,11 @@
 import {
-	Chart as TChart,
 	ChartConfiguration,
 	ChartData,
 	ChartOptions,
 	ChartType,
 	ChartTypeRegistry,
 	Point,
+	Chart as TChart,
 } from "chart.js";
 import _ from "lodash";
 
@@ -13,11 +13,11 @@ import {
 	TestChartOptions,
 	genericChartScenarioBase,
 } from "../../__data__/data";
+import { Point2DObject } from "../../__utils__/testTypes";
 import {
 	UnitTestCategory,
 	isTestsConfigWhitelistItemAllowed,
 } from "../../__utils__/testsConfig";
-import { Point2DObject } from "../../__utils__/testTypes";
 
 export const DEFAULT_TEST_CHART_INSTANCE_WIDTH = 400; // px
 export const DEFAULT_TEST_CHART_INSTANCE_HEIGHT = 800; // px
@@ -54,8 +54,12 @@ export function setupChartInstance<T extends keyof ChartTypeRegistry>(
 
 	return new Chart<T>(ctx, {
 		type: chartType,
-		data: chartData,
-		options: _.merge(_.cloneDeep(TestChartOptions), customOptions ?? {}) as any,
+		data: _.cloneDeep(chartData),
+		options: _.merge(
+			// deep cloning is needed to avoid former tests mutating next tests' data
+			_.cloneDeep(TestChartOptions),
+			_.cloneDeep(customOptions ?? {}),
+		) as any,
 	});
 }
 
