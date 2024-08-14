@@ -386,6 +386,7 @@ const mExportsForTesting = {
 	calcRadar,
 	getSafe,
 	roundValue,
+	getStateVarElement: () => element,
 };
 
 // IMPORTANT: do not alter the below line or rollup will not pick it up for removal
