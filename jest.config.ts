@@ -2,15 +2,13 @@ import type { Config } from "jest";
 
 import { testPathIgnorePatterns } from "./tests/__config__/commonJestConfig";
 
-// since jest projects don't inherit from root config, we instead use tests/__config__/commonJestConfig.ts
-// thus, here we want just to define projects' configs; see https://github.com/jestjs/jest/issues/10991
-const config: Pick<
-	Config,
-	| "projects"
-	| "coverageReporters"
-	| "collectCoverageFrom"
-	| "coveragePathIgnorePatterns"
-> = {
+/**
+ * Since jest projects don't inherit all properties from root config, we instead use tests/__config__/commonJestConfig.ts
+ * thus, here we want just to define projects' configs; see https://github.com/jestjs/jest/issues/10991.
+ * Also, as some options are not allowed in project configs, but only in the global config, they are specified here; see https://github.com/jestjs/jest/issues/13576.
+ */
+
+const config: Config = {
 	projects: [
 		"<rootDir>/tests/unit/jest.unit.config.ts",
 		"<rootDir>/tests/integration/jest.integration.config.ts",
@@ -18,6 +16,7 @@ const config: Pick<
 	collectCoverageFrom: ["src/*.{js,ts,jsx,tsx}"],
 	coverageReporters: ["lcov", "json"],
 	coveragePathIgnorePatterns: testPathIgnorePatterns,
+	verbose: true,
 };
 
 export default config;
