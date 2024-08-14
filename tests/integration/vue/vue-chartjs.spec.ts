@@ -15,7 +15,7 @@ afterEach(() => {
 });
 
 (integrationAllowed("vue") ? describe : describe.skip)("vue.js", () => {
-	test("renders chart canvas in the document", () => {
+	it("renders chart canvas in the document", () => {
 		const wrapper = render(Line, {
 			props: {
 				data: genericChartScenarioBase.configuration.data,

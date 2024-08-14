@@ -40,7 +40,7 @@ function ChartComponent() {
 }
 
 (integrationAllowed("react") ? describe : describe.skip)("react.js", () => {
-	test("renders chart canvas in the document", () => {
+	it("renders chart canvas in the document", () => {
 		render(<ChartComponent />);
 
 		expect(chartInstance!.canvas).toBeInTheDocument();
