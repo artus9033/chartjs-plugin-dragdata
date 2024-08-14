@@ -36,7 +36,7 @@
 		<script>
 			// demo environment build
 
-			Chart.Interaction.modes.maxValueCustomMode = function (
+			Chart.Interaction.modes.maxValueCustomMode = function maxValueCustomMode(
 				chart,
 				e,
 				options,
@@ -48,11 +48,9 @@
 					{ axis: "x", intersect: false },
 					useFinalPosition,
 				);
-
 				let maxItem = null,
 					maxValue = -Infinity;
 				for (const item of nearestItems) {
-					// console.log(item, chart.data.datasets[item.datasetIndex])
 					const value =
 						chart.data.datasets[item.datasetIndex].data[item.index].y;
 					if (value > maxValue) {
@@ -60,10 +58,8 @@
 						maxItem = item;
 					}
 				}
-
 				return maxItem ? [maxItem] : [];
 			};
-
 			const isFirefox = navigator.userAgent.match(/firefox|fxios/i),
 				chartConfiguration = {
 					type: "line",

@@ -1,10 +1,11 @@
 import {
-	Chart,
+	Chart as TChart,
 	ChartConfiguration,
 	ChartData,
 	ChartOptions,
 	ChartType,
 	ChartTypeRegistry,
+	Point,
 } from "chart.js";
 import _ from "lodash";
 
@@ -42,7 +43,7 @@ export function setupChartInstance<T extends keyof ChartTypeRegistry>(
 		canvasHeight = DEFAULT_TEST_CHART_INSTANCE_HEIGHT,
 		chartData = genericChartScenarioBase.configuration.data as any,
 	}: SetupChartInstanceOptions<T> = {},
-): Chart<T> {
+): TChart<T> {
 	const canvas = document.createElement("canvas");
 	canvas.width = canvasWidth;
 	canvas.height = canvasHeight;
@@ -176,4 +177,33 @@ export function getChartDataPointShape(data: ChartData) {
 		isDataPointShapePair,
 		isDataPointShape2DObject,
 	};
+}
+
+export function maxValueCustomMode(
+	chart: TChart,
+	e: MouseEvent,
+	options: ChartOptions,
+	useFinalPosition: boolean,
+) {
+	const nearestItems = Chart.Interaction.modes.nearest(
+		chart,
+		e,
+		{ axis: "x", intersect: false },
+		useFinalPosition,
+	);
+
+	let maxItem = null,
+		maxValue = -Infinity;
+	for (const item of nearestItems) {
+		const value = (
+			chart.data.datasets[item.datasetIndex].data[item.index] as Point
+		).y;
+
+		if (value > maxValue) {
+			maxValue = value;
+			maxItem = item;
+		}
+	}
+
+	return maxItem ? [maxItem] : [];
 }
