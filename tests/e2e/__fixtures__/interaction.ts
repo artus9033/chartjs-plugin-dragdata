@@ -1,5 +1,5 @@
 import type { Page } from "playwright";
-import { expect } from "playwright-test-coverage";
+import { expect, test } from "playwright-test-coverage";
 
 import {
 	GenericDragTestParams,
@@ -40,97 +40,99 @@ export async function playwrightTestDrag({
 	additionalInfo,
 	...parameters
 }: PlaywrightTestDragParams) {
-	const canvasBB = await playwrightCalcCanvasBB(page),
-		windowBB: BoundingBox = await page.evaluate(() => ({
-			x: 0,
-			y: 0,
-			width: window.innerWidth,
-			height: window.innerHeight,
-		}));
+	await test.step(`Test drag on axis: ${parameters.whichAxis} from ${parameters.dragPointSpec} to ${parameters.expectedDestPointSpecOverride ?? parameters.dragDestPointSpecOrStartPointOffset}`, async () => {
+		const canvasBB = await playwrightCalcCanvasBB(page),
+			windowBB: BoundingBox = await page.evaluate(() => ({
+				x: 0,
+				y: 0,
+				width: window.innerWidth,
+				height: window.innerHeight,
+			}));
 
-	return await _genericTestDrag({
-		...parameters,
-		canvasBB,
-		additionalInfo:
-			`${describeDatasetPointSpecOrPoint(parameters.dragPointSpec)} -> ${describeDatasetPointSpecOrPoint(parameters.dragDestPointSpecOrStartPointOffset)} on ${getAxisDescription(parameters.whichAxis)}${additionalInfo ?? ""}\n` +
-			JSON.stringify(
-				{
-					isCategoricalX: parameters.isCategoricalX,
-					isCategoricalY: parameters.isCategoricalY,
-				},
-				undefined,
-				4,
-			),
-		performDrag: async ({ dragStartPoint, dragDestPoint }) => {
-			// playwright "loops" the cursor when leaving the window bounds, thus we want to clip the coordinates
-			dragStartPoint = dragStartPoint.copyConstrainedTo(windowBB);
-			dragDestPoint = dragDestPoint.copyConstrainedTo(windowBB);
-
-			if (hasGUI()) {
-				console.log(
-					`[playwrightTestDrag] Dragging ${dragStartPoint.toString()} -> ${dragDestPoint.toString()}`,
-				);
-			}
-
-			await page.mouse.move(...dragStartPoint.toArray(), {
-				steps: hasGUI() ? 8 : undefined,
-			});
-			await page.mouse.down();
-
-			await page.mouse.move(...dragDestPoint.toArray(), {
-				steps: hasGUI() ? 8 : undefined,
-			});
-			await page.mouse.up();
-		},
-		getChartDatasetSamplePixelPosition: (datasetIndex, sampleIndex) =>
-			playwrightGetChartDatasetSamplePixelPosition(
-				page,
-				datasetIndex,
-				sampleIndex,
-			),
-		getChartScales: () => playwrightGetChartScales(page),
-		isDragDataPluginEnabled: !isDragDataPluginDisabled,
-		bExpectResult: true,
-		expect,
-		...(magnet
-			? {
-					magnet,
-					getDataFromPointOnScreen: async (pointOnScreen, canvasBB) => {
-						pointOnScreen = new Offset2D({
-							xAbs: -canvasBB.x,
-							yAbs: -canvasBB.y,
-						}).translatePoint(pointOnScreen);
-
-						const { x, y } = await page.evaluate(
-							(pointOnScreen) => ({
-								x: window.testedChart.scales["x"].getValueForPixel(
-									pointOnScreen.x,
-								),
-								y: window.testedChart.scales["y"].getValueForPixel(
-									pointOnScreen.y,
-								),
-							}),
-							pointOnScreen,
-						);
-
-						return x === undefined
-							? y === undefined
-								? undefined
-								: y
-							: y === undefined
-								? x
-								: new Point2D({ x, y });
+		return await _genericTestDrag({
+			...parameters,
+			canvasBB,
+			additionalInfo:
+				`${describeDatasetPointSpecOrPoint(parameters.dragPointSpec)} -> ${describeDatasetPointSpecOrPoint(parameters.dragDestPointSpecOrStartPointOffset)} on ${getAxisDescription(parameters.whichAxis)}${additionalInfo ?? ""}\n` +
+				JSON.stringify(
+					{
+						isCategoricalX: parameters.isCategoricalX,
+						isCategoricalY: parameters.isCategoricalY,
 					},
+					undefined,
+					4,
+				),
+			performDrag: async ({ dragStartPoint, dragDestPoint }) => {
+				// playwright "loops" the cursor when leaving the window bounds, thus we want to clip the coordinates
+				dragStartPoint = dragStartPoint.copyConstrainedTo(windowBB);
+				dragDestPoint = dragDestPoint.copyConstrainedTo(windowBB);
+
+				if (hasGUI()) {
+					console.log(
+						`[playwrightTestDrag] Dragging ${dragStartPoint.toString()} -> ${dragDestPoint.toString()}`,
+					);
 				}
-			: { magnet: undefined, getDataFromPointOnScreen: undefined }),
-		getCoordinateOnScaleForAxis: async (data, axis) => {
-			return await page.evaluate(
-				({ data, axis }) =>
-					isNaN(data)
-						? NaN
-						: window.testedChart.scales[axis].getPixelForValue(data),
-				{ data, axis },
-			);
-		},
+
+				await page.mouse.move(...dragStartPoint.toArray(), {
+					steps: hasGUI() ? 8 : undefined,
+				});
+				await page.mouse.down();
+
+				await page.mouse.move(...dragDestPoint.toArray(), {
+					steps: hasGUI() ? 8 : undefined,
+				});
+				await page.mouse.up();
+			},
+			getChartDatasetSamplePixelPosition: (datasetIndex, sampleIndex) =>
+				playwrightGetChartDatasetSamplePixelPosition(
+					page,
+					datasetIndex,
+					sampleIndex,
+				),
+			getChartScales: () => playwrightGetChartScales(page),
+			isDragDataPluginEnabled: !isDragDataPluginDisabled,
+			bExpectResult: true,
+			expect,
+			...(magnet
+				? {
+						magnet,
+						getDataFromPointOnScreen: async (pointOnScreen, canvasBB) => {
+							pointOnScreen = new Offset2D({
+								xAbs: -canvasBB.x,
+								yAbs: -canvasBB.y,
+							}).translatePoint(pointOnScreen);
+
+							const { x, y } = await page.evaluate(
+								(pointOnScreen) => ({
+									x: window.testedChart.scales["x"].getValueForPixel(
+										pointOnScreen.x,
+									),
+									y: window.testedChart.scales["y"].getValueForPixel(
+										pointOnScreen.y,
+									),
+								}),
+								pointOnScreen,
+							);
+
+							return x === undefined
+								? y === undefined
+									? undefined
+									: y
+								: y === undefined
+									? x
+									: new Point2D({ x, y });
+						},
+					}
+				: { magnet: undefined, getDataFromPointOnScreen: undefined }),
+			getCoordinateOnScaleForAxis: async (data, axis) => {
+				return await page.evaluate(
+					({ data, axis }) =>
+						isNaN(data)
+							? NaN
+							: window.testedChart.scales[axis].getPixelForValue(data),
+					{ data, axis },
+				);
+			},
+		});
 	});
 }

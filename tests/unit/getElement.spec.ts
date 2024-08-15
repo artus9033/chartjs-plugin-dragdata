@@ -52,7 +52,7 @@ describe("getElement", () => {
 			jest.clearAllMocks(); // clear mocks
 		});
 
-		test("getElement should properly call getElementsAtEventForMode & select first returned point", () => {
+		it("getElement should properly call getElementsAtEventForMode & select first returned point", () => {
 			const evtMock = {};
 
 			getElement(evtMock, chartInstance);
@@ -69,7 +69,7 @@ describe("getElement", () => {
 			);
 		});
 
-		test("getElement should result in selecting null if callback returns false", () => {
+		it("getElement should result in selecting null if callback returns false", () => {
 			const evtMock = {};
 
 			getElement(evtMock, chartInstance, () => false);

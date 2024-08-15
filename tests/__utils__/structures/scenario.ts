@@ -1,6 +1,7 @@
 import { ChartConfiguration } from "chart.js";
 
 import { GenericDragTestParams } from "../../e2e/__fixtures__";
+import { TestSuiteIdentifier } from "../../e2e/__utils__/types";
 import { DatasetPointSpec } from "../testTypes";
 import Offset2D from "./Offset2D";
 import Point2D from "./Point2D";
@@ -78,6 +79,10 @@ export type TestScenario<GroupNameType, bSealed extends boolean = false> = {
 	 * @default undefined ("both")
 	 */
 	forceDraggableAxis?: AxisSpec;
+	/**
+	 * Specifies whether this page should be excluded from a given test suite.
+	 */
+	excludedTestSuites?: TestSuiteIdentifier[];
 };
 
 export function describeDatasetPointSpecOrPoint(

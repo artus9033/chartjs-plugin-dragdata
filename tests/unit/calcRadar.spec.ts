@@ -1,6 +1,11 @@
 import { Chart, ChartType } from "chart.js";
-import _ from "lodash";
+import { getRelativePosition } from "chart.js/helpers";
 import type { Mock } from "jest-mock";
+import _ from "lodash";
+
+import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test";
+import { genericChartScenarioBase } from "../__data__/data";
+import { setupChartInstance } from "./__utils__/utils";
 
 const CHART_CENTER_POS_X = 75;
 const CHART_CENTER_POS_Y = 80;
@@ -12,12 +17,6 @@ jest.mock("chart.js/helpers", () => ({
 		y: CHART_CENTER_POS_Y,
 	})),
 }));
-
-import { getRelativePosition } from "chart.js/helpers";
-
-import { genericChartScenarioBase } from "../__data__/data";
-import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test";
-import { setupChartInstance } from "./__utils__/utils";
 
 const { calcRadar } = exportsForTesting;
 
@@ -108,7 +107,7 @@ describe("calcRadar", () => {
 				},
 			);
 
-			test("should calculate the correct value for data point 3 / 6 (south) dragged to the bottom", () => {
+			it("should calculate the correct value for data point 3 / 6 (south) dragged to the bottom", () => {
 				const curIndex = 2;
 
 				(getRelativePosition as Mock).mockImplementation(() => ({
@@ -121,7 +120,7 @@ describe("calcRadar", () => {
 				expect(value).toBeCloseTo(14.96, 2);
 			});
 
-			test("should calculate the correct value for data point 3 / 6 (south) dragged to the bottom if axis is reversed", () => {
+			it("should calculate the correct value for data point 3 / 6 (south) dragged to the bottom if axis is reversed", () => {
 				chartInstance.scales[rAxisID].options.reverse = true;
 
 				const curIndex = 2;
@@ -136,7 +135,7 @@ describe("calcRadar", () => {
 				expect(value).toBeCloseTo(chartInstance.scales[rAxisID].max - 14.96, 2);
 			});
 
-			test("should calculate 0 for data point 3 / 6 (south) dragged above chart center", () => {
+			it("should calculate 0 for data point 3 / 6 (south) dragged above chart center", () => {
 				const curIndex = 2;
 
 				(getRelativePosition as Mock).mockImplementation(() => ({
@@ -149,7 +148,7 @@ describe("calcRadar", () => {
 				expect(value).toEqual(0);
 			});
 
-			test("should calculate 0 for data point 5 / 6 (north-west) dragged to the right", () => {
+			it("should calculate 0 for data point 5 / 6 (north-west) dragged to the right", () => {
 				const curIndex = 4;
 
 				(getRelativePosition as Mock).mockImplementation(() => ({
@@ -162,7 +161,7 @@ describe("calcRadar", () => {
 				expect(value).toEqual(15);
 			});
 
-			test("should calculate 0 for polarArea data point 3 / 6 (south) dragged above chart center", () => {
+			it("should calculate 0 for polarArea data point 3 / 6 (south) dragged above chart center", () => {
 				// since polarArea charts have axes rotated by Math.PI / 2, we need to pick a different axis
 				// to have a proper environment for this scenario to work
 				const curIndex = chartType === "polarArea" ? 5 : 0;
@@ -177,7 +176,7 @@ describe("calcRadar", () => {
 				expect(value).toEqual(0);
 			});
 
-			test("should return 0 when the dot product is negative", () => {
+			it("should return 0 when the dot product is negative", () => {
 				(getRelativePosition as Mock).mockImplementation(() => ({
 					x: 25,
 					y: 25,
@@ -190,7 +189,7 @@ describe("calcRadar", () => {
 				expect(value).toBe(0);
 			});
 
-			test("should clamp the value to the max scale value if dragged out of bounds on x axis", () => {
+			it("should clamp the value to the max scale value if dragged out of bounds on x axis", () => {
 				(getRelativePosition as Mock).mockImplementation(() => ({
 					x: 30000,
 					y: CHART_CENTER_POS_Y,
@@ -203,7 +202,7 @@ describe("calcRadar", () => {
 				expect(value).toBe(chartInstance.scales[rAxisID].max);
 			});
 
-			test("should clamp the value to the min scale value if dragged out of bounds on x axis", () => {
+			it("should clamp the value to the min scale value if dragged out of bounds on x axis", () => {
 				(getRelativePosition as Mock).mockImplementation(() => ({
 					x: -30000,
 					y: CHART_CENTER_POS_Y,
@@ -216,7 +215,7 @@ describe("calcRadar", () => {
 				expect(value).toBe(chartInstance.scales[rAxisID].min);
 			});
 
-			test("should clamp the value to the max scale value if dragged out of bounds on y axis", () => {
+			it("should clamp the value to the max scale value if dragged out of bounds on y axis", () => {
 				(getRelativePosition as Mock).mockImplementation(() => ({
 					x: CHART_CENTER_POS_X,
 					y: 30000,
@@ -229,7 +228,7 @@ describe("calcRadar", () => {
 				expect(value).toBe(chartInstance.scales[rAxisID].max);
 			});
 
-			test("should clamp the value to the min scale value if dragged out of bounds on y axis", () => {
+			it("should clamp the value to the min scale value if dragged out of bounds on y axis", () => {
 				(getRelativePosition as Mock).mockImplementation(() => ({
 					x: CHART_CENTER_POS_X,
 					y: -30000,

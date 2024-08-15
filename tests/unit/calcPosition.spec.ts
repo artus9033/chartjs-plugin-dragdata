@@ -1,17 +1,18 @@
 import { Chart, ChartConfiguration, ChartType } from "chart.js";
 import _ from "lodash";
+
 import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test-browser";
 import { genericChartScenarioBase } from "../__data__/data";
-import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { Point2DObject } from "../__utils__/testTypes";
+import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import {
+	DEFAULT_TEST_CHART_INSTANCE_HEIGHT,
+	DEFAULT_TEST_CHART_INSTANCE_WIDTH,
+	SetupChartInstanceOptions,
 	assertPointsEqual,
 	dataPointCompatFromPoint2D,
 	dataPointCompatToPoint2D,
-	DEFAULT_TEST_CHART_INSTANCE_HEIGHT,
-	DEFAULT_TEST_CHART_INSTANCE_WIDTH,
 	setupChartInstance,
-	SetupChartInstanceOptions,
 } from "./__utils__/utils";
 
 const { calcPosition, getElement } = exportsForTesting;
@@ -20,6 +21,11 @@ const xAxisID = "x",
 	yAxisID = "y",
 	PX_TO_VALUE_X_DIVISOR = 10,
 	PX_TO_VALUE_Y_DIVISOR = 20;
+
+const DEFAULT_DRAGGING_CONFIGURATION = {
+	xAxisDraggingDisabled: false,
+	yAxisDraggingDisabled: false,
+};
 
 const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 		[5, 12],
@@ -201,7 +207,10 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 				);
 
 				function calcPositionWrapper() {
-					calcPosition(mouseEvent, chartInstance, frozenDataPoint);
+					calcPosition(mouseEvent, chartInstance, frozenDataPoint, {
+						xAxisDraggingDisabled: false,
+						yAxisDraggingDisabled: false,
+					});
 				}
 
 				expect(calcPositionWrapper).not.toThrow();
@@ -222,6 +231,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 						testDataPoint,
 						(chartInstance.config as ChartConfiguration).type,
 					),
+					DEFAULT_DRAGGING_CONFIGURATION,
 				);
 				expect(
 					chartInstance.scales[xAxisID].getValueForPixel,
@@ -261,6 +271,10 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 							testDataPoint,
 							(chartInstance.config as ChartConfiguration).type,
 						),
+						{
+							xAxisDraggingDisabled: false,
+							yAxisDraggingDisabled: false,
+						},
 					);
 
 					// the below would be a false-positive by eslint, as the block is actually in it or it.skip
@@ -279,6 +293,10 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 							testDataPoint,
 							(chartInstance.config as ChartConfiguration).type,
 						),
+						{
+							xAxisDraggingDisabled: false,
+							yAxisDraggingDisabled: false,
+						},
 					);
 
 					// the below would be a false-positive by eslint, as the block is actually in it or it.skip
@@ -301,6 +319,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 						testDataPoint,
 						(chartInstance.config as ChartConfiguration).type,
 					),
+					DEFAULT_DRAGGING_CONFIGURATION,
 				);
 
 				expect(dataPointCompatToPoint2D(resultMax).y).toStrictEqual(
@@ -315,6 +334,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 						testDataPoint,
 						(chartInstance.config as ChartConfiguration).type,
 					),
+					DEFAULT_DRAGGING_CONFIGURATION,
 				);
 
 				expect(
@@ -343,6 +363,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 						testDataPoint,
 						(chartInstance.config as ChartConfiguration).type,
 					),
+					DEFAULT_DRAGGING_CONFIGURATION,
 				);
 
 				assertPointsEqual({
@@ -368,6 +389,10 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 						testDataPoint,
 						(chartInstance.config as ChartConfiguration).type,
 					),
+					{
+						xAxisDraggingDisabled: false,
+						yAxisDraggingDisabled: true,
+					},
 				);
 
 				assertPointsEqual({

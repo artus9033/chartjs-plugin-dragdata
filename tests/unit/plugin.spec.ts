@@ -1,5 +1,5 @@
 /* eslint-disable jest/no-standalone-expect */
-// above: mitigate ESLint false-positive due to wrapping inside conditional test / test.skip
+// above: mitigate ESLint false-positive due to wrapping inside conditional test / it.skip
 
 import { Chart } from "chart.js";
 import d3Drag from "d3-drag";
@@ -32,7 +32,7 @@ describe("plugin", () => {
 				jest.clearAllMocks(); // clear mocks
 			});
 
-			(unitTestCategoryAllowed("pluginRegistration") ? test : test.skip)(
+			(unitTestCategoryAllowed("pluginRegistration") ? test : it.skip)(
 				`plugin should be accepted by chart.js register() method`,
 				() => {
 					expect(
@@ -41,7 +41,7 @@ describe("plugin", () => {
 				},
 			);
 
-			(unitTestCategoryAllowed("pluginRegistration") ? test : test.skip)(
+			(unitTestCategoryAllowed("pluginRegistration") ? test : it.skip)(
 				"should register canvas via d3's select & pass in drag() handler instance",
 				() => {
 					expect(d3Selection.select).toHaveBeenCalledWith(chartInstance.canvas);
@@ -53,7 +53,7 @@ describe("plugin", () => {
 				},
 			);
 
-			(unitTestCategoryAllowed("dragListenersRegistration") ? test : test.skip)(
+			(unitTestCategoryAllowed("dragListenersRegistration") ? test : it.skip)(
 				"should register a drag listener bound to the canvas",
 				() => {
 					expect(d3Drag.drag).toHaveBeenCalledTimes(1);
@@ -67,7 +67,7 @@ describe("plugin", () => {
 				},
 			);
 
-			(unitTestCategoryAllowed("dragListenersRegistration") ? test : test.skip)(
+			(unitTestCategoryAllowed("dragListenersRegistration") ? test : it.skip)(
 				"should register drag event listeners",
 				() => {
 					expect(d3Drag.drag).toHaveBeenCalledTimes(1);

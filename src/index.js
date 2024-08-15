@@ -24,6 +24,57 @@ function getSafe(func) {
 	}
 }
 
+function checkDraggingConfiguration(
+	chartInstance,
+	datasetIndex,
+	dataPointIndex,
+) {
+	const dataset = chartInstance.data.datasets[datasetIndex];
+
+	/** per-chart option */
+	const chartDraggingDisabled =
+		chartInstance.config.options.plugins.dragData === false;
+
+	/** per-dataset option */
+	const datasetDraggingDisabled =
+		chartDraggingDisabled || dataset.dragData === false;
+
+	/** x-axis option (per-axis); dragging on the x-axis is disabled by default */
+	const _xAxisDraggingPerAxisOptionValue =
+		chartInstance.config.options.scales[xAxisID]?.dragData;
+
+	/** x-axis option (per-axis); dragging on the x-axis is disabled by default */
+	let xAxisDraggingDisabled = true;
+
+	if (
+		!datasetDraggingDisabled &&
+		(_xAxisDraggingPerAxisOptionValue === true || // finally, dragging can be enabled on the x-axis by the plugin options,
+			// unless it's explicitly disabled in x-axis options
+			(chartInstance.config.options.plugins?.dragData?.dragX === true &&
+				_xAxisDraggingPerAxisOptionValue !== false))
+	) {
+		xAxisDraggingDisabled = false;
+	}
+
+	/** y-axis option (per-axis); dragging on the y-axis is enabled by default */
+	const yAxisDraggingDisabled =
+		datasetDraggingDisabled ||
+		chartInstance.config.options.plugins?.dragData?.dragY === false ||
+		chartInstance.config.options.scales[yAxisID]?.dragData === false;
+
+	/** per-data-point option */
+	const dataPointDraggingDisabled =
+		datasetDraggingDisabled || dataset.data[dataPointIndex].dragData === false;
+
+	return {
+		chartDraggingDisabled,
+		datasetDraggingDisabled,
+		xAxisDraggingDisabled,
+		yAxisDraggingDisabled,
+		dataPointDraggingDisabled,
+	};
+}
+
 const getElement = (e, chartInstance, callback) => {
 	const searchMode =
 			chartInstance.config.options.interaction?.mode ?? "nearest",
@@ -42,6 +93,7 @@ const getElement = (e, chartInstance, callback) => {
 	if (element) {
 		let datasetIndex = element.datasetIndex;
 		let index = element.index;
+
 		// save element settings
 		eventSettings = getSafe(
 			() => chartInstance.config.options.plugins.tooltip.animation,
@@ -55,16 +107,24 @@ const getElement = (e, chartInstance, callback) => {
 		yAxisID = datasetMeta.yAxisID;
 		rAxisID = datasetMeta.rAxisID;
 
+		const draggingConfiguration = checkDraggingConfiguration(
+				chartInstance,
+				datasetIndex,
+				index,
+			),
+			{
+				datasetDraggingDisabled,
+				xAxisDraggingDisabled,
+				yAxisDraggingDisabled,
+				dataPointDraggingDisabled,
+			} = draggingConfiguration;
+
 		// check if dragging the dataset or datapoint is prohibited
 		if (
-			// per-dataset option - disabled
-			dataset.dragData === false ||
+			datasetDraggingDisabled ||
 			// dragging disabled on all scales
-			(chartInstance.config.options.scales[xAxisID]?.dragData === false &&
-				chartInstance.config.options.scales[yAxisID]?.dragData === false &&
-				chartInstance.config.options.scales[rAxisID]?.dragData === false) ||
-			// per-data-point option - disabled
-			dataset.data[element.index].dragData === false
+			(xAxisDraggingDisabled && yAxisDraggingDisabled) ||
+			dataPointDraggingDisabled
 		) {
 			element = null;
 			return;
@@ -81,7 +141,12 @@ const getElement = (e, chartInstance, callback) => {
 				samplePoint.length >= 2;
 
 			let dataPoint = chartInstance.data.datasets[datasetIndex].data[index];
-			let newPos = calcPosition(e, chartInstance, dataPoint);
+			let newPos = calcPosition(
+				e,
+				chartInstance,
+				dataPoint,
+				draggingConfiguration,
+			);
 			initValue = newPos - curValue;
 		}
 
@@ -159,7 +224,12 @@ function calcRadar(e, chartInstance, curIndex, rAxisID) {
 	return v;
 }
 
-function calcPosition(e, chartInstance, data) {
+function calcPosition(
+	e,
+	chartInstance,
+	data,
+	{ xAxisDraggingDisabled, yAxisDraggingDisabled },
+) {
 	let x, y;
 	const dataPoint = cloneDataPoint(data);
 
@@ -207,7 +277,7 @@ function calcPosition(e, chartInstance, data) {
 		// the side with the smallest difference from the new value was the one that was dragged
 		// return an interval with new value on the dragged side and old value on the other side
 		let newVal;
-		// choose the right variable based on the orientation of the graph(vertical, horizontal)
+		// choose the right variable based on the orientation of the graph (vertical, horizontal)
 		if (chartInstance.config.options.indexAxis === "y") {
 			newVal = x;
 		} else {
@@ -225,35 +295,24 @@ function calcPosition(e, chartInstance, data) {
 		return dataPoint;
 	}
 
-	if (
-		dataPoint.x !== undefined &&
-		// dragging on the x-axis is disabled by default
-		(chartInstance.config.options.plugins.dragData.dragX ||
-			chartInstance.config.options.scales[xAxisID].dragData)
-	) {
+	if (dataPoint.x !== undefined && !xAxisDraggingDisabled) {
 		dataPoint.x = x;
 	}
 
 	if (dataPoint.y !== undefined) {
-		if (chartInstance.config.options.plugins.dragData.dragY !== false) {
+		if (!yAxisDraggingDisabled) {
 			dataPoint.y = y;
 		}
 		return dataPoint;
 	} else {
 		if (chartInstance.config.options.indexAxis === "y") {
-			if (
-				chartInstance.config.options.plugins.dragData.dragX !== false &&
-				chartInstance.config.options.scales[xAxisID].dragData !== false
-			) {
+			if (!xAxisDraggingDisabled) {
 				return x;
 			} else {
 				return dataPoint;
 			}
 		} else {
-			if (
-				chartInstance.config.options.plugins.dragData.dragY !== false &&
-				chartInstance.config.options.scales[yAxisID].dragData !== false
-			) {
+			if (!yAxisDraggingDisabled) {
 				return y;
 			} else {
 				return dataPoint;
@@ -271,15 +330,29 @@ const updateData = (e, chartInstance, pluginOptions, callback) => {
 
 		let dataPoint = chartInstance.data.datasets[curDatasetIndex].data[curIndex];
 
+		const draggingConfiguration = checkDraggingConfiguration(
+			chartInstance,
+			curDatasetIndex,
+			curIndex,
+		);
+
 		if (type === "radar" || type === "polarArea") {
 			dataPoint = calcRadar(e, chartInstance, curIndex, rAxisID);
 		} else if (stacked) {
-			let cursorPos = calcPosition(e, chartInstance, dataPoint);
+			let cursorPos = calcPosition(
+				e,
+				chartInstance,
+				dataPoint,
+				draggingConfiguration,
+			);
 			dataPoint = roundValue(cursorPos - initValue, pluginOptions.round);
-		} else if (floatingBar) {
-			dataPoint = calcPosition(e, chartInstance, dataPoint);
 		} else {
-			dataPoint = calcPosition(e, chartInstance, dataPoint);
+			dataPoint = calcPosition(
+				e,
+				chartInstance,
+				dataPoint,
+				draggingConfiguration,
+			);
 		}
 
 		if (
@@ -337,34 +410,30 @@ const cloneDataPoint = (source) => {
 const ChartJSdragDataPlugin = {
 	id: "dragdata",
 	afterInit: function (chartInstance) {
-		if (
-			chartInstance.config.options.plugins &&
-			chartInstance.config.options.plugins.dragData
-		) {
-			const pluginOptions = chartInstance.config.options.plugins.dragData;
-			select(chartInstance.canvas).call(
-				drag()
-					.container(chartInstance.canvas)
-					.on("start", (e) =>
-						getElement(e.sourceEvent, chartInstance, pluginOptions.onDragStart),
-					)
-					.on("drag", (e) =>
-						updateData(
-							e.sourceEvent,
-							chartInstance,
-							pluginOptions,
-							pluginOptions.onDrag,
-						),
-					)
-					.on("end", (e) =>
-						dragEndCallback(
-							e.sourceEvent,
-							chartInstance,
-							pluginOptions.onDragEnd,
-						),
+		const pluginOptions = chartInstance.config.options.plugins.dragData;
+
+		select(chartInstance.canvas).call(
+			drag()
+				.container(chartInstance.canvas)
+				.on("start", (e) =>
+					getElement(e.sourceEvent, chartInstance, pluginOptions.onDragStart),
+				)
+				.on("drag", (e) =>
+					updateData(
+						e.sourceEvent,
+						chartInstance,
+						pluginOptions,
+						pluginOptions.onDrag,
 					),
-			);
-		}
+				)
+				.on("end", (e) =>
+					dragEndCallback(
+						e.sourceEvent,
+						chartInstance,
+						pluginOptions.onDragEnd,
+					),
+				),
+		);
 	},
 	beforeEvent: function (chart) {
 		if (isDragging) {
@@ -386,6 +455,7 @@ const mExportsForTesting = {
 	calcRadar,
 	getSafe,
 	roundValue,
+	checkDraggingConfiguration,
 	getStateVarElement: () => element,
 };
 

@@ -1,6 +1,6 @@
 import { Config } from "jest";
 
-const testPathIgnorePatterns: string[] = [
+export const testPathIgnorePatterns: string[] = [
 	"__utils__",
 	"__fixtures__",
 	"__mocks__",
@@ -29,9 +29,6 @@ const config: Config = {
 	testEnvironmentOptions: {
 		customExportConditions: ["node", "node-addons"],
 	},
-	collectCoverageFrom: ["src/*.{js,ts,jsx,tsx}"],
-	coverageReporters: ["lcov", "json"],
-	coveragePathIgnorePatterns: testPathIgnorePatterns,
 };
 
 export default config;

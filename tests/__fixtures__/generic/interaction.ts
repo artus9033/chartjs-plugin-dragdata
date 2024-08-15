@@ -234,7 +234,7 @@ export async function _genericTestDrag({
 
 			// if applicable, assert that the value has been rounded as per how the magnet is set up
 			if (magnet) {
-				let actualData = await getDataFromPointOnScreen(
+				let actualData = await getDataFromPointOnScreen!(
 					actualNewDraggedPointLocation,
 					canvasBB,
 				);
@@ -271,7 +271,7 @@ export async function _genericTestDrag({
 						);
 					}
 
-					const expectedValue = await getDataFromPointOnScreen(
+					const expectedValue = await getDataFromPointOnScreen!(
 						expectedDestPoint,
 						canvasBB,
 					);

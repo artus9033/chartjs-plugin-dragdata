@@ -51,24 +51,30 @@ for (const disablePlugin of [false, true]) {
 								() => {
 									test.describe.configure({ mode: "serial" }); // in this context, we want tests to run serially since they will reuse that same page
 
-									test.beforeAll(async ({ browser, isMobile }) => {
-										page = await browser.newPage();
+									test.beforeAll(
+										"Setup page for series of tests",
+										async ({ browser, isMobile }) => {
+											page = await browser.newPage();
 
-										await setupE2ETest(
-											{
-												fileName,
-												disablePlugin,
-												draggableAxis,
-												magnet,
-											},
-											page,
-											isMobile,
-										);
-									});
+											await setupE2ETest(
+												{
+													fileName,
+													disablePlugin,
+													draggableAxis,
+													magnet,
+												},
+												page,
+												isMobile,
+											);
+										},
+									);
 
-									test.afterAll(async () => {
-										await page.close();
-									});
+									test.afterAll(
+										"Clean page up after series of tests",
+										async () => {
+											await page.close();
+										},
+									);
 
 									for (const stepsGroup of disablePlugin
 										? scenario.stepGroups.slice(0, 1)
@@ -156,7 +162,10 @@ for (const disablePlugin of [false, true]) {
 															// screenshot snapshots if both axes are not prohibited from being draggable
 															// by config (although they can still be categorical, thus not draggable)
 															if (draggableAxis === "both" && !hasGUI()) {
-																await expect(page).toHaveScreenshot({
+																await expect(
+																	page,
+																	"Snapshot screenshots should be similar",
+																).toHaveScreenshot({
 																	maxDiffPixelRatio: testInfo.project.name
 																		.toLowerCase()
 																		.includes("mobile")
@@ -166,8 +175,10 @@ for (const disablePlugin of [false, true]) {
 															}
 
 															// after each group & (optionally) screenshot comparison, force reload the original dataset so as not to influence the next group
-															await page.evaluate(() => {
-																window.resetData();
+															await test.step("Reset data for next interaction", async () => {
+																await page.evaluate(() => {
+																	window.resetData();
+																});
 															});
 														}
 													});
@@ -181,6 +192,6 @@ for (const disablePlugin of [false, true]) {
 					},
 				);
 			}
-		});
+		}, "interaction");
 	});
 }
