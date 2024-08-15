@@ -6,15 +6,17 @@ jobs:
   tests-and-coverage:
     name: Run tests & report coverage
     runs-on: ubuntu-latest
+    env:
+      NODE_VERSION: 20.9.0
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js 20.9.0
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v4
         with:
-          node-version: 20.9.0
+          node-version: ${{ env.NODE_VERSION }}
           cache: "npm"
 
       - name: Cache npm dependencies
@@ -57,7 +59,7 @@ jobs:
         run: npm test
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v3
+        uses: codecov/codecov-action@v4
         with:
           fail_ci_if_error: false
           files: ./coverage/e2e/coverage-final.json,./coverage/unit/coverage-final.json,./coverage/integration/coverage-final.json
