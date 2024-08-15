@@ -277,7 +277,7 @@ function calcPosition(
 		// the side with the smallest difference from the new value was the one that was dragged
 		// return an interval with new value on the dragged side and old value on the other side
 		let newVal;
-		// choose the right variable based on the orientation of the graph(vertical, horizontal)
+		// choose the right variable based on the orientation of the graph (vertical, horizontal)
 		if (chartInstance.config.options.indexAxis === "y") {
 			newVal = x;
 		} else {
@@ -306,7 +306,7 @@ function calcPosition(
 		return dataPoint;
 	} else {
 		if (chartInstance.config.options.indexAxis === "y") {
-			if (chartInstance.config.options.plugins?.dragData?.dragX) {
+			if (!xAxisDraggingDisabled) {
 				return x;
 			} else {
 				return dataPoint;
