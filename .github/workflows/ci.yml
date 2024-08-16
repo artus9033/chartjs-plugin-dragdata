@@ -64,10 +64,8 @@ jobs:
         run: npm test
 
       - name: Upload coverage reports to Codecov
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: false
           files: ./coverage/e2e/coverage-final.json,./coverage/unit/coverage-final.json,./coverage/integration/coverage-final.json
-          verbose: true
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+          token: ${{ secrets.CODECOV_TOKEN }}
