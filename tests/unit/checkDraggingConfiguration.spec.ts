@@ -6,7 +6,6 @@ import {
 	checkDraggingConfiguration,
 	getElement,
 } from "../../src/util";
-import { genericChartScenarioBase } from "../__data__/data";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { setupChartInstance } from "./__utils__/utils";
 
@@ -300,14 +299,9 @@ const xAxisID = "x",
 			dataPointDraggingDisabled: true,
 		};
 
-		// create a chart that has getElement has not been called with, thus that does not exist in the state map
-		const unregisteredChartInstance = new Chart(
-			document.createElement("canvas").getContext("2d"),
-			{
-				type: "line",
-				...genericChartScenarioBase.configuration,
-			},
-		);
+		// create a fake chart-like-object that creation of does not call afterInit
+		// thus one that does not exist in the state map
+		const unregisteredChartInstance = { id: 98732 } as any;
 
 		expect(checkDraggingConfiguration(unregisteredChartInstance, 0, 0)).toEqual(
 			expectedConfig,
