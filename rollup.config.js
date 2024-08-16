@@ -103,7 +103,7 @@ const config = [
 
 	bundleDragDataPlugin({
 		file: pkg.module,
-		format: "es",
+		format: "esm",
 		terse: true,
 		bTestBuild: false,
 	}),
@@ -112,7 +112,7 @@ const config = [
 	bundleDragDataPlugin({
 		file: pkg.main
 			.replace(".js", "-test-browser.js")
-			.replace("dist/plugin/", "dist/test/"),
+			.replace("dist/", "dist/test/"),
 		format: "umd",
 		terse: false,
 		bTestBuild: true,
@@ -120,9 +120,7 @@ const config = [
 
 	// bundle for unit/integration testing: istanbul + external D3
 	bundleDragDataPlugin({
-		file: pkg.main
-			.replace(".js", "-test.js")
-			.replace("dist/plugin/", "dist/test/"),
+		file: pkg.main.replace(".js", "-test.js").replace("dist/", "dist/test/"),
 		format: "es",
 		terse: false,
 		bTestBuild: true,

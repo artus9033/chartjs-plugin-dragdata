@@ -2,10 +2,15 @@
 	"name": "chartjs-plugin-dragdata",
 	"version": "2.2.5",
 	"description": "Draggable data points for Chart.js",
-	"main": "dist/plugin/chartjs-plugin-dragdata.js",
-	"module": "dist/plugin/chartjs-plugin-dragdata.esm.js",
-	"browser": "dist/plugin/chartjs-plugin-dragdata.min.js",
-	"types": "dist/plugin/typeAugmentations.d.ts",
+	"exports": {
+		"import": "./dist/chartjs-plugin-dragdata.esm.js",
+		"require": "./dist/chartjs-plugin-dragdata.js",
+		"types": "./dist/typeAugmentations.d.ts"
+	},
+	"main": "dist/chartjs-plugin-dragdata.js",
+	"module": "dist/chartjs-plugin-dragdata.esm.js",
+	"browser": "dist/chartjs-plugin-dragdata.min.js",
+	"types": "dist/typeAugmentations.d.ts",
 	"scripts": {
 		"build": "npm run rollup:base",
 		"build:no-coverage": "npx cross-env DISABLE_ISTANBUL_COVERAGE_AT_BUILD=true npm run rollup:base",
