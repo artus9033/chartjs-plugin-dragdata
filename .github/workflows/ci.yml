@@ -68,4 +68,6 @@ jobs:
         with:
           fail_ci_if_error: false
           files: ./coverage/e2e/coverage-final.json,./coverage/unit/coverage-final.json,./coverage/integration/coverage-final.json
-          token: ${{ secrets.CODECOV_TOKEN }}
+          verbose: true
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
