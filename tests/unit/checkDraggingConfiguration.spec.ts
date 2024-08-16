@@ -1,11 +1,11 @@
 import type { Point, Chart as TChart } from "chart.js";
 
-import type { DragDataPluginConfiguration } from "../../src";
 import {
-	DraggingConfiguration,
+	type DragDataPluginConfiguration,
+	type DraggingConfiguration,
 	checkDraggingConfiguration,
 	getElement,
-} from "../../src/util";
+} from "../../dist/test/chartjs-plugin-dragdata-test";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { setupChartInstance } from "./__utils__/utils";
 

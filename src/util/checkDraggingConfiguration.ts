@@ -4,20 +4,7 @@ import { Chart } from "chart.js";
 import ChartJSDragDataPlugin from "../plugin";
 import { DragDataState } from "../types";
 import { OptionalPluginConfiguration } from "../types/Configuration";
-
-export type DraggingConfiguration = Record<
-	| "chartDraggingDisabled"
-	| "datasetDraggingDisabled"
-	| "xAxisDraggingDisabled"
-	| "yAxisDraggingDisabled"
-	| "dataPointDraggingDisabled",
-	boolean
->;
-
-export type AxisDraggingConfiguration = Pick<
-	DraggingConfiguration,
-	"xAxisDraggingDisabled" | "yAxisDraggingDisabled"
->;
+import { DraggingConfiguration } from "../types/DraggingConfiguration";
 
 export function checkDraggingConfiguration<TType extends ChartType>(
 	chartInstance: Chart<TType>,

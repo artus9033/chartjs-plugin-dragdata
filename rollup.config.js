@@ -37,7 +37,7 @@ function bundleDragDataPlugin(options) {
 			...(bBundleD3 ? [] : ["d3-drag", "d3-selection"]),
 		],
 		output: {
-			exports: "auto",
+			exports: "named",
 			banner,
 			name: "ChartJSDragDataPlugin",
 			file,
@@ -48,7 +48,7 @@ function bundleDragDataPlugin(options) {
 			},
 		},
 		plugins: [
-			commonjs(),
+			...(format === "umd" ? [commonjs()] : []),
 			resolve({
 				browser: true,
 			}),
@@ -67,14 +67,15 @@ function bundleDragDataPlugin(options) {
 				tsconfig: "./tsconfig.build.json",
 			}),
 			{
-				// generate .d.ts files matching filenames for typings for test bundles
+				// copy index.d.ts to file matching the bundle filename for jest tests to pick up typings
 				buildEnd() {
 					if (bTestBuild) {
-						fs.mkdirSync(path.dirname(file), { recursive: true });
+						const dir = path.dirname(file);
+						fs.mkdirSync(dir, { recursive: true });
 
-						fs.writeFileSync(
+						fs.copyFileSync(
+							path.join(dir, "index.d.ts"),
 							file.replace(".js", ".d.ts"),
-							'export * from "./index.d.ts";',
 						);
 					}
 				},

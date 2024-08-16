@@ -1,4 +1,4 @@
-import { roundValue } from "../../src/util";
+import { roundValue } from "../../dist/test/chartjs-plugin-dragdata-test";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 
 (isTestsConfigWhitelistItemAllowed(

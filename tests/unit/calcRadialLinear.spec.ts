@@ -3,8 +3,10 @@ import { getRelativePosition } from "chart.js/helpers";
 import type { Mock } from "jest-mock";
 import _ from "lodash";
 
-import { DragDataEvent } from "../../src";
-import { calcRadialLinear } from "../../src/util";
+import {
+	type DragDataEvent,
+	calcRadialLinear,
+} from "../../dist/test/chartjs-plugin-dragdata-test";
 import { genericChartScenarioBase } from "../__data__/data";
 import { setupChartInstance } from "./__utils__/utils";
 

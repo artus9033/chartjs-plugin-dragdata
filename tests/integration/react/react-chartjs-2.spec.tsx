@@ -4,7 +4,7 @@ import { Chart } from "react-chartjs-2";
 
 import { cleanup, render } from "@testing-library/react";
 
-import ChartJSDragDataPlugin from "../../../src";
+import ChartJSDragDataPlugin from "../../../dist/test/chartjs-plugin-dragdata-test";
 import {
 	JestTestChartOptions,
 	genericChartScenarioBase,

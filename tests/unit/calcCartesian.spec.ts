@@ -1,12 +1,13 @@
 import { Chart, ChartConfiguration, ChartType, Point } from "chart.js";
 import _ from "lodash";
 
-import type { DragDataEvent, DragDataPluginConfiguration } from "../../src";
 import {
-	calcCartesian,
-	getElement,
+	type DragDataEvent,
+	type DragDataPluginConfiguration,
 	type AxisDraggingConfiguration,
-} from "../../src/util";
+	getElement,
+	calcCartesian,
+} from "../../dist/test/chartjs-plugin-dragdata-test";
 import { genericChartScenarioBase } from "../__data__/data";
 import { Point2DObject } from "../__utils__/testTypes";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";

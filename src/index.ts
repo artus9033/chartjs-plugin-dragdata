@@ -1,10 +1,10 @@
 // ensure Chart.js type augmentations are bundled
-export type * from "./types";
+export type * from "./typeAugmentations";
 
 // export all types
-export * from "./types";
+export type * from "./types";
 
-export * from "./plugin";
+export * from "./util";
 
 import ChartJSDragDataPlugin from "./plugin";
 

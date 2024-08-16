@@ -8,7 +8,7 @@ import {
 	DragDataState,
 	OptionalPluginConfiguration,
 } from "../../types";
-import { AxisDraggingConfiguration } from "../../util/checkDraggingConfiguration";
+import { AxisDraggingConfiguration } from "../../types/DraggingConfiguration";
 import { cloneDataPoint } from "../cloneDataPoint";
 import { roundValue } from "../roundValue";
 

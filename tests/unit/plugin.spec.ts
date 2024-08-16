@@ -5,7 +5,7 @@ import { Chart } from "chart.js";
 import d3Drag from "d3-drag";
 import d3Selection from "d3-selection";
 
-import ChartJSDragDataPlugin from "../../src";
+import ChartJSDragDataPlugin from "../../dist/test/chartjs-plugin-dragdata-test";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { UNIT_TEST_CHART_TYPES } from "./__utils__/constants";
 import { setupChartInstance, unitTestCategoryAllowed } from "./__utils__/utils";

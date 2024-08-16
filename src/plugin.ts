@@ -3,9 +3,7 @@ import { drag } from "d3-drag";
 import { select } from "d3-selection";
 
 import { DragDataState, OptionalPluginConfiguration } from "./types";
-import { dragEndCallback } from "./util/dragEndCallback";
-import { getElement } from "./util/getElement";
-import { updateData } from "./util/updateData";
+import * as util from "./util";
 
 const ChartJSDragDataPlugin = {
 	id: "dragdata",
@@ -36,7 +34,7 @@ const ChartJSDragDataPlugin = {
 			drag<HTMLCanvasElement, unknown>()
 				.container(chartInstance.canvas)
 				.on("start", (e) =>
-					getElement(
+					util.getElement(
 						e.sourceEvent,
 						chartInstance,
 						pluginOptions?.onDragStart,
@@ -44,7 +42,7 @@ const ChartJSDragDataPlugin = {
 					),
 				)
 				.on("drag", (e) =>
-					updateData(
+					util.updateData(
 						e.sourceEvent,
 						chartInstance,
 						pluginOptions,
@@ -53,7 +51,7 @@ const ChartJSDragDataPlugin = {
 					),
 				)
 				.on("end", (e) =>
-					dragEndCallback(
+					util.dragEndCallback(
 						e.sourceEvent,
 						chartInstance,
 						pluginOptions?.onDragEnd,
@@ -73,6 +71,7 @@ const ChartJSDragDataPlugin = {
 			return false;
 		}
 	},
+	util,
 };
 
 // TODO: in a future major release, stop auto-registering the plugin and require users to manually register it

@@ -1,3 +1,5 @@
+// this file is not a .d.ts in src/ file so as for rollup to bundle it along with other ts files
+
 import { ChartType, Plugin } from "chart.js";
 
 import {

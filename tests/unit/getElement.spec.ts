@@ -5,8 +5,9 @@ import {
 	Chart as TChart,
 } from "chart.js";
 
-import ChartJSDragDataPlugin from "../../src";
-import { getElement } from "../../src/util";
+import ChartJSDragDataPlugin, {
+	getElement,
+} from "../../dist/test/chartjs-plugin-dragdata-test";
 import { maxValueCustomMode, setupChartInstance } from "./__utils__/utils";
 
 const DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE = [
