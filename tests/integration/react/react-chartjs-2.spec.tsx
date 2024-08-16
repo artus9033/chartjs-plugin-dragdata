@@ -4,12 +4,12 @@ import { Chart } from "react-chartjs-2";
 
 import { cleanup, render } from "@testing-library/react";
 
-import ChartJSdragDataPlugin from "../../../dist/chartjs-plugin-dragdata-test-browser";
+import ChartJSDragDataPlugin from "../../../src";
 import {
-	TestChartOptions,
+	JestTestChartOptions,
 	genericChartScenarioBase,
 } from "../../__data__/data";
-import { integrationAllowed } from "../__utils__/utils";
+import { integrationAllowed } from "../__utils__";
 
 let chartInstance: ChartJS | null = null;
 
@@ -32,9 +32,9 @@ function ChartComponent() {
 			type="line"
 			data={genericChartScenarioBase.configuration.data}
 			options={{
-				...TestChartOptions,
+				...JestTestChartOptions,
 			}}
-			plugins={[ChartJSdragDataPlugin]}
+			plugins={[ChartJSDragDataPlugin]}
 		/>
 	);
 }

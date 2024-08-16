@@ -1,4 +1,4 @@
-import {
+import type {
 	ChartConfiguration,
 	ChartData,
 	ChartOptions,
@@ -9,8 +9,9 @@ import {
 } from "chart.js";
 import _ from "lodash";
 
+import { ChartDataItemType } from "../../../src";
 import {
-	TestChartOptions,
+	JestTestChartOptions,
 	genericChartScenarioBase,
 } from "../../__data__/data";
 import { Point2DObject } from "../../__utils__/testTypes";
@@ -57,7 +58,7 @@ export function setupChartInstance<T extends keyof ChartTypeRegistry>(
 		data: _.cloneDeep(chartData),
 		options: _.merge(
 			// deep cloning is needed to avoid former tests mutating next tests' data
-			_.cloneDeep(TestChartOptions),
+			_.cloneDeep(JestTestChartOptions),
 			_.cloneDeep(customOptions ?? {}),
 		) as any,
 	});
@@ -91,9 +92,8 @@ export function assertPointsEqual({
 }: {
 	/** The baseline expected point coordinates as a 2D point; only the applicable coordinate will be used for actual assertion based on the shape of `actual` */
 	expected: Point2DObject;
-	// TODO: fix the below typing to use imported type from plugin sources later with proper TS typings
 	/** The actual point to be checked for validity */
-	actual: Point2DObject | [number, number] | number;
+	actual: Point;
 	/** Specifies the configured chart index axis; this parameter picks the proper coordinate to be compared from the baseline (which is 2D) when the actual point is 1D */
 	indexAxis: "x" | "y";
 }) {
@@ -125,8 +125,7 @@ export function assertPointsEqual({
 export function dataPointCompatFromPoint2D(
 	point2D: Point2DObject,
 	type: ChartType,
-): // TODO: fix the below typing to use imported type from plugin sources later with proper TS typings
-Point2DObject | [number, number] | number {
+): Point2DObject | [number, number] {
 	switch (type) {
 		case "bar":
 			return [point2D.x, point2D.y];
@@ -144,8 +143,7 @@ Point2DObject | [number, number] | number {
  * @param point the point to be converted to a `Point2DObject`
  */
 export function dataPointCompatToPoint2D(
-	// TODO: fix the below typing to use imported type from plugin sources later with proper TS typings
-	point: Point2DObject | [number, number] | number,
+	point: ChartDataItemType<ChartType>,
 ): Point2DObject {
 	const { isDataPointShape2DObject, isDataPointShapePair } =
 		getChartDataPointShape({ datasets: [{ data: [point] }] });

@@ -5,12 +5,9 @@ import {
 	Chart as TChart,
 } from "chart.js";
 
-import ChartJSdragDataPlugin, {
-	exportsForTesting,
-} from "../../dist/chartjs-plugin-dragdata-test";
+import ChartJSDragDataPlugin from "../../src";
+import { getElement } from "../../src/util";
 import { maxValueCustomMode, setupChartInstance } from "./__utils__/utils";
-
-const { getElement, getStateVarElement } = exportsForTesting;
 
 const DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE = [
 	{ index: 0, datasetIndex: 0, element: new PointElement({}) },
@@ -38,7 +35,7 @@ describe("getElement", () => {
 					DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE,
 			);
 
-			Chart.register(ChartJSdragDataPlugin);
+			Chart.register(ChartJSDragDataPlugin);
 
 			interactionMode =
 				chartInstance.config.options?.interaction?.mode ?? "nearest";
@@ -53,7 +50,7 @@ describe("getElement", () => {
 		});
 
 		it("getElement should properly call getElementsAtEventForMode & select first returned point", () => {
-			const evtMock = {};
+			const evtMock = {} as any;
 
 			getElement(evtMock, chartInstance);
 
@@ -64,13 +61,14 @@ describe("getElement", () => {
 				interactionOptions,
 				false,
 			);
-			expect(getStateVarElement()).toBe(
-				DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE[0],
-			);
+
+			expect(
+				ChartJSDragDataPlugin.statesStore.get(chartInstance.id)?.element,
+			).toBe(DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE[0]);
 		});
 
 		it("getElement should result in selecting null if callback returns false", () => {
-			const evtMock = {};
+			const evtMock = {} as any;
 
 			getElement(evtMock, chartInstance, () => false);
 
@@ -81,7 +79,9 @@ describe("getElement", () => {
 				interactionOptions,
 				false,
 			);
-			expect(getStateVarElement()).toBe(null);
+			expect(
+				ChartJSDragDataPlugin.statesStore.get(chartInstance.id)?.element,
+			).toBe(null);
 		});
 	});
 });

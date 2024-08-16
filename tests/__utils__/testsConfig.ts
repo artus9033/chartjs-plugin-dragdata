@@ -105,7 +105,7 @@ export type UnitTestCategory =
 	| "roundValue"
 	| "pluginRegistration"
 	| "dragListenersRegistration"
-	| "calcPosition"
+	| "calcCartesian"
 	| "checkDraggingConfiguration";
 
 export type UnitConfig = {

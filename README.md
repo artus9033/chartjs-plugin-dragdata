@@ -126,9 +126,8 @@ const draggableChart = new Chart(ctx, {
 				showTooltip: true, // show the tooltip while dragging [default = true]
 				// dragX: true // also enable dragging along the x-axis.
 				// this solely works for continous, numerical x-axis scales (no categories or dates)!
-				onDragStart: function (e, element) {
+				onDragStart: function (event, datasetIndex, index, value) {
 					/*
-          // e = event, element = datapoint that was dragged
           // you may use this callback to prohibit dragging certain datapoints
           // by returning false in this callback
           if (element.datasetIndex === 0 && element.index === 0) {
@@ -138,7 +137,7 @@ const draggableChart = new Chart(ctx, {
           }
           */
 				},
-				onDrag: function (e, datasetIndex, index, value) {
+				onDrag: function (event, datasetIndex, index, value) {
 					/*     
           // you may control the range in which datapoints are allowed to be
           // dragged by returning `false` in this callback
@@ -146,7 +145,7 @@ const draggableChart = new Chart(ctx, {
           if (datasetIndex === 0 && index === 0 && value > 20) return false 
           */
 				},
-				onDragEnd: function (e, datasetIndex, index, value) {
+				onDragEnd: function (event, datasetIndex, index, value) {
 					// you may use this callback to store the final datapoint value
 					// (after dragging) in a database, or update other UI elements that
 					// dependent on it

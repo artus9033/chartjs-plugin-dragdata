@@ -1,14 +1,15 @@
 import "chart.js/auto";
 
+import { ChartOptions } from "chart.js/auto";
 import { Line } from "vue-chartjs";
 
 import { cleanup, render } from "@testing-library/vue";
 
 import {
-	TestChartOptions,
+	JestTestChartOptions,
 	genericChartScenarioBase,
 } from "../../__data__/data";
-import { integrationAllowed } from "../__utils__/utils";
+import { integrationAllowed } from "../__utils__";
 
 afterEach(() => {
 	cleanup();
@@ -19,7 +20,7 @@ afterEach(() => {
 		const wrapper = render(Line, {
 			props: {
 				data: genericChartScenarioBase.configuration.data,
-				options: TestChartOptions,
+				options: JestTestChartOptions as ChartOptions<"line">,
 			},
 		});
 

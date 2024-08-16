@@ -1,7 +1,12 @@
-import { Chart, ChartConfiguration, ChartType } from "chart.js";
+import { Chart, ChartConfiguration, ChartType, Point } from "chart.js";
 import _ from "lodash";
 
-import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test-browser";
+import type { DragDataEvent, DragDataPluginConfiguration } from "../../src";
+import {
+	calcCartesian,
+	getElement,
+	type AxisDraggingConfiguration,
+} from "../../src/util";
 import { genericChartScenarioBase } from "../__data__/data";
 import { Point2DObject } from "../__utils__/testTypes";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
@@ -15,14 +20,12 @@ import {
 	setupChartInstance,
 } from "./__utils__/utils";
 
-const { calcPosition, getElement } = exportsForTesting;
-
 const xAxisID = "x",
 	yAxisID = "y",
 	PX_TO_VALUE_X_DIVISOR = 10,
 	PX_TO_VALUE_Y_DIVISOR = 20;
 
-const DEFAULT_DRAGGING_CONFIGURATION = {
+const DEFAULT_DRAGGING_CONFIGURATION: AxisDraggingConfiguration = {
 	xAxisDraggingDisabled: false,
 	yAxisDraggingDisabled: false,
 };
@@ -93,10 +96,10 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 (isTestsConfigWhitelistItemAllowed(
 	"unit",
 	"whitelistedTestCategories",
-	"calcPosition",
+	"calcCartesian",
 )
 	? describe
-	: describe.skip)("calcPosition", () => {
+	: describe.skip)("calcCartesian", () => {
 	for (const {
 		chartType,
 		chartSetupOptions,
@@ -106,11 +109,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 		describe(`${isFloatingBar ? "floating " : ""}${chartType} chart${description ? `, ${description}` : ""}`, () => {
 			let chartInstance: Chart;
 			let testDataPoint: Point2DObject;
-
-			// make clientX & clientY mutable (they are readonly in MouseEvent)
-			let mouseEvent: Partial<
-				MouseEvent & { clientX: number; clientY: number }
-			>;
+			let mouseEvent: DragDataEvent;
 
 			beforeEach(() => {
 				// mock required chart methods for unit tests to work
@@ -118,8 +117,6 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 					chartType,
 					{
 						plugins: {
-							// TODO: fix this later with proper TS typings
-							// @ts-ignore next line
 							dragData: {
 								round: 2,
 								dragX: true,
@@ -183,10 +180,10 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 					clientX: 50,
 					clientY: 200,
 					type: "click",
-				};
+				} as any;
 
 				// final preparation: initializes all proper variables in the dragdata plugin
-				getElement(mouseEvent, chartInstance, () => {});
+				getElement(mouseEvent, chartInstance);
 			});
 
 			// test to prevent regression of https://github.com/artus9033/chartjs-plugin-dragdata/issues/96
@@ -206,25 +203,30 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 					),
 				);
 
-				function calcPositionWrapper() {
-					calcPosition(mouseEvent, chartInstance, frozenDataPoint, {
-						xAxisDraggingDisabled: false,
-						yAxisDraggingDisabled: false,
-					});
+				function calcCartesianWrapper() {
+					calcCartesian(
+						mouseEvent,
+						chartInstance,
+						frozenDataPoint as [number, number],
+						{
+							xAxisDraggingDisabled: false,
+							yAxisDraggingDisabled: false,
+						},
+					);
 				}
 
-				expect(calcPositionWrapper).not.toThrow();
+				expect(calcCartesianWrapper).not.toThrow();
 			});
 
 			it("should calculate position properly on mouse event", () => {
 				// slightly different scenario for floating bar chart: to simulate dragging the vertical bar by the top edge
 				if (isFloatingBar) {
 					testDataPoint.y = FLOATING_BAR_DATA_POINTS[0][1] * 1.4; // simulate that the new value is higher
-					mouseEvent.clientY =
+					((mouseEvent as MouseEvent).clientY as number) =
 						FLOATING_BAR_DATA_POINTS[0][1] * PX_TO_VALUE_Y_DIVISOR * 1.4; // simulate the mouse event happening somewhere above the current top edge
 				}
 
-				const result = calcPosition(
+				const result = calcCartesian(
 					mouseEvent,
 					chartInstance,
 					dataPointCompatFromPoint2D(
@@ -235,7 +237,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 				);
 				expect(
 					chartInstance.scales[xAxisID].getValueForPixel,
-				).toHaveBeenCalledWith(mouseEvent.clientX);
+				).toHaveBeenCalledWith((mouseEvent as MouseEvent).clientX);
 
 				if (isFloatingBar) {
 					// floating bar scenario behaves differently: only the edge of the bar that
@@ -244,27 +246,28 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 					// eslint-disable-next-line jest/no-conditional-expect
 					expect(result).toStrictEqual([
 						FLOATING_BAR_DATA_POINTS[0][0], // this edge should not be moved
-						mouseEvent.clientY! / PX_TO_VALUE_Y_DIVISOR, // this edge should be moved
+						(mouseEvent as MouseEvent).clientY / PX_TO_VALUE_Y_DIVISOR, // this edge should be moved
 					]);
 				} else {
 					assertPointsEqual({
-						actual: result,
+						actual: result as Point,
 						expected: {
-							x: mouseEvent.clientX! / PX_TO_VALUE_X_DIVISOR,
-							y: mouseEvent.clientY! / PX_TO_VALUE_Y_DIVISOR,
+							x: (mouseEvent as MouseEvent).clientX! / PX_TO_VALUE_X_DIVISOR,
+							y: (mouseEvent as MouseEvent).clientY! / PX_TO_VALUE_Y_DIVISOR,
 						},
 						indexAxis: chartInstance.config.options!.indexAxis!,
 					});
 				}
 			});
 
-			// a vertical bar only moves on the y-axis and calcPosition always returns the y-axis
+			// a vertical bar only moves on the y-axis and calcCartesian always returns the y-axis
 			// value for a vertical bar, thus this test is inapplicable to these cases
 			(chartType === "bar" ? it.skip : it)(
 				"should clamp x-axis to x-scale bounds",
 				() => {
-					mouseEvent.clientX = DEFAULT_TEST_CHART_INSTANCE_WIDTH + 600; // above max
-					const resultMax = calcPosition(
+					((mouseEvent as MouseEvent).clientX as number) =
+						DEFAULT_TEST_CHART_INSTANCE_WIDTH + 600; // above max
+					const resultMax = calcCartesian(
 						mouseEvent,
 						chartInstance,
 						dataPointCompatFromPoint2D(
@@ -285,8 +288,8 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 							: chartInstance.scales[xAxisID].max,
 					);
 
-					mouseEvent.clientX = -600; // below min
-					const resultMin = calcPosition(
+					((mouseEvent as MouseEvent).clientX as number) = -600; // below min
+					const resultMin = calcCartesian(
 						mouseEvent,
 						chartInstance,
 						dataPointCompatFromPoint2D(
@@ -311,8 +314,9 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 			);
 
 			it("should clamp y-axis to y-scale bounds", () => {
-				mouseEvent.clientY = DEFAULT_TEST_CHART_INSTANCE_HEIGHT + 600; // above max
-				const resultMax = calcPosition(
+				((mouseEvent as MouseEvent).clientY as number) =
+					DEFAULT_TEST_CHART_INSTANCE_HEIGHT + 600; // above max
+				const resultMax = calcCartesian(
 					mouseEvent,
 					chartInstance,
 					dataPointCompatFromPoint2D(
@@ -326,8 +330,8 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 					chartInstance.scales[yAxisID].max,
 				);
 
-				mouseEvent.clientY = -600; // below min
-				const resultMin = calcPosition(
+				((mouseEvent as MouseEvent).clientY as number) = -600; // below min
+				const resultMin = calcCartesian(
 					mouseEvent,
 					chartInstance,
 					dataPointCompatFromPoint2D(
@@ -352,11 +356,14 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 			// below it block is a false-positive for eslint, as it uses assertPointsEqual, which in fact asserts with expect()
 			// eslint-disable-next-line jest/expect-expect
 			it("should not drag x-axis if dragX is false", () => {
-				// TODO: fix this later with proper TS typings
-				(chartInstance.config.options!.plugins as any).dragData!.dragX = false;
+				(
+					chartInstance.config.options!.plugins!
+						.dragData as DragDataPluginConfiguration
+				).dragX = false;
 
-				mouseEvent.clientY = DEFAULT_TEST_CHART_INSTANCE_WIDTH;
-				const result = calcPosition(
+				((mouseEvent as MouseEvent).clientY as number) =
+					DEFAULT_TEST_CHART_INSTANCE_WIDTH;
+				const result = calcCartesian(
 					mouseEvent,
 					chartInstance,
 					dataPointCompatFromPoint2D(
@@ -369,9 +376,9 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 				assertPointsEqual({
 					expected: {
 						x: testDataPoint.x, // x should be unchanged
-						y: mouseEvent.clientY / PX_TO_VALUE_Y_DIVISOR, // y should be changed
+						y: (mouseEvent as MouseEvent).clientY / PX_TO_VALUE_Y_DIVISOR, // y should be changed
 					},
-					actual: result,
+					actual: result as Point,
 					indexAxis: chartInstance.config.options!.indexAxis!,
 				});
 			});
@@ -379,10 +386,12 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 			// below it block is a false-positive for eslint, as it uses assertPointsEqual, which in fact asserts with expect()
 			// eslint-disable-next-line jest/expect-expect
 			it("should not drag y-axis if dragY is false", () => {
-				// TODO: fix this later with proper TS typings
-				(chartInstance.config.options!.plugins as any).dragData.dragY = false;
+				(
+					chartInstance.config.options!.plugins!
+						.dragData as DragDataPluginConfiguration
+				).dragY = false;
 
-				const result = calcPosition(
+				const result = calcCartesian(
 					mouseEvent,
 					chartInstance,
 					dataPointCompatFromPoint2D(
@@ -397,10 +406,10 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 
 				assertPointsEqual({
 					expected: {
-						x: mouseEvent.clientX! / PX_TO_VALUE_X_DIVISOR, // x should be changed
+						x: (mouseEvent as MouseEvent).clientX / PX_TO_VALUE_X_DIVISOR, // x should be changed
 						y: testDataPoint.y, // y should be unchanged
 					},
-					actual: result,
+					actual: result as Point,
 					indexAxis: chartInstance.config.options!.indexAxis!,
 				});
 			});

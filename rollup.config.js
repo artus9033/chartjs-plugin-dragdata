@@ -1,8 +1,10 @@
+const fs = require("fs");
+const path = require("path");
+
 const commonjs = require("@rollup/plugin-commonjs");
 const resolve = require("@rollup/plugin-node-resolve");
 const terser = require("@rollup/plugin-terser");
 const istanbul = require("rollup-plugin-istanbul");
-const replace = require("@rollup/plugin-replace");
 const typescript = require("@rollup/plugin-typescript");
 
 const pkg = require("./package.json");
@@ -28,16 +30,16 @@ function bundleDragDataPlugin(options) {
 
 	/** @type {import('rollup').RollupOptions} */
 	const customOptions = {
-		input: "src/index.js",
+		input: "src/index.ts",
 		external: [
 			"chart.js",
 			"chart.js/helpers",
 			...(bBundleD3 ? [] : ["d3-drag", "d3-selection"]),
 		],
 		output: {
-			exports: "named",
+			exports: "auto",
 			banner,
-			name: "index",
+			name: "ChartJSDragDataPlugin",
 			file,
 			format,
 			globals: {
@@ -59,20 +61,24 @@ function bundleDragDataPlugin(options) {
 							}),
 						]
 					: []
-				: [
-						// in a non-test build, strip the testing exports
-						replace({
-							values: {
-								"export const exportsForTesting = mExportsForTesting;": "",
-							},
-							delimiters: ["", ""], // no delimiters, we want to replace literally
-							preventAssignment: true, // prevent replacing near assignment - setting recommended by plugin docs
-						}),
-					]),
+				: []),
 			terse ? terser() : undefined,
 			typescript({
 				tsconfig: "./tsconfig.build.json",
 			}),
+			{
+				// generate .d.ts files matching filenames for typings for test bundles
+				buildEnd() {
+					if (bTestBuild) {
+						fs.mkdirSync(path.dirname(file), { recursive: true });
+
+						fs.writeFileSync(
+							file.replace(".js", ".d.ts"),
+							'export * from "./index.d.ts";',
+						);
+					}
+				},
+			},
 		],
 	};
 
@@ -104,7 +110,9 @@ const config = [
 
 	// bundle for E2E testing: istanbul + bundled D3 (for browser)
 	bundleDragDataPlugin({
-		file: pkg.main.replace(".js", "-test-browser.js"),
+		file: pkg.main
+			.replace(".js", "-test-browser.js")
+			.replace("dist/plugin/", "dist/test/"),
 		format: "umd",
 		terse: false,
 		bTestBuild: true,
@@ -112,7 +120,9 @@ const config = [
 
 	// bundle for unit/integration testing: istanbul + external D3
 	bundleDragDataPlugin({
-		file: pkg.main.replace(".js", "-test.js"),
+		file: pkg.main
+			.replace(".js", "-test.js")
+			.replace("dist/plugin/", "dist/test/"),
 		format: "es",
 		terse: false,
 		bTestBuild: true,

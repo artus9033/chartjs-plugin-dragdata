@@ -5,7 +5,7 @@ import { Chart } from "chart.js";
 import d3Drag from "d3-drag";
 import d3Selection from "d3-selection";
 
-import ChartJSdragDataPlugin from "../../dist/chartjs-plugin-dragdata-test";
+import ChartJSDragDataPlugin from "../../src";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { UNIT_TEST_CHART_TYPES } from "./__utils__/constants";
 import { setupChartInstance, unitTestCategoryAllowed } from "./__utils__/utils";
@@ -24,7 +24,7 @@ describe("plugin", () => {
 			beforeEach(() => {
 				chartInstance = setupChartInstance(chartType);
 
-				Chart.register(ChartJSdragDataPlugin);
+				Chart.register(ChartJSDragDataPlugin);
 			});
 
 			afterEach(() => {
@@ -36,8 +36,8 @@ describe("plugin", () => {
 				`plugin should be accepted by chart.js register() method`,
 				() => {
 					expect(
-						Chart.registry.getPlugin(ChartJSdragDataPlugin.id),
-					).toStrictEqual(ChartJSdragDataPlugin);
+						Chart.registry.getPlugin(ChartJSDragDataPlugin.id),
+					).toStrictEqual(ChartJSDragDataPlugin);
 				},
 			);
 
@@ -46,9 +46,11 @@ describe("plugin", () => {
 				() => {
 					expect(d3Selection.select).toHaveBeenCalledWith(chartInstance.canvas);
 
-					expect(d3Selection.call).toHaveBeenCalledTimes(1);
-					expect(d3Selection.call).toHaveBeenCalledWith(
-						d3Drag.drag.mock.results[0].value,
+					expect((d3Selection as any as jest.Mock).call).toHaveBeenCalledTimes(
+						1,
+					);
+					expect((d3Selection as any as jest.Mock).call).toHaveBeenCalledWith(
+						(d3Drag.drag as jest.Mock).mock.results[0].value,
 					);
 				},
 			);
@@ -58,8 +60,8 @@ describe("plugin", () => {
 				() => {
 					expect(d3Drag.drag).toHaveBeenCalledTimes(1);
 
-					const d3DragContainerFun =
-						d3Drag.drag.mock.results[0].value.container;
+					const d3DragContainerFun = (d3Drag.drag as any as jest.Mock).mock
+						.results[0].value.container;
 
 					// test if drag()'s return instance's container() method had been called with the canvas instance
 					expect(d3DragContainerFun).toHaveBeenCalledTimes(1);
@@ -71,7 +73,8 @@ describe("plugin", () => {
 				"should register drag event listeners",
 				() => {
 					expect(d3Drag.drag).toHaveBeenCalledTimes(1);
-					const d3DragOnFun = d3Drag.drag.mock.results[0].value.on;
+					const d3DragOnFun = (d3Drag.drag as any as jest.Mock).mock.results[0]
+						.value.on;
 
 					// test if drag()'s return instance's on() method had been called with the correct event types & handlers
 					expect(d3DragOnFun).toHaveBeenCalledTimes(3);

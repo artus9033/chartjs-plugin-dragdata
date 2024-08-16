@@ -16,19 +16,38 @@ const LOG_TAG = "[Bundler]",
 	e2eDistDirPath = path.join(pagesSrcDirPath, "..", "dist-e2e"),
 	pagesFactoriesDirPath = path.join(pagesSrcDirPath, "pages"),
 	demosAssetsDirPath = path.join(demosDistDirPath, "assets"),
-	e2eAssetsDirPath = path.join(e2eDistDirPath, "assets");
+	e2eAssetsDirPath = path.join(e2eDistDirPath, "assets"),
+	projectRootAbsPath = path.resolve(
+		path.join(path.dirname(__filename), "..", ".."),
+	);
 
-function copyAsset(sourcePath: string, destFileName: string) {
-	console.log(`${LOG_TAG} Copying asset ${sourcePath} -> ${destFileName}`);
+function copyAsset(assetSpec: AssetSpec): void {
+	console.log(
+		`${LOG_TAG} Copying asset for variants ${assetSpec.variants.join(", ")}: ${assetSpec.sourcePath.replace(projectRootAbsPath, "")} -> ${assetSpec.destFileName}`,
+	);
 
-	fs.copyFileSync(sourcePath, path.join(demosAssetsDirPath, destFileName));
-	fs.copyFileSync(sourcePath, path.join(e2eAssetsDirPath, destFileName));
+	if (assetSpec.variants.includes("demo")) {
+		fs.copyFileSync(
+			assetSpec.sourcePath,
+			path.join(demosAssetsDirPath, assetSpec.destFileName),
+		);
+	}
+
+	if (assetSpec.variants.includes("e2e")) {
+		fs.copyFileSync(
+			assetSpec.sourcePath,
+			path.join(e2eAssetsDirPath, assetSpec.destFileName),
+		);
+	}
 }
 
 export type AssetSpec = {
 	sourcePath: string;
 	destFileName: string;
+	variants: AssetSpecVariant[];
 };
+
+export type AssetSpecVariant = "demo" | "e2e";
 
 export const assetSpecs: AssetSpec[] = [
 	{
@@ -41,6 +60,7 @@ export const assetSpecs: AssetSpec[] = [
 			"lodash.min.js",
 		),
 		destFileName: "lodash.min.js",
+		variants: ["demo", "e2e"],
 	},
 	{
 		sourcePath: path.join(
@@ -53,6 +73,7 @@ export const assetSpecs: AssetSpec[] = [
 			"chartjs-plugin-datalabels.min.js",
 		),
 		destFileName: "chartjs-plugin-datalabels.min.js",
+		variants: ["demo", "e2e"],
 	},
 	{
 		sourcePath: path.join(
@@ -65,6 +86,7 @@ export const assetSpecs: AssetSpec[] = [
 			"chartjs-adapter-date-fns.bundle.min.js",
 		),
 		destFileName: "chartjs-adapter-date-fns.bundle.min.js",
+		variants: ["demo", "e2e"],
 	},
 	{
 		sourcePath: path.join(
@@ -77,26 +99,33 @@ export const assetSpecs: AssetSpec[] = [
 			"chart.umd.js",
 		),
 		destFileName: "chart.min.js",
+		variants: ["demo", "e2e"],
 	},
+	// demo-only plugin bundle
 	{
 		sourcePath: path.join(
 			path.dirname(__filename),
 			"..",
 			"..",
 			"dist",
+			"plugin",
 			"chartjs-plugin-dragdata.min.js",
 		),
 		destFileName: "chartjs-plugin-dragdata.min.js",
+		variants: ["demo"],
 	},
+	// test-only plugin bundle
 	{
 		sourcePath: path.join(
 			path.dirname(__filename),
 			"..",
 			"..",
 			"dist",
+			"test",
 			"chartjs-plugin-dragdata-test-browser.js",
 		),
 		destFileName: "chartjs-plugin-dragdata-test-browser.js",
+		variants: ["e2e"],
 	},
 ];
 
@@ -117,7 +146,7 @@ export async function bundle(): Promise<boolean> {
 
 	// copy assets
 	for (const assetSpec of assetSpecs) {
-		copyAsset(assetSpec.sourcePath, assetSpec.destFileName);
+		copyAsset(assetSpec);
 	}
 
 	// render EJS to HTML
@@ -153,7 +182,7 @@ export async function bundle(): Promise<boolean> {
 					);
 
 					console.log(
-						`${LOG_TAG} Rendering ${isE2ETest ? "E2E" : "demo"} page ${demosPageFilename} -> ${htmlDestPath}`,
+						`${LOG_TAG} Rendering ${isE2ETest ? "E2E" : "demo"} page ${demosPageFilename} -> ${htmlDestPath.replace(projectRootAbsPath, "")}`,
 					);
 
 					fs.writeFileSync(
