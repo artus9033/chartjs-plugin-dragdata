@@ -68,7 +68,7 @@ function bundleDragDataPlugin(options) {
 			}),
 			{
 				// copy index.d.ts to file matching the bundle filename for jest tests to pick up typings
-				buildEnd() {
+				closeBundle() {
 					if (bTestBuild) {
 						const dir = path.dirname(file);
 						fs.mkdirSync(dir, { recursive: true });
