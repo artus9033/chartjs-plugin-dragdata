@@ -3,9 +3,13 @@ import { getRelativePosition } from "chart.js/helpers";
 import type { Mock } from "jest-mock";
 import _ from "lodash";
 
-import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test";
-import { genericChartScenarioBase } from "../__data__/data";
-import { setupChartInstance } from "./__utils__/utils";
+import {
+	type DragDataEvent,
+	calcRadialLinear,
+} from "../../../dist/test/chartjs-plugin-dragdata-test";
+import { genericChartScenarioBase } from "../../__data__/data";
+import { setupChartInstance } from "../__utils__/utils";
+import { isTestsConfigWhitelistItemAllowed } from "../../__utils__/testsConfig";
 
 const CHART_CENTER_POS_X = 75;
 const CHART_CENTER_POS_Y = 80;
@@ -18,13 +22,18 @@ jest.mock("chart.js/helpers", () => ({
 	})),
 }));
 
-const { calcRadar } = exportsForTesting;
-
 const rAxisID = "y";
 
-describe("calcRadar", () => {
+(isTestsConfigWhitelistItemAllowed(
+	"unit",
+	"whitelistedTestCategories",
+	"calcRadialLinear",
+)
+	? describe
+	: describe.skip)("calcRadialLinear", () => {
 	for (const chartType of ["radar", "polarArea"] as ChartType[]) {
 		let chartInstance: Chart;
+		let mouseEvent: DragDataEvent;
 
 		describe(`${chartType} chart`, () => {
 			beforeEach(() => {
@@ -33,7 +42,7 @@ describe("calcRadar", () => {
 						dragData: {
 							round: 4,
 						},
-					} as any, // TODO: fix this later with proper TS typings
+					},
 					scales: {
 						[rAxisID]: {
 							max: 100,
@@ -94,6 +103,12 @@ describe("calcRadar", () => {
 						y: CHART_CENTER_POS_Y,
 					})),
 				);
+
+				mouseEvent = {
+					clientX: 50,
+					clientY: 200,
+					type: "click",
+				} as any;
 			});
 
 			test.each(
@@ -101,7 +116,12 @@ describe("calcRadar", () => {
 			)(
 				"should calculate 0 when drag event occurs in the center of the chart",
 				(curIndex) => {
-					const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+					const value = calcRadialLinear(
+						mouseEvent,
+						chartInstance,
+						curIndex,
+						rAxisID,
+					);
 
 					expect(value).toEqual(0);
 				},
@@ -115,7 +135,12 @@ describe("calcRadar", () => {
 					y: CHART_CENTER_POS_Y * 4.74, // to the bottom
 				}));
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toBeCloseTo(14.96, 2);
 			});
@@ -130,7 +155,12 @@ describe("calcRadar", () => {
 					y: CHART_CENTER_POS_Y * 4.74, // to the bottom
 				}));
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toBeCloseTo(chartInstance.scales[rAxisID].max - 14.96, 2);
 			});
@@ -143,7 +173,12 @@ describe("calcRadar", () => {
 					y: CHART_CENTER_POS_Y - 300, // to the top
 				}));
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toEqual(0);
 			});
@@ -156,7 +191,12 @@ describe("calcRadar", () => {
 					y: CHART_CENTER_POS_Y,
 				}));
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toEqual(15);
 			});
@@ -171,7 +211,12 @@ describe("calcRadar", () => {
 					y: CHART_CENTER_POS_Y * 4.74, // to the top
 				}));
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toEqual(0);
 			});
@@ -184,7 +229,12 @@ describe("calcRadar", () => {
 
 				const curIndex = 0;
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toBe(0);
 			});
@@ -197,7 +247,12 @@ describe("calcRadar", () => {
 
 				const curIndex = 0;
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toBe(chartInstance.scales[rAxisID].max);
 			});
@@ -210,7 +265,12 @@ describe("calcRadar", () => {
 
 				const curIndex = 0;
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toBe(chartInstance.scales[rAxisID].min);
 			});
@@ -223,7 +283,12 @@ describe("calcRadar", () => {
 
 				const curIndex = 1;
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toBe(chartInstance.scales[rAxisID].max);
 			});
@@ -236,7 +301,12 @@ describe("calcRadar", () => {
 
 				const curIndex = 1;
 
-				const value = calcRadar({}, chartInstance, curIndex, rAxisID);
+				const value = calcRadialLinear(
+					mouseEvent,
+					chartInstance,
+					curIndex,
+					rAxisID,
+				);
 
 				expect(value).toBe(chartInstance.scales[rAxisID].min);
 			});

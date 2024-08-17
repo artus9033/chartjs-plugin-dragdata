@@ -37,7 +37,8 @@ for (const disablePlugin of [false, true]) {
 					() => {
 						test.describe.configure({ mode: "parallel" });
 
-						for (const magnet of disablePlugin
+						// only test magnet enabled in different variants on both-axes-draggable scenarios to reduce the number of test cases
+						for (const magnet of disablePlugin || draggableAxis !== "both"
 							? (["none"] satisfies MagnetVariant[])
 							: ALL_TESTED_MAGNET_VARIANTS) {
 							(isTestsConfigWhitelistItemAllowed(

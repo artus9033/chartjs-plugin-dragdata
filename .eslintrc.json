@@ -5,5 +5,13 @@
 	"rules": {
 		"prettier/prettier": ["error"],
 		"import/no-extraneous-dependencies": ["off"]
-	}
+	},
+	"overrides": [
+		{
+			"files": ["*.ts", "*.tsx"],
+			"parserOptions": {
+				"project": "./tsconfig.eslint.json"
+			}
+		}
+	]
 }

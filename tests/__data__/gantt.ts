@@ -91,7 +91,6 @@ export const ganttChartScenario = {
 	onDrag: (_e, _datasetIndex, index, _value) => {
 		// const duration = dateFns.differenceInDays(value[1], value[0]);
 		window.testedChart.data.datasets.forEach((segment, i) => {
-			// console.log(i);
 			const curDuration = dateFns.differenceInDays(
 				// @ts-ignore: this is valid since chartjs-adapter-date-fns is used
 				segment.data[index][1],
@@ -108,15 +107,12 @@ export const ganttChartScenario = {
 					// @ts-ignore: this is valid since chartjs-adapter-date-fns is used
 					window.testedChart.data.datasets[i + 1].data[index][0],
 				);
-				// console.log(nextStart);
 				if (nextStart !== thisEnd) {
 					// @ts-ignore: this is valid since chartjs-adapter-date-fns is used
 					segment.data[index] = [thisStart, nextStart];
 				}
 			}
 			if (i > 0) {
-				// console.log(i);
-				// console.log(window.testedChart.data.datasets[i - 1]);
 				const prevEnd = new Date(
 					// @ts-ignore: this is valid since chartjs-adapter-date-fns is used
 					window.testedChart.data.datasets[i - 1].data[index][1],
@@ -124,7 +120,6 @@ export const ganttChartScenario = {
 				if (thisStart !== prevEnd) {
 					// retain current segment length
 					const newEnd = dateFns.addDays(prevEnd, curDuration);
-					// console.log(prevEnd, newEnd);
 					// @ts-ignore: this is valid since chartjs-adapter-date-fns is used
 					segment.data[index] = [prevEnd, newEnd];
 				}

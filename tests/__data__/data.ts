@@ -17,10 +17,10 @@ import { DeepPartial } from "../__utils__/types";
 import { ganttChartScenario } from "./gantt";
 import { scatterChartScenario } from "./scatter";
 
-export const TestChartOptions: ChartOptions = {
+export const JestTestChartOptions: ChartOptions = {
 	plugins: {
 		dragData: true,
-	} as any, // TODO: fix this later with proper TS typings
+	},
 	animation: false,
 };
 
@@ -438,8 +438,6 @@ export const bubbleXOnlyChartScenario = mergeScenarioPartialConfigurations(
 		configuration: {
 			options: {
 				plugins: {
-					// TODO: fix this later with proper TS typings
-					// @ts-ignore
 					dragData: {
 						dragY: false, // only allow X axis to be draggable
 					},

@@ -1,8 +1,10 @@
+const fs = require("fs");
+const path = require("path");
+
 const commonjs = require("@rollup/plugin-commonjs");
 const resolve = require("@rollup/plugin-node-resolve");
 const terser = require("@rollup/plugin-terser");
 const istanbul = require("rollup-plugin-istanbul");
-const replace = require("@rollup/plugin-replace");
 const typescript = require("@rollup/plugin-typescript");
 
 const pkg = require("./package.json");
@@ -28,7 +30,7 @@ function bundleDragDataPlugin(options) {
 
 	/** @type {import('rollup').RollupOptions} */
 	const customOptions = {
-		input: "src/index.js",
+		input: "src/index.ts",
 		external: [
 			"chart.js",
 			"chart.js/helpers",
@@ -37,7 +39,7 @@ function bundleDragDataPlugin(options) {
 		output: {
 			exports: "named",
 			banner,
-			name: "index",
+			name: "ChartJSDragDataPlugin",
 			file,
 			format,
 			globals: {
@@ -46,7 +48,7 @@ function bundleDragDataPlugin(options) {
 			},
 		},
 		plugins: [
-			commonjs(),
+			...(format === "umd" ? [commonjs()] : []),
 			resolve({
 				browser: true,
 			}),
@@ -59,20 +61,25 @@ function bundleDragDataPlugin(options) {
 							}),
 						]
 					: []
-				: [
-						// in a non-test build, strip the testing exports
-						replace({
-							values: {
-								"export const exportsForTesting = mExportsForTesting;": "",
-							},
-							delimiters: ["", ""], // no delimiters, we want to replace literally
-							preventAssignment: true, // prevent replacing near assignment - setting recommended by plugin docs
-						}),
-					]),
+				: []),
 			terse ? terser() : undefined,
 			typescript({
 				tsconfig: "./tsconfig.build.json",
 			}),
+			{
+				// copy index.d.ts to file matching the bundle filename for jest tests to pick up typings
+				closeBundle() {
+					if (bTestBuild) {
+						const dir = path.dirname(file);
+						fs.mkdirSync(dir, { recursive: true });
+
+						fs.copyFileSync(
+							path.join(dir, "index.d.ts"),
+							file.replace(".js", ".d.ts"),
+						);
+					}
+				},
+			},
 		],
 	};
 
@@ -97,14 +104,16 @@ const config = [
 
 	bundleDragDataPlugin({
 		file: pkg.module,
-		format: "es",
+		format: "esm",
 		terse: true,
 		bTestBuild: false,
 	}),
 
 	// bundle for E2E testing: istanbul + bundled D3 (for browser)
 	bundleDragDataPlugin({
-		file: pkg.main.replace(".js", "-test-browser.js"),
+		file: pkg.main
+			.replace(".js", "-test-browser.js")
+			.replace("dist/", "dist/test/"),
 		format: "umd",
 		terse: false,
 		bTestBuild: true,
@@ -112,7 +121,7 @@ const config = [
 
 	// bundle for unit/integration testing: istanbul + external D3
 	bundleDragDataPlugin({
-		file: pkg.main.replace(".js", "-test.js"),
+		file: pkg.main.replace(".js", "-test.js").replace("dist/", "dist/test/"),
 		format: "es",
 		terse: false,
 		bTestBuild: true,

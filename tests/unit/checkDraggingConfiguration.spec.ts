@@ -1,16 +1,19 @@
-import { Chart } from "chart.js";
+import type { Point, Chart as TChart } from "chart.js";
 
-import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test-browser";
+import {
+	type PluginConfiguration,
+	type DraggingConfiguration,
+	checkDraggingConfiguration,
+	getElement,
+} from "../../dist/test/chartjs-plugin-dragdata-test";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { setupChartInstance } from "./__utils__/utils";
-
-const { checkDraggingConfiguration, getElement } = exportsForTesting;
 
 /**
  * The default configuration of dragging that should be calculated when
  * no dragging options (or default values) are passed to chart
  */
-const VANILLA_DEFAULT_CONFIG = {
+const VANILLA_DEFAULT_CONFIG: DraggingConfiguration = {
 		chartDraggingDisabled: false,
 		datasetDraggingDisabled: false,
 		xAxisDraggingDisabled: true,
@@ -20,7 +23,7 @@ const VANILLA_DEFAULT_CONFIG = {
 	/**
 	 * The default configuration of dragging that is set up in beforeAll() call
 	 */
-	TEST_SETUP_DEFAULT_CONFIG = {
+	TEST_SETUP_DEFAULT_CONFIG: DraggingConfiguration = {
 		...VANILLA_DEFAULT_CONFIG,
 		xAxisDraggingDisabled: false,
 	};
@@ -35,7 +38,7 @@ const xAxisID = "x",
 )
 	? describe
 	: describe.skip)("checkDraggingConfiguration", () => {
-	let chartInstance: Chart;
+	let chartInstance: TChart<"line">;
 
 	beforeEach(() => {
 		// mock required chart methods for unit tests to work
@@ -43,8 +46,6 @@ const xAxisID = "x",
 			"line",
 			{
 				plugins: {
-					// TODO: fix this later with proper TS typings
-					// @ts-ignore next line
 					dragData: {
 						round: 2,
 						dragX: true,
@@ -117,17 +118,14 @@ const xAxisID = "x",
 				clientX: 50,
 				clientY: 200,
 				type: "click",
-			},
+			} as any,
 			chartInstance,
-			() => {},
 		);
 	});
 
 	it("has valid default dragging configuration", () => {
 		// reset the options to the default state (beforeAll activates dragging on both axes via plugin options)
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
-		chartInstance.options.plugins.dragData = undefined;
+		chartInstance.options.plugins!.dragData = undefined;
 
 		expect(checkDraggingConfiguration(chartInstance, 0, 0)).toEqual(
 			VANILLA_DEFAULT_CONFIG,
@@ -135,9 +133,7 @@ const xAxisID = "x",
 	});
 
 	it("disables all drag interactions when chart-level dragging is disabled", () => {
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
-		chartInstance.config.options.plugins.dragData = false;
+		chartInstance.config.options!.plugins!.dragData = false;
 
 		const allDisabled = {
 			chartDraggingDisabled: true,
@@ -162,8 +158,6 @@ const xAxisID = "x",
 	});
 
 	it("disables dataset-level-and-below drag interactions when dataset dragging is disabled", () => {
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
 		chartInstance.data.datasets[0].dragData = false;
 
 		const datasetDisabledConfig = {
@@ -191,9 +185,7 @@ const xAxisID = "x",
 	});
 
 	it("disables only x-axis dragging when per-axis option for x-axis is disabled", () => {
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
-		chartInstance.config.options.scales[xAxisID].dragData = false;
+		chartInstance.config.options!.scales![xAxisID]!.dragData = false;
 
 		const expectedConfig = {
 			...TEST_SETUP_DEFAULT_CONFIG,
@@ -209,9 +201,7 @@ const xAxisID = "x",
 	});
 
 	it("does not enable x-axis dragging when per-axis option is set to false and overrides enabled plugin option for x-axis", () => {
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
-		chartInstance.config.options.scales[xAxisID].dragData = false;
+		chartInstance.config.options!.scales![xAxisID]!.dragData = false;
 
 		const expectedConfig = {
 			...TEST_SETUP_DEFAULT_CONFIG,
@@ -227,9 +217,7 @@ const xAxisID = "x",
 	});
 
 	it("disables only y-axis dragging when per-axis option for y-axis is disabled when x-axis dragging is disabled by default", () => {
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
-		chartInstance.config.options.scales[yAxisID].dragData = false;
+		chartInstance.config.options!.scales![yAxisID]!.dragData = false;
 
 		const expectedConfig = {
 			...TEST_SETUP_DEFAULT_CONFIG,
@@ -245,13 +233,11 @@ const xAxisID = "x",
 	});
 
 	it("disables only y-axis dragging when per-axis option for y-axis is disabled when x-axis dragging is enabled", () => {
-		// enable dragging the x-axis in scales' options
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
-		chartInstance.config.options.scales[xAxisID].dragData = true;
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
-		chartInstance.config.options.scales[yAxisID].dragData = false;
+		// enable dragging the x-axis in scale's options
+		chartInstance.config.options!.scales![xAxisID]!.dragData = true;
+
+		// disable dragging the y-axis in scale's options
+		chartInstance.config.options!.scales![yAxisID]!.dragData = false;
 
 		const expectedConfig = {
 			...TEST_SETUP_DEFAULT_CONFIG,
@@ -269,12 +255,11 @@ const xAxisID = "x",
 
 	it("produces proper config for all axes enabled & per-data-point dragging disabled just for one point", () => {
 		// enable dragging on all axes in plugin options
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
-		chartInstance.options.plugins.dragData.dragX = true;
-		// TODO: fix this later with proper TS typings
-		// @ts-ignore
-		chartInstance.data.datasets[0].data[0].dragData = false;
+		(chartInstance.options!.plugins!.dragData as PluginConfiguration)!.dragX =
+			true;
+
+		// disable dragging for the first point in the first dataset
+		(chartInstance.data.datasets[0].data[0] as Point)!.dragData = false;
 
 		const expectedConfigBase = {
 				chartDraggingDisabled: false,
@@ -302,6 +287,33 @@ const xAxisID = "x",
 		);
 		expect(checkDraggingConfiguration(chartInstance, 1, 1)).toEqual(
 			expectedConfigOtherPoints,
+		);
+	});
+
+	it("produces config with all axes disabled for an inexistent chart object", () => {
+		const expectedConfig: DraggingConfiguration = {
+			chartDraggingDisabled: true,
+			datasetDraggingDisabled: true,
+			xAxisDraggingDisabled: true,
+			yAxisDraggingDisabled: true,
+			dataPointDraggingDisabled: true,
+		};
+
+		// create a fake chart-like-object that creation of does not call afterInit
+		// thus one that does not exist in the state map
+		const unregisteredChartInstance = { id: 98732 } as any;
+
+		expect(checkDraggingConfiguration(unregisteredChartInstance, 0, 0)).toEqual(
+			expectedConfig,
+		);
+		expect(checkDraggingConfiguration(unregisteredChartInstance, 0, 1)).toEqual(
+			expectedConfig,
+		);
+		expect(checkDraggingConfiguration(unregisteredChartInstance, 1, 0)).toEqual(
+			expectedConfig,
+		);
+		expect(checkDraggingConfiguration(unregisteredChartInstance, 1, 1)).toEqual(
+			expectedConfig,
 		);
 	});
 });

@@ -15,8 +15,10 @@
 		"noEmit": true,
 		"jsx": "react",
 		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+		"emitDecoratorMetadata": true,
+		"declaration": true,
+		"outDir": "dist"
 	},
-	"include": ["src"],
+	"include": ["src", "src/typings.d.ts"],
 	"exclude": ["node_modules", "dist", "scripts"]
 }

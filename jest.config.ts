@@ -13,7 +13,7 @@ const config: Config = {
 		"<rootDir>/tests/unit/jest.unit.config.ts",
 		"<rootDir>/tests/integration/jest.integration.config.ts",
 	],
-	collectCoverageFrom: ["src/*.{js,ts,jsx,tsx}"],
+	collectCoverageFrom: ["src/**/*.{js,ts,jsx,tsx}"],
 	coverageReporters: ["lcov", "json"],
 	coveragePathIgnorePatterns: testPathIgnorePatterns,
 	verbose: true,

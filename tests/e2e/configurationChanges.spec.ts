@@ -1,3 +1,4 @@
+import { Point } from "chart.js";
 import { test } from "playwright-test-coverage";
 
 import Offset2D from "../__utils__/structures/Offset2D";
@@ -125,14 +126,10 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 											? {
 													x: dataSample[0],
 													y: dataSample[1],
-													// TODO: fix this later with proper TS typings
-													// @ts-ignore
 													dragData: bEnabled,
 												}
 											: {
-													...dataSample,
-													// TODO: fix this later with proper TS typings
-													// @ts-ignore
+													...(dataSample as Point),
 													dragData: bEnabled,
 												};
 									}
@@ -142,8 +139,6 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 								case "y-scale":
 									window.testedChart.config.options!.scales![
 										enablerLocationSpec === "x-scale" ? "x" : "y"
-										// TODO: fix this later with proper TS typings
-										// @ts-ignore
 									]!.dragData = bEnabled;
 									break;
 							}

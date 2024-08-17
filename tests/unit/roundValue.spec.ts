@@ -1,7 +1,5 @@
-import { exportsForTesting } from "../../dist/chartjs-plugin-dragdata-test-browser";
+import { roundValue } from "../../dist/test/chartjs-plugin-dragdata-test";
 import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
-
-const { roundValue } = exportsForTesting;
 
 (isTestsConfigWhitelistItemAllowed(
 	"unit",
