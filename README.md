@@ -74,13 +74,13 @@ Click here to learn [how to use this plugin in an Observable notebook](https://o
 
 ### npm
 
-```
+```bash
 npm install chartjs-plugin-dragdata
 ```
 
 ### yarn
 
-```
+```bash
 yarn add chartjs-plugin-dragdata
 ```
 
@@ -88,7 +88,7 @@ yarn add chartjs-plugin-dragdata
 
 In browsers, you may simply add the following script tag:
 
-```
+```html
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-dragdata@latest/dist/chartjs-plugin-dragdata.min.js"></script>
 ```
 
@@ -127,23 +127,19 @@ const draggableChart = new Chart(ctx, {
 				// dragX: true // also enable dragging along the x-axis.
 				// this solely works for continous, numerical x-axis scales (no categories or dates)!
 				onDragStart: function (event, datasetIndex, index, value) {
-					/*
-          // you may use this callback to prohibit dragging certain datapoints
-          // by returning false in this callback
-          if (element.datasetIndex === 0 && element.index === 0) {
-            // this would prohibit dragging the first datapoint in the first
-            // dataset entirely
-            return false
-          }
-          */
+					// you may use this callback to prohibit dragging certain datapoints
+					// by returning false in this callback
+					if (element.datasetIndex === 0 && element.index === 0) {
+						// this would prohibit dragging the first datapoint in the first
+						//dataset entirely
+						return false;
+					}
 				},
 				onDrag: function (event, datasetIndex, index, value) {
-					/*     
-          // you may control the range in which datapoints are allowed to be
-          // dragged by returning `false` in this callback
-          if (value < 0) return false // this only allows positive values
-          if (datasetIndex === 0 && index === 0 && value > 20) return false 
-          */
+					// you may control the range in which datapoints are allowed to be
+					// dragged by returning `false` in this callback
+					if (value < 0) return false; // this only allows positive values
+					if (datasetIndex === 0 && index === 0 && value > 20) return false;
 				},
 				onDragEnd: function (event, datasetIndex, index, value) {
 					// you may use this callback to store the final datapoint value
@@ -154,7 +150,7 @@ const draggableChart = new Chart(ctx, {
 		},
 		scales: {
 			y: {
-				// dragData: false // disables datapoint dragging for the entire axis
+				dragData: false, // disables datapoint dragging for the entire axis
 			},
 		},
 	},
@@ -193,7 +189,7 @@ const myChartOptions = {
     plugins: {
       dragData: {
         magnet: {
-    		    to: Math.round // to: (value) => value + 5
+          to: Math.round // to: (value) => value + 5
         }
       }
     }
@@ -219,7 +215,7 @@ Here's a small example for a Vue.js component
 
 <script>
   import { Chart, registerables } from 'chart.js'
-  // load the options file externally for better readability of the component.
+  // Load the options file externally for better readability of the component.
   // In the chartOptions object, make sure to add "dragData: true" etc.
   import chartOptions from '~/assets/js/labour.js'
   import 'chartjs-plugin-dragdata'
@@ -246,9 +242,6 @@ Here's a small example for a Vue.js component
     }
   }
 </script>
-
-<style>
-</style>
 ```
 
 ## Contributing
@@ -277,6 +270,9 @@ The build command comes in four variants:
 - `build:no-coverage` which works like `build`, but does not include the `rollup-istanbul-plugin`, which may sometimes be helpful when you alter the code and encounter an error when running tests, making the result bundle not contain rubbish code injected by Istanbul
 - `build:watch` which works as `build`, but watches source files for changes and triggers a rebuild whenever they change
 - `build:watch:no-coverage` which works like a mix of `build:watch` and `build:no-coverage`
+
+Scripts for linting are also provided:
+
 - `lint` which runs ESLint on the project
 - `lint:fix` which runs ESLint on the project in fix mode
 
