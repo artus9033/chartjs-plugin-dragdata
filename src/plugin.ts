@@ -71,7 +71,6 @@ const ChartJSDragDataPlugin = {
 			return false;
 		}
 	},
-	util,
 };
 
 // TODO: in a future major release, stop auto-registering the plugin and require users to manually register it

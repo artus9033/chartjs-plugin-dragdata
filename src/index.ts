@@ -4,6 +4,7 @@ export type * from "./typeAugmentations";
 // export all types
 export type * from "./types";
 
+// export all utility functions
 export * from "./util";
 
 import ChartJSDragDataPlugin from "./plugin";
