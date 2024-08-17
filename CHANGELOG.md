@@ -1,5 +1,24 @@
 # chartjs-plugin-dragdata.js changelog
 
+## [2.3.0](https://github.com/artus9033/chartjs-plugin-dragdata/compare/v2.2.5...v2.3.0) (2024-08-17)
+
+
+### Features
+
+* demos & master branch coverage ([#133](https://github.com/artus9033/chartjs-plugin-dragdata/issues/133)) ([45fa08d](https://github.com/artus9033/chartjs-plugin-dragdata/commit/45fa08d65aa2b2fb3b4f4add3e410c5fbce62dec))
+
+
+### Bug Fixes
+
+* broken plugin and tests after [#115](https://github.com/artus9033/chartjs-plugin-dragdata/issues/115) ([#143](https://github.com/artus9033/chartjs-plugin-dragdata/issues/143)) ([92a363e](https://github.com/artus9033/chartjs-plugin-dragdata/commit/92a363e425a644efcdf62a9e97c2579d4d931573))
+* **cd:** install optional packages manually in CD workflow ([#141](https://github.com/artus9033/chartjs-plugin-dragdata/issues/141)) ([e684733](https://github.com/artus9033/chartjs-plugin-dragdata/commit/e6847335214972a7d00b2da0af179838189b0595))
+* **ci:** manually trigger postinstall in CI workflow if cache was used instead of npm i ([#135](https://github.com/artus9033/chartjs-plugin-dragdata/issues/135)) ([720893f](https://github.com/artus9033/chartjs-plugin-dragdata/commit/720893f03af19b74464f3f373c33d72f49ba3672))
+* demos onHover showing grab cursor icon at all times ([#148](https://github.com/artus9033/chartjs-plugin-dragdata/issues/148)) ([72a85fd](https://github.com/artus9033/chartjs-plugin-dragdata/commit/72a85fdd22be513e9aa7a045ce8d10348f119a9c))
+* **docs:** readme badges ([2eee4c1](https://github.com/artus9033/chartjs-plugin-dragdata/commit/2eee4c1356612d5133a90cfe48c0d3e9e6d24d4f))
+* floating bar extra data preservation ([#139](https://github.com/artus9033/chartjs-plugin-dragdata/issues/139)) ([2e9867d](https://github.com/artus9033/chartjs-plugin-dragdata/commit/2e9867dd5e07119e8244708a44d4ab9d412f0d66))
+* interface DragEventCallback missing alternative void return type ([#150](https://github.com/artus9033/chartjs-plugin-dragdata/issues/150)) ([91dc179](https://github.com/artus9033/chartjs-plugin-dragdata/commit/91dc179189310489002f28058a7ed84c36618a19))
+* properly organize dependencies ([#134](https://github.com/artus9033/chartjs-plugin-dragdata/issues/134)) ([8cb0506](https://github.com/artus9033/chartjs-plugin-dragdata/commit/8cb0506d38d7022b911f295a06cd86dd07d000af))
+
 ## 2.2.5 (2022-11-30)
 
 - ⬆️ update dependencies ([c27a62e](https://github.com/artus9033/chartjs-plugin-dragdata/commit/c27a62e))

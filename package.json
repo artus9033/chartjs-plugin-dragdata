@@ -1,6 +1,6 @@
 {
 	"name": "chartjs-plugin-dragdata",
-	"version": "2.2.5",
+	"version": "2.3.0",
 	"description": "Draggable data points for Chart.js",
 	"exports": {
 		"import": "./dist/chartjs-plugin-dragdata.esm.js",
