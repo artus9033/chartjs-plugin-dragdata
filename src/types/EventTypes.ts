@@ -14,4 +14,4 @@ export type DragEventCallback<TType extends ChartType> = (
 	index: number,
 	/** the current value of the data point */
 	value: ChartDataItemType<TType>,
-) => boolean;
+) => boolean | void;
