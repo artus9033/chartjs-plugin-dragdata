@@ -1,0 +1,18 @@
+{
+	"$schema": "https://unpkg.com/release-it/schema/release-it.json",
+	"github": {
+		"release": true
+	},
+	"plugins": {
+		"@release-it/conventional-changelog": {
+			"preset": "conventionalcommits",
+			"infile": "CHANGELOG.md"
+		}
+	},
+	"git": {
+		"requireCleanWorkingDir": true,
+		"release": true,
+		"releaseName": "v${version}",
+		"commitMessage": "chore: release v${version}"
+	}
+}
