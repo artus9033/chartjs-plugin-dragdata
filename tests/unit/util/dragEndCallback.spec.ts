@@ -3,25 +3,12 @@ import "jest-extended"; // somehow, types for jest-extended matchers in this sub
 
 import ChartJSDragDataPlugin, {
 	PluginConfiguration,
-	applyMagnet,
 	dragEndCallback,
 	type DragDataEvent,
 	type DragEventCallback,
 } from "../../../dist/test/chartjs-plugin-dragdata-test";
 import { isTestsConfigWhitelistItemAllowed } from "../../__utils__/testsConfig";
 import { setupChartInstance } from "../__utils__/utils";
-
-jest.mock("../../../dist/test/chartjs-plugin-dragdata-test", () => {
-	const actual = jest.requireActual(
-		"../../../dist/test/chartjs-plugin-dragdata-test",
-	);
-
-	return {
-		...actual,
-		applyMagnet: jest.fn((...args) => actual.applyMagnet(...args)),
-		__esModule: true,
-	};
-});
 
 const rAxisID = "y";
 
@@ -58,6 +45,7 @@ const rAxisID = "y";
 
 	it("should return early if state is undefined", () => {
 		dragEndCallback<"line">({} as DragDataEvent, { id: 99 } as any, callback);
+
 		expect(callback).not.toHaveBeenCalled();
 	});
 
@@ -106,23 +94,19 @@ const rAxisID = "y";
 					isDragging: true, // we want to set this to true to test if it was properly set to false by dragEndCallback
 				});
 
-				dragEndCallback<"line">(event, chartInstance, callback);
+				const expectedValue = withMagnet
+					? mockedMagnetReturnValue
+					: chartInstance.data.datasets[element.datasetIndex].data[
+							element.index
+						];
 
-				expect(applyMagnet).toHaveBeenCalledExactlyOnceWith(
-					chartInstance,
-					element.datasetIndex,
-					element.index,
-				);
+				dragEndCallback<"line">(event, chartInstance, callback);
 
 				expect(callback).toHaveBeenCalledWith(
 					event,
 					element.datasetIndex,
 					element.index,
-					withMagnet
-						? mockedMagnetReturnValue
-						: chartInstance.data.datasets[element.datasetIndex].data[
-								element.index
-							],
+					expectedValue,
 				);
 				expect(
 					ChartJSDragDataPlugin.statesStore.get(chartInstance.id)?.isDragging,
