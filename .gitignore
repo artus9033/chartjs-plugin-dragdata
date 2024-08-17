@@ -8,3 +8,4 @@ node_modules
 .rollup.cache
 .nyc_output
 .vscode
+*.tgz
