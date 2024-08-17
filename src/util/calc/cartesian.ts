@@ -1,5 +1,5 @@
-import type { ChartType, Point } from "chart.js";
-import { Chart } from "chart.js";
+import type { Chart, ChartType, Point } from "chart.js";
+import { getRelativePosition } from "chart.js/helpers";
 
 import ChartJSDragDataPlugin from "../../plugin";
 import {
@@ -11,6 +11,7 @@ import {
 import { AxisDraggingConfiguration } from "../../types/DraggingConfiguration";
 import { cloneDataPoint } from "../cloneDataPoint";
 import { roundValue } from "../roundValue";
+import { clipValue } from "./clipValue";
 
 export function calcCartesian<TType extends ChartType>(
 	event: DragDataEvent,
@@ -23,28 +24,15 @@ export function calcCartesian<TType extends ChartType>(
 ): NonNullable<ChartDataItemType<ChartType>> {
 	if (!state) return data;
 
-	let x, y;
 	const dataPoint = cloneDataPoint(data)!;
 
-	if ((event as TouchEvent).touches) {
-		x = chartInstance.scales[state.xAxisID].getValueForPixel(
-			(event as TouchEvent).touches[0].clientX -
-				chartInstance.canvas.getBoundingClientRect().left,
-		);
-		y = chartInstance.scales[state.yAxisID].getValueForPixel(
-			(event as TouchEvent).touches[0].clientY -
-				chartInstance.canvas.getBoundingClientRect().top,
-		);
-	} else {
-		x = chartInstance.scales[state.xAxisID].getValueForPixel(
-			(event as MouseEvent).clientX -
-				chartInstance.canvas.getBoundingClientRect().left,
-		);
-		y = chartInstance.scales[state.yAxisID].getValueForPixel(
-			(event as MouseEvent).clientY -
-				chartInstance.canvas.getBoundingClientRect().top,
-		);
-	}
+	let { x: cursorX, y: cursorY } = getRelativePosition(
+		event,
+		chartInstance as any,
+	);
+
+	let x = chartInstance.scales[state.xAxisID].getValueForPixel(cursorX);
+	let y = chartInstance.scales[state.yAxisID].getValueForPixel(cursorY);
 
 	const rounding = (
 		chartInstance.config.options?.plugins
@@ -54,23 +42,16 @@ export function calcCartesian<TType extends ChartType>(
 	x = roundValue(x!, rounding);
 	y = roundValue(y!, rounding);
 
-	x =
-		x > chartInstance.scales[state.xAxisID].max
-			? chartInstance.scales[state.xAxisID].max
-			: x;
-	x =
-		x < chartInstance.scales[state.xAxisID].min
-			? chartInstance.scales[state.xAxisID].min
-			: x;
-
-	y =
-		y > chartInstance.scales[state.yAxisID].max
-			? chartInstance.scales[state.yAxisID].max
-			: y;
-	y =
-		y < chartInstance.scales[state.yAxisID].min
-			? chartInstance.scales[state.yAxisID].min
-			: y;
+	x = clipValue(
+		x,
+		chartInstance.scales[state.xAxisID].min,
+		chartInstance.scales[state.xAxisID].max,
+	);
+	y = clipValue(
+		y,
+		chartInstance.scales[state.yAxisID].min,
+		chartInstance.scales[state.yAxisID].max,
+	);
 
 	if (state.floatingBar) {
 		// x contains the new value for one end of the floating bar

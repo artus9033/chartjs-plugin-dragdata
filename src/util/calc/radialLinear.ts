@@ -1,5 +1,4 @@
-import type { ChartType, RadialLinearScale } from "chart.js";
-import { Chart } from "chart.js";
+import type { Chart, ChartType, RadialLinearScale } from "chart.js";
 import { getRelativePosition } from "chart.js/helpers";
 
 import ChartJSDragDataPlugin from "../../plugin";
@@ -9,6 +8,7 @@ import {
 	OptionalPluginConfiguration,
 } from "../../types";
 import { roundValue } from "../roundValue";
+import { clipValue } from "./clipValue";
 
 export function calcRadialLinear<TType extends ChartType>(
 	event: DragDataEvent,
@@ -64,14 +64,11 @@ export function calcRadialLinear<TType extends ChartType>(
 		)?.round,
 	);
 
-	v =
-		v > chartInstance.scales[rAxisID].max
-			? chartInstance.scales[rAxisID].max
-			: v;
-	v =
-		v < chartInstance.scales[rAxisID].min
-			? chartInstance.scales[rAxisID].min
-			: v;
+	v = clipValue(
+		v,
+		chartInstance.scales[rAxisID].min,
+		chartInstance.scales[rAxisID].max,
+	);
 
 	return v;
 }
