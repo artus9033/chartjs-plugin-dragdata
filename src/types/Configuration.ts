@@ -4,7 +4,7 @@ import { ChartDataItemType } from "./ChartJSTypes";
 import { DragEventCallback } from "./EventTypes";
 
 export type OptionalPluginConfiguration<TType extends ChartType> =
-	| DragDataPluginConfiguration<TType>
+	| PluginConfiguration<TType>
 	| undefined;
 
 /**
@@ -36,7 +36,7 @@ export type DatasetDraggingConfiguration = CoreConfiguration;
 export type DataPointDraggingConfiguration = boolean;
 
 // plugin (per-chart) configuration; docstring located in types.d.ts to be visible to the end users
-export type DragDataPluginConfiguration<TType extends ChartType = ChartType> =
+export type PluginConfiguration<TType extends ChartType = ChartType> =
 	CoreConfiguration & {
 		/**
 		 * Whether to allow for dragging on the x-axis.

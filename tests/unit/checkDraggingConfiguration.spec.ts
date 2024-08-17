@@ -1,7 +1,7 @@
 import type { Point, Chart as TChart } from "chart.js";
 
 import {
-	type DragDataPluginConfiguration,
+	type PluginConfiguration,
 	type DraggingConfiguration,
 	checkDraggingConfiguration,
 	getElement,
@@ -255,8 +255,8 @@ const xAxisID = "x",
 
 	it("produces proper config for all axes enabled & per-data-point dragging disabled just for one point", () => {
 		// enable dragging on all axes in plugin options
-		(chartInstance.options!.plugins!
-			.dragData as DragDataPluginConfiguration)!.dragX = true;
+		(chartInstance.options!.plugins!.dragData as PluginConfiguration)!.dragX =
+			true;
 
 		// disable dragging for the first point in the first dataset
 		(chartInstance.data.datasets[0].data[0] as Point)!.dragData = false;

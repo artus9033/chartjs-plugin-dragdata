@@ -5,7 +5,7 @@ import { ChartType, Plugin } from "chart.js";
 import {
 	DataPointDraggingConfiguration,
 	DatasetDraggingConfiguration,
-	DragDataPluginConfiguration,
+	PluginConfiguration,
 	ScaleDraggingConfiguration,
 } from "./types/Configuration";
 
@@ -17,7 +17,7 @@ declare module "chart.js" {
 		 *
 		 * For information regarding the mechanics, please consult `PluginConfiguration`.
 		 *
-		 * @see DragDataPluginConfiguration
+		 * @see PluginConfiguration
 		 */
 		dragData?: DatasetDraggingConfiguration | boolean;
 	}
@@ -43,7 +43,7 @@ declare module "chart.js" {
 		 * To entirely disable the plugin, pass `false`. By default, the plugin is enabled for every data point but only
 		 * on the y-axis, unless a lower-level configuration specifies otherwise.
 		 */
-		dragData?: DragDataPluginConfiguration<TType> | boolean;
+		dragData?: PluginConfiguration<TType> | boolean;
 	}
 
 	export interface CoreScaleOptions {
@@ -64,7 +64,7 @@ declare module "chart.js" {
 		 *
 		 * For information regarding the mechanics, please consult `PluginConfiguration`.
 		 *
-		 * @see DragDataPluginConfiguration
+		 * @see PluginConfiguration
 		 */
 		dragData?: DataPointDraggingConfiguration | false;
 	}

@@ -111,7 +111,9 @@ export type UnitTestCategory =
 	| "clipValue"
 	| "applyMagnet"
 	| "getElement"
-	| "plugin";
+	| "plugin"
+	| "dragEndCallback"
+	| "updateData";
 
 export type UnitConfig = {
 	whitelistedTestCategories: Whitelist<UnitTestCategory> | undefined;

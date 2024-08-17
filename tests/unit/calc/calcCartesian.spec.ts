@@ -3,7 +3,7 @@ import _ from "lodash";
 
 import {
 	type DragDataEvent,
-	type DragDataPluginConfiguration,
+	type PluginConfiguration,
 	type AxisDraggingConfiguration,
 	getElement,
 	calcCartesian,
@@ -234,7 +234,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 					expect(calcCartesianWrapper).not.toThrow();
 				});
 
-				it("should calculate position properly on mouse event", () => {
+				it("should calculate position properly upon interaction", () => {
 					// slightly different scenario for floating bar chart: to simulate dragging the vertical bar by the top edge
 					if (isFloatingBar) {
 						// simulate that the new value is higher
@@ -256,6 +256,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 						),
 						DEFAULT_DRAGGING_CONFIGURATION,
 					);
+
 					expect(
 						chartInstance.scales[xAxisID].getValueForPixel,
 					).toHaveBeenCalledWith(getEventX(event, eventType));
@@ -387,7 +388,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 				it("should not drag x-axis if dragX is false", () => {
 					(
 						chartInstance.config.options!.plugins!
-							.dragData as DragDataPluginConfiguration
+							.dragData as PluginConfiguration
 					).dragX = false;
 
 					setEventY(event, eventType, DEFAULT_TEST_CHART_INSTANCE_WIDTH);
@@ -417,7 +418,7 @@ const FLOATING_BAR_DATA_POINTS: [number, number][] = [
 				it("should not drag y-axis if dragY is false", () => {
 					(
 						chartInstance.config.options!.plugins!
-							.dragData as DragDataPluginConfiguration
+							.dragData as PluginConfiguration
 					).dragY = false;
 
 					const result = calcCartesian(

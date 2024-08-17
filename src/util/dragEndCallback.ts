@@ -25,11 +25,12 @@ export function dragEndCallback<TType extends ChartType>(
 		chartInstance.update("none");
 	}
 
-	// chartInstance.update('none')
 	if (typeof callback === "function" && state.element) {
 		const datasetIndex = state.element.datasetIndex;
 		const index = state.element.index;
+
 		let value = applyMagnet(chartInstance, datasetIndex, index);
+
 		return callback(event, datasetIndex, index, value);
 	}
 }
