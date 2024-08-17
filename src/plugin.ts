@@ -2,7 +2,7 @@ import { Chart, ChartType } from "chart.js";
 import { drag } from "d3-drag";
 import { select } from "d3-selection";
 
-import { DragDataState, OptionalPluginConfiguration } from "./types";
+import { DragDataState } from "./types";
 import * as util from "./util";
 
 const ChartJSDragDataPlugin = {
@@ -11,8 +11,6 @@ const ChartJSDragDataPlugin = {
 	afterInit: function dragDataAfterInit<TType extends ChartType>(
 		chartInstance: Chart<TType>,
 	) {
-		const pluginOptions = chartInstance.config.options?.plugins
-			?.dragData as OptionalPluginConfiguration<TType>;
 		const state: DragDataState = {
 			curIndex: undefined,
 			curDatasetIndex: undefined,
@@ -34,29 +32,11 @@ const ChartJSDragDataPlugin = {
 			drag<HTMLCanvasElement, unknown>()
 				.container(chartInstance.canvas)
 				.on("start", (e) =>
-					util.getElement(
-						e.sourceEvent,
-						chartInstance,
-						pluginOptions?.onDragStart,
-						state,
-					),
+					util.getElement(e.sourceEvent, chartInstance, state),
 				)
-				.on("drag", (e) =>
-					util.updateData(
-						e.sourceEvent,
-						chartInstance,
-						pluginOptions,
-						pluginOptions?.onDrag,
-						state,
-					),
-				)
+				.on("drag", (e) => util.updateData(e.sourceEvent, chartInstance, state))
 				.on("end", (e) =>
-					util.dragEndCallback(
-						e.sourceEvent,
-						chartInstance,
-						pluginOptions?.onDragEnd,
-						state,
-					),
+					util.dragEndCallback(e.sourceEvent, chartInstance, state),
 				),
 		);
 	},

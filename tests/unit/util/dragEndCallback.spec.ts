@@ -26,10 +26,13 @@ const rAxisID = "y";
 	>;
 
 	beforeEach(() => {
+		callback = jest.fn();
+
 		chartInstance = setupChartInstance("line", {
 			plugins: {
 				dragData: {
 					round: 4,
+					onDragEnd: callback,
 				},
 			},
 			scales: {
@@ -40,11 +43,10 @@ const rAxisID = "y";
 				},
 			},
 		});
-		callback = jest.fn();
 	});
 
 	it("should return early if state is undefined", () => {
-		dragEndCallback<"line">({} as DragDataEvent, { id: 99 } as any, callback);
+		dragEndCallback<"line">({} as DragDataEvent, { id: 99, config: {} } as any);
 
 		expect(callback).not.toHaveBeenCalled();
 	});
@@ -58,7 +60,7 @@ const rAxisID = "y";
 
 		const chartUpdateFunctionSpy = jest.spyOn(chartInstance, "update");
 
-		dragEndCallback<"line">({} as DragDataEvent, chartInstance, callback);
+		dragEndCallback<"line">({} as DragDataEvent, chartInstance);
 		expect(chartInstance.config.options.plugins?.tooltip?.animation).toBe(
 			ChartJSDragDataPlugin.statesStore.get(chartInstance.id)?.eventSettings,
 		);
@@ -100,7 +102,7 @@ const rAxisID = "y";
 							element.index
 						];
 
-				dragEndCallback<"line">(event, chartInstance, callback);
+				dragEndCallback<"line">(event, chartInstance);
 
 				expect(callback).toHaveBeenCalledWith(
 					event,

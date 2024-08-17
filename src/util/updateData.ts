@@ -1,11 +1,10 @@
-import type { ChartType, PluginOptionsByType } from "chart.js";
+import type { ChartType } from "chart.js";
 import { Chart } from "chart.js";
 
 import ChartJSDragDataPlugin from "../plugin";
 import {
 	DragDataEvent,
 	DragDataState,
-	DragEventCallback,
 	OptionalPluginConfiguration,
 } from "../types";
 import { checkDraggingConfiguration } from "../util/checkDraggingConfiguration";
@@ -15,13 +14,16 @@ import { roundValue } from "./roundValue";
 export function updateData<TType extends ChartType>(
 	event: DragDataEvent,
 	chartInstance: Chart<TType>,
-	pluginOptions: PluginOptionsByType<TType>["dragData"],
-	callback?: DragEventCallback<TType>,
 	state: DragDataState | undefined = ChartJSDragDataPlugin.statesStore.get(
 		chartInstance.id,
 	),
 ) {
 	if (!state) return;
+
+	const pluginOptions = chartInstance.options?.plugins
+		?.dragData as OptionalPluginConfiguration<TType>;
+
+	const callback = pluginOptions?.onDrag;
 
 	if (state.element) {
 		state.curDatasetIndex = state.element.datasetIndex;

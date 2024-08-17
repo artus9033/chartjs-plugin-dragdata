@@ -9,7 +9,6 @@ import ChartJSDragDataPlugin from "../plugin";
 import {
 	DragDataEvent,
 	DragDataState,
-	DragEventCallback,
 	OptionalPluginConfiguration,
 } from "../types";
 import { checkDraggingConfiguration } from "../util/checkDraggingConfiguration";
@@ -18,11 +17,15 @@ import { calcCartesian } from "./calc";
 export function getElement<TType extends ChartType>(
 	event: DragDataEvent,
 	chartInstance: Chart<TType>,
-	callback?: DragEventCallback<TType>,
 	state: DragDataState | undefined = ChartJSDragDataPlugin.statesStore.get(
 		chartInstance.id,
 	),
 ) {
+	const callback = (
+		chartInstance.options?.plugins
+			?.dragData as OptionalPluginConfiguration<TType>
+	)?.onDragStart;
+
 	if (!state) return;
 
 	const searchMode =
