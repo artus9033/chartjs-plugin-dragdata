@@ -14,8 +14,8 @@ export function applyMagnet<TType extends ChartType>(
 	datasetIndex: number,
 	index: number,
 ): ChartDataItemType<TType> {
-	const pluginOptions = (chartInstance as any as Chart<"bubble">).config.options
-		?.plugins?.dragData as OptionalPluginConfiguration<TType>;
+	const pluginOptions = chartInstance.config.options?.plugins
+		?.dragData as OptionalPluginConfiguration<TType>;
 
 	if (pluginOptions?.magnet) {
 		const magnet = pluginOptions?.magnet;

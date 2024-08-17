@@ -1,4 +1,4 @@
-import { ChartTypeRegistry } from "chart.js";
+import { ChartType } from "chart.js";
 import { ArrayItemType } from "../../__utils__/types";
 
 export const UNIT_TEST_CHART_TYPES = [
@@ -8,6 +8,6 @@ export const UNIT_TEST_CHART_TYPES = [
 	"bubble",
 	"polarArea",
 	"radar",
-] satisfies Array<keyof ChartTypeRegistry>;
+] satisfies Array<ChartType>;
 
 export type TestChartTypes = ArrayItemType<typeof UNIT_TEST_CHART_TYPES>;
