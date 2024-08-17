@@ -46,14 +46,12 @@ export function setupChartInstance<T extends keyof ChartTypeRegistry>(
 	}: SetupChartInstanceOptions<T> = {},
 ): TChart<T> {
 	const canvas = document.createElement("canvas");
-	canvas.width = canvasWidth;
-	canvas.height = canvasHeight;
 	canvas.style.width = `${canvasWidth}px`;
 	canvas.style.height = `${canvasHeight}px`;
 
 	var ctx = canvas.getContext("2d")!;
 
-	return new Chart<T>(ctx, {
+	const chart = new Chart<T>(ctx, {
 		type: chartType,
 		data: _.cloneDeep(chartData),
 		options: _.merge(
@@ -62,6 +60,15 @@ export function setupChartInstance<T extends keyof ChartTypeRegistry>(
 			_.cloneDeep(customOptions ?? {}),
 		) as any,
 	});
+
+	// ensure these properties are initialized for chart.js helpers to be able to work properly
+	chart.width = canvasWidth;
+	chart.height = canvasHeight;
+
+	canvas.width = canvasWidth;
+	canvas.height = canvasHeight;
+
+	return chart;
 }
 
 /**

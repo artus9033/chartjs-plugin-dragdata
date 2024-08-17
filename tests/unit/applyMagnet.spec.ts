@@ -2,14 +2,27 @@ import { Chart, ChartType } from "chart.js";
 
 import { applyMagnet } from "../../dist/test/chartjs-plugin-dragdata-test";
 import { OptionalPluginConfiguration } from "../../src";
+import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { UNIT_TEST_CHART_TYPES } from "./__utils__/constants";
 import { setupChartInstance } from "./__utils__/utils";
 
-describe("applyMagnet", () => {
+(isTestsConfigWhitelistItemAllowed(
+	"unit",
+	"whitelistedTestCategories",
+	"applyMagnet",
+)
+	? describe
+	: describe.skip)("applyMagnet", () => {
 	for (const chartType of UNIT_TEST_CHART_TYPES) {
 		let chartInstance: Chart;
 
-		describe(`${chartType} chart`, () => {
+		(isTestsConfigWhitelistItemAllowed(
+			"unit",
+			"whitelistedTestedChartTypes",
+			chartType,
+		)
+			? describe
+			: describe.skip)(`${chartType} chart`, () => {
 			beforeEach(() => {
 				chartInstance = setupChartInstance(chartType as ChartType, {
 					plugins: { dragData: {} },

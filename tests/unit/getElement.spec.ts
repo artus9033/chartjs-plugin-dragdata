@@ -8,6 +8,7 @@ import {
 import ChartJSDragDataPlugin, {
 	getElement,
 } from "../../dist/test/chartjs-plugin-dragdata-test";
+import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { maxValueCustomMode, setupChartInstance } from "./__utils__/utils";
 
 const DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE = [
@@ -15,7 +16,13 @@ const DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE = [
 	{ index: 0, datasetIndex: 1, element: new PointElement({}) },
 ];
 
-describe("getElement", () => {
+(isTestsConfigWhitelistItemAllowed(
+	"unit",
+	"whitelistedTestCategories",
+	"getElement",
+)
+	? describe
+	: describe.skip)("getElement", () => {
 	describe("line chart with custom interaction mode", () => {
 		let chartInstance: TChart<"line">;
 		let interactionMode: InteractionMode;

@@ -10,7 +10,13 @@ import { isTestsConfigWhitelistItemAllowed } from "../__utils__/testsConfig";
 import { UNIT_TEST_CHART_TYPES } from "./__utils__/constants";
 import { setupChartInstance, unitTestCategoryAllowed } from "./__utils__/utils";
 
-describe("plugin", () => {
+(isTestsConfigWhitelistItemAllowed(
+	"unit",
+	"whitelistedTestCategories",
+	"plugin",
+)
+	? describe
+	: describe.skip)("plugin", () => {
 	for (const chartType of UNIT_TEST_CHART_TYPES) {
 		(isTestsConfigWhitelistItemAllowed(
 			"unit",
