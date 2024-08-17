@@ -108,7 +108,6 @@ export const assetSpecs: AssetSpec[] = [
 			"..",
 			"..",
 			"dist",
-			"plugin",
 			"chartjs-plugin-dragdata.min.js",
 		),
 		destFileName: "chartjs-plugin-dragdata.min.js",

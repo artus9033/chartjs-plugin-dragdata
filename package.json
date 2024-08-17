@@ -125,7 +125,7 @@
 		"vue-chartjs": "^5.3.1"
 	},
 	"files": [
-		"dist/plugin/**/*",
+		"dist/**/*",
 		"package.json"
 	]
 }
