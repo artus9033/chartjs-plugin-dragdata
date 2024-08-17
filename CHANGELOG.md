@@ -1,3 +1,5 @@
+# chartjs-plugin-dragdata.js changelog
+
 ## 2.2.5 (2022-11-30)
 
 - ⬆️ update dependencies ([c27a62e](https://github.com/artus9033/chartjs-plugin-dragdata/commit/c27a62e))
