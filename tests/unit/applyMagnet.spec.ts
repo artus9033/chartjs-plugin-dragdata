@@ -48,13 +48,13 @@ import { setupChartInstance } from "./__utils__/utils";
 				const dataPointBeforeMutation = chartInstance.data.datasets[0].data[1];
 
 				const result = applyMagnet(chartInstance, 0, 1);
-				expect(magnetFunction).toHaveBeenCalledTimes(1);
-				expect(magnetFunction).toHaveBeenCalledWith(dataPointBeforeMutation);
+				expect(magnetFunction).toHaveBeenCalledExactlyOnceWith(
+					dataPointBeforeMutation,
+				);
 
 				expect(result).toBe(magnetFunction());
 
-				expect(chartUpdateSpy).toHaveBeenCalledTimes(1);
-				expect(chartUpdateSpy).toHaveBeenCalledWith("none");
+				expect(chartUpdateSpy).toHaveBeenCalledExactlyOnceWith("none");
 			});
 		});
 	}

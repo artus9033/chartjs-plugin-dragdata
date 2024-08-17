@@ -50,12 +50,13 @@ import { setupChartInstance, unitTestCategoryAllowed } from "./__utils__/utils";
 			(unitTestCategoryAllowed("pluginRegistration") ? test : it.skip)(
 				"should register canvas via d3's select & pass in drag() handler instance",
 				() => {
-					expect(d3Selection.select).toHaveBeenCalledWith(chartInstance.canvas);
-
-					expect((d3Selection as any as jest.Mock).call).toHaveBeenCalledTimes(
-						1,
+					expect(d3Selection.select).toHaveBeenCalledExactlyOnceWith(
+						chartInstance.canvas,
 					);
-					expect((d3Selection as any as jest.Mock).call).toHaveBeenCalledWith(
+
+					expect(
+						(d3Selection as any as jest.Mock).call,
+					).toHaveBeenCalledExactlyOnceWith(
 						(d3Drag.drag as jest.Mock).mock.results[0].value,
 					);
 				},
@@ -70,8 +71,9 @@ import { setupChartInstance, unitTestCategoryAllowed } from "./__utils__/utils";
 						.results[0].value.container;
 
 					// test if drag()'s return instance's container() method had been called with the canvas instance
-					expect(d3DragContainerFun).toHaveBeenCalledTimes(1);
-					expect(d3DragContainerFun).toHaveBeenCalledWith(chartInstance.canvas);
+					expect(d3DragContainerFun).toHaveBeenCalledExactlyOnceWith(
+						chartInstance.canvas,
+					);
 				},
 			);
 

@@ -62,8 +62,9 @@ const DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE = [
 
 			getElement(evtMock, chartInstance);
 
-			expect(chartInstance.getElementsAtEventForMode).toHaveBeenCalledTimes(1);
-			expect(chartInstance.getElementsAtEventForMode).toHaveBeenCalledWith(
+			expect(
+				chartInstance.getElementsAtEventForMode,
+			).toHaveBeenCalledExactlyOnceWith(
 				evtMock,
 				interactionMode,
 				interactionOptions,
@@ -80,8 +81,9 @@ const DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE = [
 
 			getElement(evtMock, chartInstance, () => false);
 
-			expect(chartInstance.getElementsAtEventForMode).toHaveBeenCalledTimes(1);
-			expect(chartInstance.getElementsAtEventForMode).toHaveBeenCalledWith(
+			expect(
+				chartInstance.getElementsAtEventForMode,
+			).toHaveBeenCalledExactlyOnceWith(
 				evtMock,
 				interactionMode,
 				interactionOptions,
