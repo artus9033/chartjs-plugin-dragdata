@@ -27,18 +27,11 @@ declare module "chart.js" {
 		 * Configuration controlling the dragdata plugin behaviour.
 		 * The scope depends on where the configuration is applied. The possible locations are:
 		 * - per-chart (inside `plugins` section in chart configuration)
-		 * - per-scale (inside)
-		 * - per-dataset
-		 * - per-data-point
+		 * - per-scale (inside a scale's configuration)
+		 * - per-dataset (inside a dataset's configuration)
+		 * - per-data-point (inside a data point's object, for object data points only)
 		 *
-		 * Each next level from the listing above overrides any preceding configuration by entirely ignoring it.
-		 *
-		 * Example 1: applying a per-chart `round: 2` property and for one of the points `round: 3` will cause this point
-		 * to round to `3` decimal places and all other points of this chart to `2` decimal places.
-		 *
-		 * Example 2: applying a per-chart `round: 2` property and for one of the points `false` (disabling the plugin)
-		 * will disable the plugin for that poi
-		 * nt.
+		 * Each next level from the listing above overrides any preceding configuration (if applicable with respect to the configuration options available).
 		 *
 		 * To entirely disable the plugin, pass `false`. By default, the plugin is enabled for every data point but only
 		 * on the y-axis, unless a lower-level configuration specifies otherwise.

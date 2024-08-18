@@ -26,21 +26,22 @@ type CoreConfiguration = {
 	showTooltip: boolean;
 };
 
-// per-scale configuration; docstring located in types.d.ts to be visible to the end users
+// per-scale configuration; docstring located in typeAugmentations.d.ts to be visible to the end users
 export type ScaleDraggingConfiguration = boolean;
 
-// per-dataset configuration; docstring located in types.d.ts to be visible to the end users
-export type DatasetDraggingConfiguration = CoreConfiguration;
+// per-dataset configuration; docstring located in typeAugmentations.d.ts to be visible to the end users
+export type DatasetDraggingConfiguration = boolean;
 
-// per-data-point configuration; docstring located in types.d.ts to be visible to the end users
+// per-data-point configuration; docstring located in typeAugmentations.d.ts to be visible to the end users
 export type DataPointDraggingConfiguration = boolean;
 
-// plugin (per-chart) configuration; docstring located in types.d.ts to be visible to the end users
+// plugin (per-chart) configuration; docstring located in typeAugmentations.d.ts to be visible to the end users
 export type PluginConfiguration<TType extends ChartType = ChartType> =
 	CoreConfiguration & {
 		/**
 		 * Whether to allow for dragging on the x-axis.
 		 *
+		 * **Note**: This solely works for continuous, numerical x-axis scales (no categories or dates)!
 		 * **Disabled by default.**
 		 *
 		 * @default `false`
@@ -57,8 +58,7 @@ export type PluginConfiguration<TType extends ChartType = ChartType> =
 		/**
 		 * Callback fired during the drag numerous times.
 		 *
-		 * If the callback returns `false`, the drag is prevented and the previous
-		 * value of the data point is still effective while the new one is discarded.
+		 * If the callback returns `false`, the drag is prevented and the new value is discarded.
 		 *
 		 * May be used e.g. to process the data point value or to prevent the drag.
 		 *
@@ -81,6 +81,7 @@ export type PluginConfiguration<TType extends ChartType = ChartType> =
 
 		/**
 		 * Callback fired during the drag numerous times.
+		 *
 		 * If the callback returns `false`, the drag is prevented and the previous
 		 * value of the data point is still effective while the new one is discarded.
 		 *
@@ -111,7 +112,7 @@ export type PluginConfiguration<TType extends ChartType = ChartType> =
 		onDragEnd: DragEventCallback<TType>;
 
 		/**
-		 *
+		 * The 'magnet' function to apply to the dragged value. Can be used to round the values, e.g. snap them to the grid.
 		 */
 		magnet: {
 			to: (value: ChartDataItemType<TType>) => ChartDataItemType<TType>;
