@@ -1,5 +1,12 @@
 # chartjs-plugin-dragdata.js changelog
 
+## [2.3.1](https://github.com/artus9033/chartjs-plugin-dragdata/compare/v2.3.0...v2.3.1) (2024-08-18)
+
+
+### Bug Fixes
+
+* **types:** typings for lower levels of plugin configuration to be boolean ([1bef761](https://github.com/artus9033/chartjs-plugin-dragdata/commit/1bef76110f1915d82baa8c0a470cbba880f4a229))
+
 ## [2.3.0](https://github.com/artus9033/chartjs-plugin-dragdata/compare/v2.2.5...v2.3.0) (2024-08-17)
 
 
