@@ -18,18 +18,26 @@ A plugin for Chart.js that makes data points draggable. Supports touch events & 
 ### Table of contents
 
 - [chartjs-plugin-dragdata.js](#chartjs-plugin-dragdatajs)
-  - [Table of contents](#table-of-contents)
-  - [Chart.js version compatibility](#chartjs-version-compatibility)
-  - [Online demos](#online-demos)
+    - [Table of contents](#table-of-contents)
+    - [Chart.js version compatibility](#chartjs-version-compatibility)
+    - [Online demos](#online-demos)
   - [Installation](#installation)
     - [npm](#npm)
+    - [yarn](#yarn)
     - [CDN](#cdn)
-  - [Configuration](#configuration)
+  - [Getting started](#getting-started)
+    - [Configuration](#configuration)
+      - [Per-chart configuration](#per-chart-configuration)
+      - [Per-scale configuration](#per-scale-configuration)
+      - [Per-dataset configuration](#per-dataset-configuration)
+      - [Per-data-point configuration](#per-data-point-configuration)
+    - [Example configuration](#example-configuration)
     - [Applying a 'magnet'](#applying-a-magnet)
+  - [React integration example](#react-integration-example)
   - [Touch devices](#touch-devices)
   - [Gotchas](#gotchas)
   - [Contributing](#contributing)
-  - [Additional scripts](#additional-scripts)
+    - [Additional scripts](#additional-scripts)
   - [License](#license)
 
 ---
@@ -94,10 +102,71 @@ In browsers, you may simply add the following script tag:
 
 Or, download a release archive file from [releases](https://github.com/artus9033/chartjs-plugin-dragdata/releases).
 
-## Configuration
+## Getting started
 
-The following Chart.js sample configuration displays (_most_) of the available
-configuration options of the `dragdata` plugin.
+After you install the plugin, it should work out-of-the-box since it features automatic global registration, i.e., automatically calls `Chart.register(ChartJSDragDataPlugin)` and is therefore applied to all charts. If you want to disable it in a specific chart, please refer to the [Configuration section below](#configuration).
+
+> [!NOTE]
+> The automatic registration behaviour is **deprecated** and is planned to be removed in the nearest major release (`v3.0.0`). After the change, it will be necessary to perform the registration manually as [described in chart.js documentation](https://www.chartjs.org/docs/latest/developers/plugins.html#using-plugins).
+
+### Configuration
+
+The plugin can be configured in multiple ways:
+
+- [per-chart](#per-chart-configuration) (inside `plugins` section in chart configuration)
+- [per-scale](#per-scale-configuration) (inside a scale's configuration)
+- [per-dataset](#per-dataset-configuration) (inside a dataset's configuration)
+- [per-data-point](#per-data-point-configuration) (inside a data point's object, for object data points only)
+
+Applying a configuration to disable dragging at any of the above levels will cause the successive (lower on the list) levels to be overridden. For instance, disabling dragging for a dataset will cause all data points inside it to be disabled. This is to achieve compatibility with the previous versions of the library.
+
+> [!NOTE]
+> The above is about to change in the nearest major release (`v3.0.0`). After the change, the configuration of the lower levels will override the higher levels.
+
+#### Per-chart configuration
+
+Per-chart configuration can be applied to a single chart by adding to `chart.options.plugins` a property `dragData` of type `PluginConfiguration | boolean`.
+
+By default, the plugin is enabled, which is equivalent to setting the property to `true`. Note that the default behaviour, however, is allowing for dragging only on the y-axis, and not on the x-axis. To enable dragging on the x-axis, you must apply other configuration options.
+To disable the plugin for a chart, the property must be set to `false` (which applies just to the given chart).
+
+```javascript
+new Chart(ctx, {
+  options: {
+    plugins:{
+      dragData: ... // PluginConfiguration goes here
+    }
+  }
+})
+```
+
+The `PluginConfiguration` object can contain the following properties:
+
+| Property      | Type                                                                                                                           | Default     | Description                                                                                                                                                                                                                  |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------ | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dragX`       | `boolean`                                                                                                                      | `false`     | Enables dragging along the x-axis. This solely works for continuous, numerical x-axis scales (no categories or dates)!                                                                                                       |
+| `dragY`       | `boolean`                                                                                                                      | `true`      | Enables dragging along the y-axis.                                                                                                                                                                                           |
+| `onDragStart` | `DragEventCallback = (event: MouseEvent \| TouchEvent, datasetIndex: number, index: number, value: number) => boolean \| void` | `undefined` | Callback function that is called when dragging starts. If the callback returns `false`, dragging is stopped for the given data point. If the callback returns `false`, the drag is prevented and the new value is discarded. |
+| `onDrag`      | `DragEventCallback = (event: MouseEvent \| TouchEvent, datasetIndex: number, index: number, value: number) => boolean \| void` | `undefined` | Callback function that is called when dragging. If the callback returns `false`, the drag is prevented and the previous value of the data point is still effective while the new one is discarded.                           |
+| `onDragEnd`   | `DragEventCallback = (event: MouseEvent \| TouchEvent, datasetIndex: number, index: number, value: number) => void`            | `undefined` | Callback function that is called when dragging ends. If the callback returns `false`, the drag is prevented and the previous value of the data point is still effective while the new one is discarded.                      |
+| `magnet`      | `{ to: (value: ChartDataItemType) => ChartDataItemType }`                                                                      | `undefined` | Configuration object for applying a 'magnet' to the dragged data point.                                                                                                                                                      |
+
+#### Per-scale configuration
+
+Per-scale configuration can be applied to a single chart's scale by adding to `chart.options.scales[scaleID]` a property `dragData` of type `boolean`. This property can be set to `true` to enable dragging for the entire scale, or to `false` to disable it.
+
+#### Per-dataset configuration
+
+Per-dataset configuration can be applied to a single chart's dataset by adding to `chart.data.datasets[datasetIndex]` a property `dragData` of type `boolean`. This property can be set to `true` to enable dragging for the entire dataset, or to `false` to disable it.
+
+#### Per-data-point configuration
+
+Per-data-point configuration can be applied to a single data point by adding to `chart.data.datasets[datasetIndex].data[index]` a property `dragData` of type `boolean`. This property can be set to `true` to enable dragging for the entire dataset, or to `false` to disable it.
+
+### Example configuration
+
+The following Chart.js sample configuration displays most of the available
+configuration options of the `dragdata` plugin. For all of the options, see the [Configuration section](#configuration).
 
 ```js
 const draggableChart = new Chart(ctx, {
@@ -196,6 +265,10 @@ const myChartOptions = {
   }
 }
 ```
+
+## React integration example
+
+You can find a full React example featuring `react-chartjs-2` in the repository: [chartjs-plugin-dragdata-react-example](https://github.com/artus9033/chartjs-plugin-dragdata-react-example).
 
 ## Touch devices
 
