@@ -3,6 +3,10 @@
 ## [2.3.0](https://github.com/artus9033/chartjs-plugin-dragdata/compare/v2.2.5...v2.3.0) (2024-08-17)
 
 
+### ⚠ BREAKING CHANGES
+
+* Now the plugin does not self-register and manual registration is required (either via `Chart.register` or by listing the plugin in chart options)
+
 ### Features
 
 * demos & master branch coverage ([#133](https://github.com/artus9033/chartjs-plugin-dragdata/issues/133)) ([45fa08d](https://github.com/artus9033/chartjs-plugin-dragdata/commit/45fa08d65aa2b2fb3b4f4add3e410c5fbce62dec))

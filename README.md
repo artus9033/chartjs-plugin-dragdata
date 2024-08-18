@@ -94,6 +94,57 @@ In browsers, you may simply add the following script tag:
 
 Or, download a release archive file from [releases](https://github.com/artus9033/chartjs-plugin-dragdata/releases).
 
+## Getting started
+
+> [!IMPORTANT]  
+> Versions `>= 3.0.0` require [manual registration](https://www.chartjs.org/docs/latest/developers/plugins.html#using-plugins).
+
+Just importing or loading the plugin script will not make dragging work. As it is usually done with chart.js plugins, since `v3.0.0` the plugin no longer self-registers globally in Chart.js and you must [register it](https://www.chartjs.org/docs/latest/developers/plugins.html#using-plugins) manually.
+
+### Global registration
+
+As any chart.js plugin, the dragdata plugin can be registered either globally for all charts (using `Chart.register(ChartJSDragDataPlugin)`), or on a per-chart basis (by specifying `plugins: [ChartJSDragDataPlugin]` in chart config).
+
+#### Bundler
+
+If you are using a bundler (e.g. Webpack, Rollup, Parcel or similar, or a framework like React or Angular):
+
+In ESM modules:
+
+```ts
+import Chart from "chart.js/auto";
+import ChartJSDragDataPlugin from "chartjs-plugin-dragdata";
+
+Chart.register(ChartJSDragDataPlugin);
+```
+
+Or in CJS modules:
+
+```js
+const Chart = require("chart.js/auto");
+const ChartJSDragDataPlugin = require("chartjs-plugin-dragdata");
+
+Chart.register(ChartJSDragDataPlugin);
+```
+
+#### Script tag
+
+Or, if you are using a script tag, both chart.js & chartjs-plugin-dragdata are available as global variables (`Chart` & `ChartJSDragDataPlugin`):
+
+```js
+Chart.register(ChartJSDragDataPlugin);
+```
+
+### Per-chart registration
+
+If you want to apply the plugin just to selected charts, you can list the plugin in chart config:
+
+```ts
+new Chart(ctx, {
+	plugins: [ChartJSDragDataPlugin],
+});
+```
+
 ## Configuration
 
 The following Chart.js sample configuration displays (_most_) of the available
