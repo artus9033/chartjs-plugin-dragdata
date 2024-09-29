@@ -1,7 +1,0 @@
-dist
-coverage
-.nyc_output
-.github
-docs
-pages/dist-demos
-pages/dist-e2e

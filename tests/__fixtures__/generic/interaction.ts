@@ -251,7 +251,7 @@ export async function _genericTestDrag({
 
 					let actualDataAfterMagnet = applyMagnet(magnet, actualData);
 
-					// the magnet shall not alter the data sample anymore if it has already been applied;
+					// the magnet shall not alter the data sample any more if it has already been applied;
 					// strict position checking is done below, in the normal expect
 					if (typeof actualDataAfterMagnet === "number") {
 						expect?.(actualData as number).toBeCloseTo(
@@ -389,7 +389,7 @@ function applyMagnet<Data extends number | Point2D>(
 	if (magnetImpl) {
 		let dataCpy = _.cloneDeep(data);
 
-		// the magnet shall not alter the data sample anymore if it has already been applied;
+		// the magnet shall not alter the data sample any more if it has already been applied;
 		// strict position checking is done below, in the normal expect
 		if (typeof dataCpy === "number") {
 			(dataCpy as number) = magnetImpl(dataCpy);

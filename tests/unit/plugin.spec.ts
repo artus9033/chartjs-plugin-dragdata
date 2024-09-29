@@ -224,7 +224,7 @@ const xAxisID = "x",
 					expect(dragCallCallbackArg.toString()).toContain("updateData");
 					expect(endCallCallbackArg.toString()).toContain("dragEndCallback");
 
-					// verify if callbacks were succesfully fired instead; TODO: make this use spies instead
+					// verify if callbacks were successfully fired instead; TODO: make this use spies instead
 					startCallCallbackArg(eventMock);
 					expect(onDragStartCbMock).toHaveBeenCalledExactlyOnceWith(
 						eventMock.sourceEvent,

@@ -124,7 +124,7 @@ export function assertPointsEqual({
 }
 
 /**
- * Converts the pased in `point2D` to a format compatible with the chart of type `type`.
+ * Converts the passed in `point2D` to a format compatible with the chart of type `type`.
  *
  * @param point2D the point to be converted
  * @param type the type of the chart
@@ -144,7 +144,7 @@ export function dataPointCompatFromPoint2D(
 }
 
 /**
- * Converts the pased in `point` to the `Point2DObject` format.
+ * Converts the passed in `point` to the `Point2DObject` format.
  * NOTE: for scalars, which have no interpretation in 2D in this case, both `x` & `y` are set to the value of the scalar.
  *
  * @param point the point to be converted to a `Point2DObject`
