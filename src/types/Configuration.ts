@@ -62,7 +62,7 @@ export type PluginConfiguration<TType extends ChartType = ChartType> =
 		 *
 		 * May be used e.g. to process the data point value or to prevent the drag.
 		 *
-		 * **Note: this solely works for continous, numerical x-axis scales (no categories or dates)**
+		 * **Note: this solely works for continuous, numerical x-axis scales (no categories or dates)**
 		 *
 		 * @example
 		 * {

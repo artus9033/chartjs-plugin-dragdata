@@ -17,17 +17,23 @@ const banner = `/*!
  */`;
 
 /**
- *	Create a rollup configuration for a given file
+ * Create a rollup configuration for a given file
  * @param {string} options.file the input file
  * @param {import("rollup").ModuleFormat} options.format the format of the output module
  * @param {boolean} options.terse whether to run terser plugin
- * @param {boolean} options.bTestBuild whether to run instanbul plugin (if true) for coverage or to strip testing exports (if false)
+ * @param {boolean} options.bTestBuild whether to run istanbul plugin (if true) for coverage or to strip testing exports (if false)
+ * @param {string | undefined} options.outDir override the default outDir from tsconfig.build.json
  * @param {boolean} options.bBundleD3 whether to bundle D3 plugins or to reference them as externals
  * @returns {import('rollup').RollupOptions} the built options
  */
-function bundleDragDataPlugin(options) {
-	const { file, format, terse, bTestBuild, bBundleD3 = true } = options;
-
+function bundleDragDataPlugin({
+	file,
+	format,
+	terse,
+	bTestBuild,
+	outDir: outDirOverride,
+	bBundleD3 = true,
+}) {
 	/** @type {import('rollup').RollupOptions} */
 	const customOptions = {
 		input: "src/index.ts",
@@ -65,6 +71,13 @@ function bundleDragDataPlugin(options) {
 			terse ? terser() : undefined,
 			typescript({
 				tsconfig: "./tsconfig.build.json",
+				...(outDirOverride
+					? {
+							compilerOptions: {
+								outDir: outDirOverride,
+							},
+						}
+					: {}),
 			}),
 			{
 				// copy index.d.ts to file matching the bundle filename for jest tests to pick up typings
@@ -114,6 +127,7 @@ const config = [
 		file: pkg.main
 			.replace(".js", "-test-browser.js")
 			.replace("dist/", "dist/test/"),
+		outDir: "dist/test",
 		format: "umd",
 		terse: false,
 		bTestBuild: true,
@@ -122,6 +136,7 @@ const config = [
 	// bundle for unit/integration testing: istanbul + external D3
 	bundleDragDataPlugin({
 		file: pkg.main.replace(".js", "-test.js").replace("dist/", "dist/test/"),
+		outDir: "dist/test",
 		format: "es",
 		terse: false,
 		bTestBuild: true,
