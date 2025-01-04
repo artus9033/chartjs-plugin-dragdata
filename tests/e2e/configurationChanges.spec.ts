@@ -1,5 +1,5 @@
 import { Point } from "chart.js";
-import { test } from "playwright-test-coverage";
+import { test } from "playwright/test";
 
 import Offset2D from "../__utils__/structures/Offset2D";
 import { DatasetPointSpec } from "../__utils__/testTypes";
@@ -34,7 +34,7 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 		await setupE2ETest({ fileName, draggableAxis: "both" }, page, isMobile);
 	});
 
-	for (let enablerLocationSpec of ALL_ENABLER_LOCATION_SPECS.filter(
+	for (const enablerLocationSpec of ALL_ENABLER_LOCATION_SPECS.filter(
 		(enablerLocationSpec) =>
 			// to configure drag data to be disabled just for a given data sample, we need to pass an object specifying that sample
 			// on the other hand, when one of the axes is categorical, then the sample is scalar (number), thus such a test case is impossible to be carried out

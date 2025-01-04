@@ -1,5 +1,5 @@
 import path from "path";
-import { test } from "playwright-test-coverage";
+import { test } from "playwright/test";
 
 import { type Page } from "@playwright/test";
 

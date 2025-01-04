@@ -38,11 +38,11 @@ jobs:
       # has been generated on non-linux, making the installed node_modules lack packages needed by the linux runner
       - name: Ensure lefthook-linux-x64 & @rollup/rollup-linux-x64-gnu are installed
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
-        run: npm i --legacy-peer-deps lefthook-linux-x64 @rollup/rollup-linux-x64-gnu
+        run: npm i lefthook-linux-x64 @rollup/rollup-linux-x64-gnu
 
       - name: Install npm dependencies
         if: steps.cache-node_modules.outputs.cache-hit != 'true'
-        run: npm ci --legacy-peer-deps
+        run: npm ci
 
       # since playwright installs binaries of browsers with 'npx playwright install' triggered from the 'prepare' script,
       # it won't happen when no 'npm install' is run, which is the case for when the '...-npm-...' cache is restored
@@ -67,5 +67,5 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: false
-          files: ./coverage/e2e/coverage-final.json,./coverage/unit/coverage-final.json,./coverage/integration/coverage-final.json
+          files: ./coverage/unit/coverage-final.json,./coverage/integration/coverage-final.json
           token: ${{ secrets.CODECOV_TOKEN }}

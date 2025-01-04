@@ -1,4 +1,4 @@
-import { test, expect } from "playwright-test-coverage";
+import { test, expect } from "playwright/test";
 import type { Page } from "playwright";
 import {
 	ALL_AXES_SPECS,

@@ -1,5 +1,5 @@
 import type { Page } from "playwright";
-import { expect, test } from "playwright-test-coverage";
+import { expect, test } from "playwright/test";
 
 import {
 	GenericDragTestParams,
@@ -92,7 +92,7 @@ export async function playwrightTestDrag({
 			getChartScales: () => playwrightGetChartScales(page),
 			isDragDataPluginEnabled: !isDragDataPluginDisabled,
 			bExpectResult: true,
-			expect,
+			expect: expect as any,
 			...(magnet
 				? {
 						magnet,

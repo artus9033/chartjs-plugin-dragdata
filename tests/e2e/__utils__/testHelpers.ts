@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 
-import { test } from "playwright-test-coverage";
+import { test } from "playwright/test";
 
 import { TestScenarios } from "../../__data__/data";
 import { isTestsConfigWhitelistItemAllowed } from "../../__utils__/testsConfig";
