@@ -1,4 +1,4 @@
-import { Chart, ChartType } from "chart.js";
+import { Chart, Plugin as ChartPlugin } from "chart.js";
 import { drag } from "d3-drag";
 import { select } from "d3-selection";
 
@@ -8,9 +8,7 @@ import * as util from "./util";
 const ChartJSDragDataPlugin = {
 	id: "dragdata",
 	statesStore: new Map<Chart["id"], DragDataState>(),
-	afterInit: function dragDataAfterInit<TType extends ChartType>(
-		chartInstance: Chart<TType>,
-	) {
+	afterInit(chartInstance) {
 		const state: DragDataState = {
 			curIndex: undefined,
 			curDatasetIndex: undefined,
@@ -40,9 +38,7 @@ const ChartJSDragDataPlugin = {
 				),
 		);
 	},
-	beforeEvent: function dragDataBeforeEvent<TType extends ChartType>(
-		chartInstance: Chart<TType>,
-	) {
+	beforeEvent(chartInstance) {
 		let state = ChartJSDragDataPlugin.statesStore.get(chartInstance.id);
 
 		if (state?.isDragging) {
@@ -51,7 +47,10 @@ const ChartJSDragDataPlugin = {
 			return false;
 		}
 	},
-};
+	uninstall(chartInstance) {
+		ChartJSDragDataPlugin.statesStore.delete(chartInstance.id);
+	},
+} as const satisfies ChartPlugin & Record<string, any>;
 
 // TODO: in a future major release, stop auto-registering the plugin and require users to manually register it
 // see https://chartjs-plugin-datalabels.netlify.app/guide/getting-started.html#registration
