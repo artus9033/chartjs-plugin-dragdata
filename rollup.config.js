@@ -1,3 +1,4 @@
+const fs = require("fs");
 const path = require("path");
 
 const commonjs = require("@rollup/plugin-commonjs");
@@ -72,6 +73,20 @@ function bundleDragDataPlugin({
 					outDir: path.dirname(file),
 				},
 			}),
+			{
+				// copy index.d.ts to file matching the bundle filename for jest tests to pick up typings
+				closeBundle() {
+					if (bTestBuild) {
+						const dir = path.dirname(file);
+						fs.mkdirSync(dir, { recursive: true });
+
+						fs.copyFileSync(
+							path.join(dir, "index.d.ts"),
+							file.replace(".js", ".d.ts"),
+						);
+					}
+				},
+			},
 		],
 	};
 
