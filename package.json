@@ -19,7 +19,7 @@
 		"build:pages": "npx tsx pages/src/bundle.ts",
 		"build:pages:watch": "npx tsx pages/src/watch.ts",
 		"cleanCoverage": "npx tsx scripts/cleanCoverage.ts",
-		"collectCoverage": "npx tsx scripts/collectCoverage.ts && npx nyc merge coverage/merged/src coverage/merged/report/merged-coverage.json && npx nyc report --report-dir=coverage/merged/report/html --reporter=html -t coverage/merged/report",
+		"collectCoverage": "npx tsx scripts/collectCoverage.ts && npx nyc merge coverage/merged/src coverage/merged/report/merged-coverage.json && npx nyc report --report-dir=coverage/merged/report/html --reporter=html -t coverage/merged/report && npx nyc report -t coverage/merged/report --reporter=text-summary",
 		"lint": "npx eslint .",
 		"lint:fix": "npx eslint . --fix",
 		"pretest": "npm run build && npm run build:pages && npm run cleanCoverage",
