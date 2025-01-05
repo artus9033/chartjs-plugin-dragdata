@@ -25,3 +25,6 @@ commit-msg:
   commands:
     commitlint:
       run: npx commitlint --edit
+
+    knip:
+      run: npm run knip
