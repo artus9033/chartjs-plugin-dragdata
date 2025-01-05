@@ -69,6 +69,9 @@ function bundleDragDataPlugin({
 			terse ? terser() : undefined,
 			typescript({
 				tsconfig: "./tsconfig.build.json",
+				compilerOptions: {
+					outDir: path.dirname(file),
+				},
 			}),
 			{
 				// copy index.d.ts to file matching the bundle filename for jest tests to pick up typings
