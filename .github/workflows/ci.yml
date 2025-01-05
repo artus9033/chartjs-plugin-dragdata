@@ -67,5 +67,5 @@ jobs:
         uses: codecov/codecov-action@v3
         with:
           fail_ci_if_error: false
-          files: ./coverage/unit/coverage-final.json,./coverage/integration/coverage-final.json
+          files: ./coverage/merged/report/merged-coverage.json
           token: ${{ secrets.CODECOV_TOKEN }}
