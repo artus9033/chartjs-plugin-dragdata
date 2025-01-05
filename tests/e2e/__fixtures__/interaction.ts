@@ -1,5 +1,6 @@
 import type { Page } from "playwright";
 import { expect, test } from "playwright-test-coverage";
+import { Signale } from "signale";
 
 import {
 	GenericDragTestParams,
@@ -32,6 +33,10 @@ export type PlaywrightTestDragParams = {
 	| "magnet"
 	| "getDataFromPointOnScreen"
 >;
+
+const playwrightTestDragSignale = new Signale({
+	scope: "playwrightTestDrag",
+});
 
 export async function playwrightTestDrag({
 	page,
@@ -68,8 +73,8 @@ export async function playwrightTestDrag({
 				dragDestPoint = dragDestPoint.copyConstrainedTo(windowBB);
 
 				if (hasGUI()) {
-					console.log(
-						`[playwrightTestDrag] Dragging ${dragStartPoint.toString()} -> ${dragDestPoint.toString()}`,
+					playwrightTestDragSignale.log(
+						`Dragging ${dragStartPoint.toString()} -> ${dragDestPoint.toString()}`,
 					);
 				}
 

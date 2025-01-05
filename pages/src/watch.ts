@@ -3,8 +3,13 @@ import "../../scripts/setupEnv";
 import path from "path";
 
 import chokidar from "chokidar";
+import { Signale } from "signale";
 
 import { requireUncached } from "./utils";
+
+const signale = new Signale({
+	scope: "Watcher",
+});
 
 const demosSrcDirPath = path.dirname(__filename),
 	testsDataDefFilePath = path.join(
@@ -20,9 +25,9 @@ let bundlerRunning: boolean = false;
 
 function logBundlerResult(success: boolean) {
 	if (success) {
-		console.log("[Watcher] Bundling finished successfully");
+		signale.log("Bundling finished successfully");
 	} else {
-		console.error("[Watcher] Bundling failed");
+		signale.fatal("Bundling failed");
 	}
 
 	console.log();
@@ -34,10 +39,10 @@ function logBundlerResult(success: boolean) {
 		"./bundle",
 	) as typeof import("./bundle");
 
-	console.log(`[Watcher] Watching for changes in ${demosSrcDirPath}`);
+	signale.info(`Watching for changes in ${demosSrcDirPath}`);
 	console.log();
 
-	console.log("[Watcher] Bundling initially at start");
+	signale.info("Bundling initially at start");
 
 	logBundlerResult(await bundle());
 
@@ -51,16 +56,14 @@ function logBundlerResult(success: boolean) {
 			{ ignoreInitial: true },
 		)
 		.on("all", async (event, path) => {
-			console.log("[Watcher] Event:", event, path);
+			signale.log("Event:", event, path);
 
 			if (bundlerRunning) {
-				console.log(
-					"[Watcher] Bundler is already running, skipping this event",
-				);
+				signale.log("Bundler is already running, skipping this event");
 				return;
 			}
 
-			console.log("[Watcher] Starting bundler");
+			signale.log("Starting bundler");
 
 			bundlerRunning = true;
 

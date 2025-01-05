@@ -4,12 +4,16 @@ import fs from "fs";
 import path from "path";
 
 import * as prettier from "prettier";
+import { Signale } from "signale";
 
 import type { TestPageBundleFactory } from "./types";
 import { requireUncached } from "./utils";
 
-const LOG_TAG = "[Bundler]",
-	pagesSrcDirPath = path.join(path.dirname(__filename)),
+const signale = new Signale({
+	scope: "[Bundler]",
+});
+
+const pagesSrcDirPath = path.join(path.dirname(__filename)),
 	/** Dist directory path for GH public demo pages */
 	demosDistDirPath = path.join(pagesSrcDirPath, "..", "dist-demos"),
 	/** Dist directory path for E2E testing pages using `eval` for injected data from Playwright */
@@ -22,8 +26,8 @@ const LOG_TAG = "[Bundler]",
 	);
 
 function copyAsset(assetSpec: AssetSpec): void {
-	console.log(
-		`${LOG_TAG} Copying asset for variants ${assetSpec.variants.join(", ")}: ${assetSpec.sourcePath.replace(projectRootAbsPath, "")} -> ${assetSpec.destFileName}`,
+	signale.log(
+		`Copying asset for variants ${assetSpec.variants.join(", ")}: ${assetSpec.sourcePath.replace(projectRootAbsPath, "")} -> ${assetSpec.destFileName}`,
 	);
 
 	if (assetSpec.variants.includes("demo")) {
@@ -180,8 +184,8 @@ export async function bundle(): Promise<boolean> {
 						bundledPage.outputFileName,
 					);
 
-					console.log(
-						`${LOG_TAG} Rendering ${isE2ETest ? "E2E" : "demo"} page ${demosPageFilename} -> ${htmlDestPath.replace(projectRootAbsPath, "")}`,
+					signale.log(
+						`Rendering ${isE2ETest ? "E2E" : "demo"} page ${demosPageFilename} -> ${htmlDestPath.replace(projectRootAbsPath, "")}`,
 					);
 
 					fs.writeFileSync(
@@ -193,7 +197,7 @@ export async function bundle(): Promise<boolean> {
 					);
 				}
 			} catch (e) {
-				console.error(`${LOG_TAG} Error rendering: ${e}`, (e as any).stack);
+				signale.error(`Error rendering: ${e}`, (e as any).stack);
 
 				success = false;
 			}
@@ -206,6 +210,6 @@ export async function bundle(): Promise<boolean> {
 if (require.main === module) {
 	// eslint-disable-next-line promise/prefer-await-to-then -- this is the entrypoint, so no need to await
 	bundle().catch((e) => {
-		console.error(`${LOG_TAG} Bundling has failed: ${e}`, (e as any).stack);
+		signale.fatal(`Bundling has failed: ${e}`, (e as any).stack);
 	});
 }

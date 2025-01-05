@@ -1,11 +1,15 @@
 import fs from "fs";
 
+import { Signale } from "signale";
+
+const signale = new Signale({
+	scope: "cleanCoverage",
+});
+
 import { coverageReportsDirPath } from "./utils/paths";
 
 if (fs.existsSync(coverageReportsDirPath)) {
-	console.log(
-		`[cleanCoverage.ts] Removing coverage reports directory: ${coverageReportsDirPath}`,
-	);
+	signale.log(`Removing coverage reports directory: ${coverageReportsDirPath}`);
 
 	fs.rmSync(coverageReportsDirPath, { recursive: true });
 }

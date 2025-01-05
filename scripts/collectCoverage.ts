@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { Signale } from "signale";
 
 import {
 	e2eTestsCoverageDirPath,
@@ -7,6 +8,10 @@ import {
 	mergedCoverageDirPath,
 	unitTestsCoverageDirPath,
 } from "./utils/paths";
+
+const signale = new Signale({
+	scope: "collectCoverage.ts",
+});
 
 const mergedCoverageSourceReportsDirPath = path.join(
 		mergedCoverageDirPath,
@@ -30,8 +35,8 @@ for (const reportDir of reportsSources) {
 		testsComponent = path.basename(reportDir);
 
 	if (fs.existsSync(jsonReport)) {
-		console.log(
-			`[collectCoverage.ts] Including coverage report for tests component: ${testsComponent}`,
+		signale.log(
+			`Including coverage report for tests component: ${testsComponent}`,
 		);
 
 		fs.cpSync(
@@ -44,12 +49,12 @@ for (const reportDir of reportsSources) {
 
 		counter++;
 	} else {
-		console.log(
-			`[collectCoverage.ts] Not including coverage report for tests component ${testsComponent}, since directory '${reportDir}' does not exist`,
+		signale.log(
+			`Not including coverage report for tests component ${testsComponent}, since directory '${reportDir}' does not exist`,
 		);
 	}
 }
 
-console.log(
-	`[collectCoverage.ts] Placed ${counter} of ${reportsSources.length} coverage reports for merging in ${mergedCoverageDirPath}`,
+signale.log(
+	`Placed ${counter} of ${reportsSources.length} coverage reports for merging in ${mergedCoverageDirPath}`,
 );

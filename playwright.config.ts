@@ -4,11 +4,16 @@ import path from "path";
 
 import { Project, defineConfig, devices } from "@playwright/test";
 
+import { Signale } from "signale";
 import { isTestsConfigWhitelistItemAllowed } from "./tests/__utils__/testsConfig";
 import { hasGUI } from "./tests/e2e/__utils__/testHelpers";
 
+const signale = new Signale({
+	scope: "playwright.config.ts",
+});
+
 if (hasGUI()) {
-	console.log(
+	signale.info(
 		"Running in UI mode - testing will only happen on Chrome, regardless of YAML configuration",
 	);
 }
