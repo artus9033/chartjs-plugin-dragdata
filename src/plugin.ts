@@ -39,7 +39,7 @@ const ChartJSDragDataPlugin = {
 		);
 	},
 	beforeEvent(chartInstance) {
-		let state = ChartJSDragDataPlugin.statesStore.get(chartInstance.id);
+		const state = ChartJSDragDataPlugin.statesStore.get(chartInstance.id);
 
 		if (state?.isDragging) {
 			(chartInstance.tooltip as any | undefined)?.update();
