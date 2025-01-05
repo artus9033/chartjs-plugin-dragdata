@@ -11,29 +11,10 @@ jobs:
   tests-and-coverage:
     name: Run tests & report coverage
     runs-on: ubuntu-latest
-    env:
-      NODE_VERSION: 20.9.0
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        id: setup-node
-        with:
-          node-version-file: ".nvmrc"
-          cache: "npm"
-
-      # since npm ci installs only dependencies in package-lock.json, it may be that the package-lock.json pushed
-      # has been generated on non-linux, making the installed node_modules lack packages needed by the linux runner
-      - name: Ensure lefthook-linux-x64 & @rollup/rollup-linux-x64-gnu are installed
-        if: steps.setup-node.outputs.cache-hit != 'true'
-        run: npm i lefthook-linux-x64 @rollup/rollup-linux-x64-gnu
-
-      - name: Install npm dependencies
-        if: steps.setup-node.outputs.cache-hit != 'true'
-        run: npm ci
+      - name: Setup environment
+        uses: ./.github/actions/setup
 
       # since playwright installs binaries of browsers with 'npx playwright install' triggered from the 'prepare' script,
       # it won't happen when no 'npm install' is run, which is the case for when the '...-npm-...' cache is restored
