@@ -26,7 +26,6 @@ const config: KnipConfig = {
 		"ejs", // false positive
 		"jest-environment-jsdom", // false positive
 		"lint-staged", // false positive
-		"monocart-reporter", // false positive
 		"node-sass", // false positive
 		"resize-observer-polyfill", // false positive
 		"rollup-plugin-copy", // false positive

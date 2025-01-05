@@ -113,7 +113,6 @@
 		"lefthook": "^1.10.1",
 		"lint-staged": "^15.3.0",
 		"lodash": "^4.17.21",
-		"monocart-reporter": "^2.9.12",
 		"node-sass": "^9.0.0",
 		"nyc": "^17.1.0",
 		"open": "^10.1.0",
