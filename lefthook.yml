@@ -6,9 +6,11 @@ pre-push:
     packages-audit:
       tags: security
       run: npm audit
+
     test-unit:
       tags: test
       run: npm run test:unit
+
     test-integration:
       tags: test
       run: npm run test:integration
@@ -16,15 +18,15 @@ pre-push:
 pre-commit:
   parallel: true
   commands:
-    eslint:
+    eslint-staged:
       glob: "*.{js,ts,jsx,tsx}"
       run: npx eslint {staged_files}
+
+    knip:
+      run: npm run knip
 
 commit-msg:
   parallel: true
   commands:
     commitlint:
       run: npx commitlint --edit
-
-    knip:
-      run: npm run knip
