@@ -79,7 +79,7 @@ const DEFAULT_GET_ELEMENTS_AT_EVENT_MOCK_RETURN_VALUE = [
 		it("getElement should result in selecting null if callback returns false", () => {
 			const evtMock = {} as any;
 
-			getElement(evtMock, chartInstance, () => false);
+			getElement(evtMock, chartInstance, (() => false) as any);
 
 			expect(
 				chartInstance.getElementsAtEventForMode,
