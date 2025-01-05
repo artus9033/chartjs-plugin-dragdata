@@ -1,5 +1,7 @@
-import { test, expect } from "playwright-test-coverage";
 import type { Page } from "playwright";
+import { expect, test } from "playwright-test-coverage";
+
+import { ALL_TESTED_MAGNET_VARIANTS, MagnetVariant } from "../__utils__/magnet";
 import {
 	ALL_AXES_SPECS,
 	AxisSpec,
@@ -9,14 +11,13 @@ import { describeDatasetPointSpecOrPoint } from "../__utils__/structures/scenari
 import testsConfig, {
 	isTestsConfigWhitelistItemAllowed,
 } from "../__utils__/testsConfig";
-import { ALL_TESTED_MAGNET_VARIANTS, MagnetVariant } from "../__utils__/magnet";
+import { setupE2ETest } from "./__fixtures__";
 import { playwrightTestDrag } from "./__fixtures__/interaction";
-import { describeEachChartType, hasGUI } from "./__utils__/testHelpers";
 import {
 	SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_DESKTOP,
 	SCREENSHOT_TESTING_MAX_PIXEL_DIFF_PERCENT_MOBILE,
 } from "./__utils__/constants";
-import { setupE2ETest } from "./__fixtures__";
+import { describeEachChartType, hasGUI } from "./__utils__/testHelpers";
 
 test.describe.configure({ mode: "parallel" });
 

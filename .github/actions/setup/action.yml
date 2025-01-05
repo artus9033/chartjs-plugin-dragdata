@@ -1,0 +1,30 @@
+name: Setup
+description: Setup environment for Node.JS & install dependencies, including platform-specific lefthook & rollup bindings
+
+runs:
+  using: composite
+  steps:
+    - name: Install native prerequisites
+      shell: bash
+      run: |
+        sudo apt update
+        sudo apt install build-essential libcairo2-dev libpango1.0-dev libjpeg-dev libgif-dev librsvg2-dev -y
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      id: setup-node
+      with:
+        node-version-file: ".nvmrc"
+        cache: "npm"
+
+    # since npm ci installs only dependencies in package-lock.json, it may be that the package-lock.json pushed
+    # has been generated on non-linux, making the installed node_modules lack packages needed by the linux runner
+    - name: Ensure lefthook-linux-x64 & @rollup/rollup-linux-x64-gnu are installed
+      if: steps.setup-node.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm i lefthook-linux-x64 @rollup/rollup-linux-x64-gnu
+
+    - name: Install npm dependencies
+      if: steps.setup-node.outputs.cache-hit != 'true'
+      shell: bash
+      run: npm ci

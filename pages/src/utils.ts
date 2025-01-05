@@ -1,7 +1,6 @@
+import ejs from "ejs";
 import fs from "fs";
 import path from "path";
-
-import ejs from "ejs";
 
 import type { TestScenarios as TestScenariosType } from "../../tests/__data__/data";
 import { AxisSpec } from "../../tests/__utils__/structures/axisSpec";

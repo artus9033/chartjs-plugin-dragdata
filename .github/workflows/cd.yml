@@ -14,31 +14,8 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js 20.9.0
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20.9.0
-          cache: "npm"
-
-      - name: Cache npm dependencies
-        uses: actions/cache@v4
-        id: cache-node_modules
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-npm-${{ hashFiles('/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-${{ hashFiles('/package-lock.json') }}
-            ${{ runner.os }}-npm-
-
-      # since npm ci installs only dependencies in package-lock.json, it may be that the package-lock.json pushed
-      # has been generated on non-linux, making the installed node_modules lack packages needed by the linux runner
-      - name: Ensure lefthook-linux-x64 & @rollup/rollup-linux-x64-gnu are installed
-        if: steps.cache-node_modules.outputs.cache-hit != 'true'
-        run: npm i --legacy-peer-deps lefthook-linux-x64 @rollup/rollup-linux-x64-gnu
-
-      - name: Install npm dependencies
-        if: steps.cache-node_modules.outputs.cache-hit != 'true'
-        run: npm ci --legacy-peer-deps
+      - name: Setup environment
+        uses: ./.github/actions/setup
 
       - name: Build plugin bundles
         run: npm run build

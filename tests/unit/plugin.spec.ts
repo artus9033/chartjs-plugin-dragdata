@@ -1,6 +1,5 @@
 /* eslint-disable jest/no-standalone-expect */
 // above: mitigate ESLint false-positive due to wrapping inside conditional test / it.skip
-
 import { Chart, InteractionItem, Plugin } from "chart.js";
 import d3Drag, { D3DragEvent } from "d3-drag";
 import d3Selection from "d3-selection";
@@ -243,7 +242,7 @@ const xAxisID = "x",
 					expect(dragCallCallbackArg.toString()).toContain("updateData");
 					expect(endCallCallbackArg.toString()).toContain("dragEndCallback");
 
-					// verify if callbacks were succesfully fired instead; TODO: make this use spies instead
+					// verify if callbacks were successfully fired instead; TODO: make this use spies instead
 					startCallCallbackArg(eventMock);
 					expect(onDragStartCbMock).toHaveBeenCalledExactlyOnceWith(
 						eventMock.sourceEvent,

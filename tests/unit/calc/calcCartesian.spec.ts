@@ -2,15 +2,22 @@ import { Chart, ChartConfiguration, ChartType, Point } from "chart.js";
 import _ from "lodash";
 
 import {
+	type AxisDraggingConfiguration,
 	type DragDataEvent,
 	type PluginConfiguration,
-	type AxisDraggingConfiguration,
-	getElement,
 	calcCartesian,
+	getElement,
 } from "../../../dist/test/chartjs-plugin-dragdata-test";
 import { genericChartScenarioBase } from "../../__data__/data";
 import { Point2DObject } from "../../__utils__/testTypes";
 import { isTestsConfigWhitelistItemAllowed } from "../../__utils__/testsConfig";
+import {
+	TestEventType,
+	getEventX,
+	getEventY,
+	setEventX,
+	setEventY,
+} from "../__fixtures__/mockedEventUtils";
 import {
 	DEFAULT_TEST_CHART_INSTANCE_HEIGHT,
 	DEFAULT_TEST_CHART_INSTANCE_WIDTH,
@@ -20,13 +27,6 @@ import {
 	dataPointCompatToPoint2D,
 	setupChartInstance,
 } from "../__utils__/utils";
-import {
-	getEventX,
-	getEventY,
-	setEventX,
-	setEventY,
-	TestEventType,
-} from "../__fixtures__/mockedEventUtils";
 
 const xAxisID = "x",
 	yAxisID = "y",

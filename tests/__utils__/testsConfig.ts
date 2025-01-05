@@ -1,12 +1,16 @@
-import path from "path";
-
 import config from "config";
+import path from "path";
+import { Signale } from "signale";
 
 import { TestChartTypes } from "../unit/__utils__/constants";
-import { DeepFinalPropertiesOf } from "./types";
+import { MagnetVariant } from "./magnet";
 import Whitelist from "./structures/Whitelist";
 import { ALL_AXES_SPECS, AxisSpec } from "./structures/axisSpec";
-import { MagnetVariant } from "./magnet";
+import { DeepFinalPropertiesOf } from "./types";
+
+const signale = new Signale({
+	scope: "testsConfig.ts",
+});
 
 export function isSimpleWhitelistItemAllowed<T>(
 	whitelist: Whitelist<T> | undefined,
@@ -221,7 +225,7 @@ type ConfigSpec = {
 
 /** Prints the loaded configuration */
 export function showConfig(which?: Array<keyof TestsConfig>) {
-	console.log(
+	signale.log(
 		`Merged tests configuration from files ${config.util
 			.getConfigSources()
 			.map(({ name }) => path.basename(name))
@@ -247,7 +251,7 @@ export function showConfig(which?: Array<keyof TestsConfig>) {
 			},
 		] satisfies ConfigSpec[]
 	).filter(({ category }) => !which || which.includes(category))) {
-		console.log(`Config for ${displayName} tests`);
+		signale.log(`Config for ${displayName} tests`);
 
 		console.table(
 			Object.entries(configuration).map(([key, value]) => ({

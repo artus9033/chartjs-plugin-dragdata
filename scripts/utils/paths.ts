@@ -18,10 +18,19 @@ const e2eTestsCoverageDirPath = path.join(coverageReportsDirPath, "e2e");
 
 const mergedCoverageDirPath = path.join(coverageReportsDirPath, "merged");
 
+const mergedCoverageSourceReportsDirPath = path.join(
+		mergedCoverageDirPath,
+		"src",
+	),
+	reportsSources = [
+		unitTestsCoverageDirPath,
+		integrationTestsCoverageDirPath,
+		e2eTestsCoverageDirPath,
+	];
+
 export {
 	coverageReportsDirPath,
-	unitTestsCoverageDirPath,
-	integrationTestsCoverageDirPath,
-	e2eTestsCoverageDirPath,
 	mergedCoverageDirPath,
+	mergedCoverageSourceReportsDirPath,
+	reportsSources,
 };

@@ -1,8 +1,8 @@
 import type { Point, Chart as TChart } from "chart.js";
 
 import {
-	type PluginConfiguration,
 	type DraggingConfiguration,
+	type PluginConfiguration,
 	checkDraggingConfiguration,
 	getElement,
 } from "../../dist/test/chartjs-plugin-dragdata-test";

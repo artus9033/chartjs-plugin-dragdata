@@ -16,6 +16,7 @@
 		"types.d.ts",
 		"*.config.ts",
 		"*.config.mjs",
-		"*.config.js"
+		"*.config.js",
+		"knip.ts"
 	]
 }

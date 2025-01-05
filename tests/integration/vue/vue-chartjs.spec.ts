@@ -1,9 +1,9 @@
 import "chart.js/auto";
 
+import { cleanup, render } from "@testing-library/vue";
+
 import { ChartOptions } from "chart.js/auto";
 import { Line } from "vue-chartjs";
-
-import { cleanup, render } from "@testing-library/vue";
 
 import {
 	JestTestChartOptions,

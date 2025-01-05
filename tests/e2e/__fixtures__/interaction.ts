@@ -69,7 +69,7 @@ export async function playwrightTestDrag({
 
 				if (hasGUI()) {
 					console.log(
-						`[playwrightTestDrag] Dragging ${dragStartPoint.toString()} -> ${dragDestPoint.toString()}`,
+						`[playwrightTestDragSignale] Dragging ${dragStartPoint.toString()} -> ${dragDestPoint.toString()}`,
 					);
 				}
 
@@ -92,7 +92,7 @@ export async function playwrightTestDrag({
 			getChartScales: () => playwrightGetChartScales(page),
 			isDragDataPluginEnabled: !isDragDataPluginDisabled,
 			bExpectResult: true,
-			expect,
+			expect: expect as any,
 			...(magnet
 				? {
 						magnet,
