@@ -1,9 +1,7 @@
 import "../../scripts/setupEnv";
 
-import {
-	ExpectMatcherState,
-	expect as playwrightExpect,
-} from "playwright/test";
+import { expect as playwrightExpect } from "playwright-test-coverage";
+import { ExpectMatcherState } from "playwright/test";
 
 import { euclideanDistance } from "../__utils__/cartesian";
 import Point2D from "../__utils__/structures/Point2D";

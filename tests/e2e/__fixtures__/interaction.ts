@@ -1,5 +1,5 @@
 import type { Page } from "playwright";
-import { expect, test } from "playwright/test";
+import { test, expect } from "playwright-test-coverage";
 
 import {
 	GenericDragTestParams,

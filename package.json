@@ -19,7 +19,7 @@
 		"build:pages": "npx tsx pages/src/bundle.ts",
 		"build:pages:watch": "npx tsx pages/src/watch.ts",
 		"cleanCoverage": "npx tsx scripts/cleanCoverage.ts",
-		"collectCoverage": "npx tsx scripts/collectCoverage.ts && npx nyc merge --remap-after-coverage=false --exclude-after-remap=false coverage/merged/src coverage/merged/report/merged-coverage.json && npx nyc report --report-dir=coverage/merged/report/html --reporter=html --remap-after-coverage=false --exclude-after-remap=false -t coverage/merged/report",
+		"collectCoverage": "npx tsx scripts/collectCoverage.ts && npx nyc merge coverage/merged/src coverage/merged/report/merged-coverage.json && npx nyc report --report-dir=coverage/merged/report/html --reporter=html -t coverage/merged/report",
 		"lint": "npx eslint .",
 		"lint:fix": "npx eslint . --fix",
 		"pretest": "npm run build && npm run build:pages && npm run cleanCoverage",
@@ -30,11 +30,12 @@
 		"test": "npm run test:unit && npm run test:integration && npm run test:e2e",
 		"test:unit": "npx jest --coverage --coverageDirectory=coverage/unit --config jest.config.ts --selectProjects unit",
 		"test:integration": "npx jest --coverage --coverageDirectory=coverage/integration --config jest.config.ts --selectProjects integration",
-		"test:e2e": "npm run test:e2e:base",
+		"test:e2e": "npm run test:e2e:base && npm run test:e2e:posttest",
 		"test:e2e:base": "playwright test",
-		"test:e2e:ui": "npm run test:e2e:base -- --ui",
-		"test:e2e:headed": "npm run test:e2e:base --headed",
-		"test:e2e:updateSnapshots": "npm run test:e2e -- -- --update-snapshots",
+		"test:e2e:ui": "npm run test:e2e:base -- --ui && npm run test:e2e:posttest",
+		"test:e2e:headed": "npm run test:e2e:base --headed && npm run test:e2e:posttest",
+		"test:e2e:updateSnapshots": "npm run test:e2e -- -- --update-snapshots && npm run test:e2e:posttest",
+		"test:e2e:posttest": "npx nyc report --reporter=json --report-dir=coverage/e2e && npx nyc report --reporter=html --report-dir=coverage/e2e/report/html",
 		"release": "release-it"
 	},
 	"repository": {
@@ -55,7 +56,8 @@
 	},
 	"dependencies": {
 		"d3-drag": "^3.0.0",
-		"d3-selection": "^3.0.0"
+		"d3-selection": "^3.0.0",
+		"playwright-test-coverage": "^1.2.12"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.26.0",

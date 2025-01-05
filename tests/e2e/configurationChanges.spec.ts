@@ -1,5 +1,5 @@
 import { Point } from "chart.js";
-import { test } from "playwright/test";
+import { test } from "playwright-test-coverage";
 
 import Offset2D from "../__utils__/structures/Offset2D";
 import { DatasetPointSpec } from "../__utils__/testTypes";
