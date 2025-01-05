@@ -1,7 +1,7 @@
+import { type Page } from "@playwright/test";
+
 import path from "path";
 import { test } from "playwright-test-coverage";
-
-import { type Page } from "@playwright/test";
 
 import { TestScenarios } from "../../__data__/data";
 import { MagnetImplementations, MagnetVariant } from "../../__utils__/magnet";

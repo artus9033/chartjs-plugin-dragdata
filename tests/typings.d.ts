@@ -1,7 +1,7 @@
 import type { Chart } from "chart.js";
 
-import type { AxisSpec } from "./__utils__/structures/axisSpec";
 import type Point2D from "./__utils__/structures/Point2D";
+import type { AxisSpec } from "./__utils__/structures/axisSpec";
 
 interface CustomMatchers<R = unknown> {
 	pointsToBeClose(

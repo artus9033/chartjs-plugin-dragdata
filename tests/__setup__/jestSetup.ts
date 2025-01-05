@@ -1,5 +1,4 @@
 import "@testing-library/jest-dom/jest-globals";
-
 import "./commonSetup";
 
 import Chart from "chart.js/auto";

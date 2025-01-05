@@ -1,8 +1,7 @@
 import "../../scripts/setupEnv";
 
-import path from "path";
-
 import chokidar from "chokidar";
+import path from "path";
 import { Signale } from "signale";
 
 import { requireUncached } from "./utils";

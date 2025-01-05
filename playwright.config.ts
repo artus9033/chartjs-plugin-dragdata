@@ -1,10 +1,10 @@
 import "./tests/e2e/__setup__/playwrightSetup";
 
-import path from "path";
-
 import { Project, defineConfig, devices } from "@playwright/test";
 
+import path from "path";
 import { Signale } from "signale";
+
 import { isTestsConfigWhitelistItemAllowed } from "./tests/__utils__/testsConfig";
 import { hasGUI } from "./tests/e2e/__utils__/testHelpers";
 

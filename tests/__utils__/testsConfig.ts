@@ -1,13 +1,12 @@
-import path from "path";
-
 import config from "config";
+import path from "path";
 import { Signale } from "signale";
 
 import { TestChartTypes } from "../unit/__utils__/constants";
-import { DeepFinalPropertiesOf } from "./types";
+import { MagnetVariant } from "./magnet";
 import Whitelist from "./structures/Whitelist";
 import { ALL_AXES_SPECS, AxisSpec } from "./structures/axisSpec";
-import { MagnetVariant } from "./magnet";
+import { DeepFinalPropertiesOf } from "./types";
 
 const signale = new Signale({
 	scope: "testsConfig.ts",

@@ -2,7 +2,6 @@ import "../../scripts/setupEnv";
 
 import fs from "fs";
 import path from "path";
-
 import * as prettier from "prettier";
 import { Signale } from "signale";
 

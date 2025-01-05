@@ -1,5 +1,5 @@
 import type { Page } from "playwright";
-import { test, expect } from "playwright-test-coverage";
+import { expect, test } from "playwright-test-coverage";
 import { Signale } from "signale";
 
 import {

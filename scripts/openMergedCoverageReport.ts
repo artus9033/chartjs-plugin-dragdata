@@ -1,13 +1,12 @@
-import path from "path";
-
 import open from "open";
+import path from "path";
 import { Signale } from "signale";
+
+import { mergedCoverageDirPath } from "./utils/paths";
 
 const signale = new Signale({
 	scope: "openMergedCoverageReport",
 });
-
-import { mergedCoverageDirPath } from "./utils/paths";
 
 const htmlPath = path.join(
 	mergedCoverageDirPath,
