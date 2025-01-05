@@ -1,11 +1,12 @@
 import callstackConfig from "@callstack/eslint-config/react.flat.js";
-import eslintConfigPrettier from "eslint-config-prettier";
-import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 // false-positives below:
 // eslint-disable-next-line import/no-unresolved
-import tsEslintParser from "@typescript-eslint/parser";
-// eslint-disable-next-line import/no-unresolved
 import cspellConfigs from "@cspell/eslint-plugin/configs";
+// eslint-disable-next-line import/no-unresolved
+import tsEslintParser from "@typescript-eslint/parser";
+
+import eslintConfigPrettier from "eslint-config-prettier";
+import eslintPluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 /** @type {import('eslint').Linter.Config} */
 export default [
@@ -48,6 +49,7 @@ export default [
 	eslintPluginPrettierRecommended,
 	{
 		rules: {
+			"import/order": "off", // handled by prettier & @trivago/prettier-plugin-sort-imports
 			"prettier/prettier": ["error"],
 			"import/no-extraneous-dependencies": [
 				"error",
