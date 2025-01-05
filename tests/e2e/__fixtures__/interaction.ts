@@ -1,5 +1,5 @@
 import type { Page } from "playwright";
-import { test, expect } from "playwright-test-coverage";
+import { expect, test } from "playwright-test-coverage";
 
 import {
 	GenericDragTestParams,
@@ -69,7 +69,7 @@ export async function playwrightTestDrag({
 
 				if (hasGUI()) {
 					console.log(
-						`[playwrightTestDrag] Dragging ${dragStartPoint.toString()} -> ${dragDestPoint.toString()}`,
+						`[playwrightTestDragSignale] Dragging ${dragStartPoint.toString()} -> ${dragDestPoint.toString()}`,
 					);
 				}
 

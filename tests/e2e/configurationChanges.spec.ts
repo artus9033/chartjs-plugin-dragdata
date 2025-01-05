@@ -145,8 +145,9 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 
 							window.testedChart.update("none");
 
+							// note: do not use signale here because this will be executed in browser context where this lib is not available
 							console.log(
-								"[updateChartDragDataEnabledConfig] Updated configuration:",
+								"Updated configuration:",
 								JSON.stringify(window.testedChart.config),
 							);
 						},

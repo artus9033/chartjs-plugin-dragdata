@@ -1,19 +1,21 @@
 import "chartjs-plugin-datalabels";
+
 import { ChartConfiguration, ChartOptions } from "chart.js";
 import _ from "lodash";
+
+import Offset2D from "../__utils__/structures/Offset2D";
+import { ALL_AXES_SPECS, AxisSpec } from "../__utils__/structures/axisSpec";
 import {
 	TestScenario,
-	TestScenarioStepsGroup,
 	TestScenarioStep,
+	TestScenarioStepsGroup,
 } from "../__utils__/structures/scenario";
 import testsConfig, {
 	E2EInteraction,
 	isTestsConfigWhitelistItemAllowed,
 } from "../__utils__/testsConfig";
-import Offset2D from "../__utils__/structures/Offset2D";
-import { ALL_AXES_SPECS, AxisSpec } from "../__utils__/structures/axisSpec";
-import { BAR_SAFETY_HIT_MARGIN } from "../e2e/__utils__/constants";
 import { DeepPartial } from "../__utils__/types";
+import { BAR_SAFETY_HIT_MARGIN } from "../e2e/__utils__/constants";
 import { ganttChartScenario } from "./gantt";
 import { scatterChartScenario } from "./scatter";
 

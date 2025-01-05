@@ -1,6 +1,6 @@
-import type { Chart } from "chart.js";
-
 import { fireEvent } from "@testing-library/react";
+
+import type { Chart } from "chart.js";
 
 import Offset2D from "../../__utils__/structures/Offset2D";
 import Point2D from "../../__utils__/structures/Point2D";

@@ -3,6 +3,7 @@
 	"include": [
 		"tests",
 		"*.config.ts",
+		"knip.ts",
 		"scripts",
 		"types.d.ts",
 		"pages/src",

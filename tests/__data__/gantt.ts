@@ -1,4 +1,5 @@
 import dateFns from "date-fns";
+
 import { TestScenario } from "../__utils__/structures/scenario";
 import { E2EInteraction } from "../__utils__/testsConfig";
 

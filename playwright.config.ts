@@ -1,14 +1,19 @@
 import "./tests/e2e/__setup__/playwrightSetup";
 
-import path from "path";
-
 import { Project, defineConfig, devices } from "@playwright/test";
+
+import path from "path";
+import { Signale } from "signale";
 
 import { isTestsConfigWhitelistItemAllowed } from "./tests/__utils__/testsConfig";
 import { hasGUI } from "./tests/e2e/__utils__/testHelpers";
 
+const signale = new Signale({
+	scope: "playwright.config.ts",
+});
+
 if (hasGUI()) {
-	console.log(
+	signale.info(
 		"Running in UI mode - testing will only happen on Chrome, regardless of YAML configuration",
 	);
 }
@@ -49,7 +54,7 @@ export default defineConfig({
 		trace: "off",
 	},
 	workers: "50%",
-	maxFailures: process.env.ci ? undefined : 10,
+	maxFailures: process.env.CI ? undefined : 10,
 	retries: 2,
 	projects: allAvailableRunners.filter(({ name }) =>
 		isTestsConfigWhitelistItemAllowed("e2e", "whitelistedBrowsers", name!),

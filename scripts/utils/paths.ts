@@ -30,9 +30,6 @@ const mergedCoverageSourceReportsDirPath = path.join(
 
 export {
 	coverageReportsDirPath,
-	unitTestsCoverageDirPath,
-	integrationTestsCoverageDirPath,
-	e2eTestsCoverageDirPath,
 	mergedCoverageDirPath,
 	mergedCoverageSourceReportsDirPath,
 	reportsSources,

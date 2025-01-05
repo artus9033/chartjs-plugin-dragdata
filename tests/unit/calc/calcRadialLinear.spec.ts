@@ -8,8 +8,8 @@ import {
 	calcRadialLinear,
 } from "../../../dist/test/chartjs-plugin-dragdata-test";
 import { genericChartScenarioBase } from "../../__data__/data";
-import { setupChartInstance } from "../__utils__/utils";
 import { isTestsConfigWhitelistItemAllowed } from "../../__utils__/testsConfig";
+import { setupChartInstance } from "../__utils__/utils";
 
 const CHART_CENTER_POS_X = 75;
 const CHART_CENTER_POS_Y = 80;

@@ -3,5 +3,19 @@
 	"semi": true,
 	"singleQuote": false,
 	"trailingComma": "all",
-	"endOfLine": "auto"
+	"endOfLine": "auto",
+	"plugins": ["@trivago/prettier-plugin-sort-imports"],
+	"importOrder": [
+		"^node:.*",
+		"^react$",
+		"^react",
+		"<THIRD_PARTY_MODULES>",
+		"^@.*",
+		"^[a-zA-Z].*",
+		"^\\.{1,2}.*"
+	],
+	"importOrderSeparation": true,
+	"importOrderSortSpecifiers": true,
+	"importOrderParserPlugins": ["typescript", "jsx", "decorators-legacy"],
+	"importOrderSideEffects": false
 }

@@ -1,11 +1,16 @@
 import fs from "fs";
 import path from "path";
+import { Signale } from "signale";
 
 import {
 	mergedCoverageDirPath,
 	mergedCoverageSourceReportsDirPath,
 	reportsSources,
 } from "./utils/paths";
+
+const signale = new Signale({
+	scope: "collectCoverage.ts",
+});
 
 if (fs.existsSync(mergedCoverageDirPath)) {
 	fs.rmSync(mergedCoverageDirPath, { recursive: true });
@@ -19,8 +24,8 @@ for (const reportDir of reportsSources) {
 		testsComponent = path.basename(reportDir);
 
 	if (fs.existsSync(jsonReport)) {
-		console.log(
-			`[collectCoverage.ts] Including coverage report for tests component: ${testsComponent}`,
+		signale.log(
+			`Including coverage report for tests component: ${testsComponent}`,
 		);
 
 		// FIXME: remove this fix as the root cause is eliminated; tracked in https://github.com/rollup/plugins/issues/1779
@@ -58,12 +63,12 @@ for (const reportDir of reportsSources) {
 
 		counter++;
 	} else {
-		console.log(
-			`[collectCoverage.ts] Not including coverage report for tests component ${testsComponent}, since directory '${reportDir}' does not exist`,
+		signale.log(
+			`Not including coverage report for tests component ${testsComponent}, since directory '${reportDir}' does not exist`,
 		);
 	}
 }
 
-console.log(
-	`[collectCoverage.ts] Placed ${counter} of ${reportsSources.length} coverage reports for merging in ${mergedCoverageDirPath}`,
+signale.log(
+	`Placed ${counter} of ${reportsSources.length} coverage reports for merging in ${mergedCoverageDirPath}`,
 );

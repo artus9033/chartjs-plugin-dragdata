@@ -1,11 +1,13 @@
 import { Chart, InteractionItem } from "chart.js";
-import "jest-extended"; // somehow, types for jest-extended matchers in this subdirectory don't work without an explicit import
+
+// somehow, types for jest-extended matchers in this subdirectory don't work without an explicit import
+import "jest-extended";
 
 import ChartJSDragDataPlugin, {
-	PluginConfiguration,
-	dragEndCallback,
 	type DragDataEvent,
 	type DragEventCallback,
+	PluginConfiguration,
+	dragEndCallback,
 } from "../../../dist/test/chartjs-plugin-dragdata-test";
 import { isTestsConfigWhitelistItemAllowed } from "../../__utils__/testsConfig";
 import { setupChartInstance } from "../__utils__/utils";

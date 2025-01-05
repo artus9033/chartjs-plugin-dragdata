@@ -11,44 +11,19 @@ jobs:
   tests-and-coverage:
     name: Run tests & report coverage
     runs-on: ubuntu-latest
-    env:
-      NODE_VERSION: 20.9.0
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: "npm"
-
-      - name: Cache npm dependencies
-        uses: actions/cache@v4
-        id: cache-node_modules
-        with:
-          path: "node_modules"
-          key: ${{ runner.os }}-npm-${{ hashFiles('/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-npm-${{ hashFiles('/package-lock.json') }}
-            ${{ runner.os }}-npm-
-
-      # since npm ci installs only dependencies in package-lock.json, it may be that the package-lock.json pushed
-      # has been generated on non-linux, making the installed node_modules lack packages needed by the linux runner
-      - name: Ensure lefthook-linux-x64 & @rollup/rollup-linux-x64-gnu are installed
-        if: steps.cache-node_modules.outputs.cache-hit != 'true'
-        run: npm i lefthook-linux-x64 @rollup/rollup-linux-x64-gnu
-
-      - name: Install npm dependencies
-        if: steps.cache-node_modules.outputs.cache-hit != 'true'
-        run: npm ci
+      - name: Setup environment
+        uses: ./.github/actions/setup
 
       # since playwright installs binaries of browsers with 'npx playwright install' triggered from the 'prepare' script,
       # it won't happen when no 'npm install' is run, which is the case for when the '...-npm-...' cache is restored
       # for that reason, there is a need to run this command here
       - name: Run 'npm run prepare' manually if the cache was used instead of npm install
-        if: steps.cache-node_modules.outputs.cache-hit == 'true'
+        if: steps.setup-node.outputs.cache-hit == 'true'
         run: npm run prepare
 
       - name: Install playwright dependency libraries
@@ -59,6 +34,12 @@ jobs:
 
       - name: Build E2E pages & demos
         run: npm run build:pages
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run knip
+        run: npm run knip
 
       - name: Run tests
         run: npm test
