@@ -29,15 +29,7 @@ export default [
 				"warn",
 				{
 					cspell: {
-						language: "en-GB",
-						words: [
-							"chartjs",
-							"datalabels",
-							"gantt",
-							"dragdata",
-							"behaviour",
-							"vars",
-						],
+						import: ["cspell.json"],
 					},
 				},
 			],
@@ -72,6 +64,7 @@ export default [
 						"*.config.ts",
 						"pages/**/*.ts",
 						"pages/**/*.js",
+						"scripts/**/*.ts",
 					],
 				},
 			],
