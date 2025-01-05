@@ -54,7 +54,7 @@ export default defineConfig({
 		trace: "off",
 	},
 	workers: "50%",
-	maxFailures: process.env.ci ? undefined : 10,
+	maxFailures: process.env.CI ? undefined : 10,
 	retries: 2,
 	projects: allAvailableRunners.filter(({ name }) =>
 		isTestsConfigWhitelistItemAllowed("e2e", "whitelistedBrowsers", name!),

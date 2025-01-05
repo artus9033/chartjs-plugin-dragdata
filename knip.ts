@@ -30,6 +30,12 @@ const config: KnipConfig = {
 		"resize-observer-polyfill", // false positive
 		"rollup-plugin-copy", // false positive
 		"ts-node", // false positive
+		...(process.env.CI
+			? [
+					"lefthook-linux-x64", // false positive in CI
+					"@rollup/rollup-linux-x64-gnu", // false positive in CI
+				]
+			: []),
 	],
 	ignore: ["src/util/typings.d.ts"],
 };

@@ -1,6 +1,5 @@
 import { Point } from "chart.js";
 import { test } from "playwright-test-coverage";
-import { Signale } from "signale";
 
 import Offset2D from "../__utils__/structures/Offset2D";
 import { DatasetPointSpec } from "../__utils__/testTypes";
@@ -12,10 +11,6 @@ import {
 } from "./__fixtures__/interaction";
 import { BAR_SAFETY_HIT_MARGIN } from "./__utils__/constants";
 import { describeEachChartType } from "./__utils__/testHelpers";
-
-const signale = new Signale({
-	scope: "updateChartDragDataEnabledConfig",
-});
 
 type PluginEnablerLocationSpec =
 	| "x-scale"
@@ -150,7 +145,8 @@ describeEachChartType(function testGenerator(fileName, scenario) {
 
 							window.testedChart.update("none");
 
-							signale.log(
+							// note: do not use signale here because this will be executed in browser context where this lib is not available
+							console.log(
 								"Updated configuration:",
 								JSON.stringify(window.testedChart.config),
 							);

@@ -13,6 +13,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
       - name: Setup environment
         uses: ./.github/actions/setup
 
@@ -26,17 +29,17 @@ jobs:
       - name: Install playwright dependency libraries
         run: npx playwright install-deps
 
-      - name: Run ESLint
-        run: npm run lint
-
-      - name: Run knip
-        run: npm run knip
-
       - name: Build plugin bundles
         run: npm run build
 
       - name: Build E2E pages & demos
         run: npm run build:pages
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Run knip
+        run: npm run knip
 
       - name: Run tests
         run: npm test

@@ -9,7 +9,7 @@ import type { TestPageBundleFactory } from "./types";
 import { requireUncached } from "./utils";
 
 const signale = new Signale({
-	scope: "[Bundler]",
+	scope: "Bundler",
 });
 
 const pagesSrcDirPath = path.join(path.dirname(__filename)),
