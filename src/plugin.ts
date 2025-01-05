@@ -47,7 +47,7 @@ const ChartJSDragDataPlugin = {
 			return false;
 		}
 	},
-	uninstall(chartInstance) {
+	afterDestroy(chartInstance) {
 		ChartJSDragDataPlugin.statesStore.delete(chartInstance.id);
 	},
 } as const satisfies ChartPlugin & Record<string, any>;
