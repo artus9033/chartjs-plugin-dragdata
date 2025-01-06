@@ -66,6 +66,25 @@ const xAxisID = "x",
 			);
 
 			(unitTestCategoryAllowed("pluginRegistration") ? test : it.skip)(
+				`plugin should clear its state after dragging when the chart is destroy()-ed`,
+				() => {
+					const plugin = Chart.registry.getPlugin(
+						ChartJSDragDataPlugin.id,
+					) as typeof ChartJSDragDataPlugin;
+
+					// ensure the chart instance reference is placed in the internal states store
+					plugin.beforeEvent(chartInstance as any);
+					expect(plugin.statesStore.has(chartInstance.id)).toBeTrue();
+
+					// destroy the chart
+					chartInstance.destroy();
+
+					// assert that the chart is not kept in the internal states store any more
+					expect(plugin.statesStore.has(chartInstance.id)).not.toBeTrue();
+				},
+			);
+
+			(unitTestCategoryAllowed("pluginRegistration") ? test : it.skip)(
 				`plugin should register proper logic to be executed on beforeEvent`,
 				() => {
 					const mockedEvent = {
