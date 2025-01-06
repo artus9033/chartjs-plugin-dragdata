@@ -17,13 +17,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup environment
+        id: setup-environment
         uses: ./.github/actions/setup
 
       # since playwright installs binaries of browsers with 'npx playwright install' triggered from the 'prepare' script,
       # it won't happen when no 'npm install' is run, which is the case for when the '...-npm-...' cache is restored
       # for that reason, there is a need to run this command here
       - name: Run 'npm run prepare' manually if the cache was used instead of npm install
-        if: steps.setup-node.outputs.cache-hit == 'true'
+        if: steps.setup-environment.outputs.node-modules-cache-hit == 'true'
         run: npm run prepare
 
       - name: Install playwright dependency libraries
