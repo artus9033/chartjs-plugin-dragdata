@@ -1,6 +1,11 @@
 name: Setup
 description: Setup environment for Node.JS & install dependencies, including platform-specific lefthook & rollup bindings
 
+outputs:
+  node-modules-cache-hit:
+    description: "Whether the node_modules cache was hit ('true' or 'false')"
+    value: ${{ steps.cache-node-modules.outputs.cache-hit }}
+
 runs:
   using: composite
   steps:
@@ -17,14 +22,21 @@ runs:
         node-version-file: ".nvmrc"
         cache: "npm"
 
+    - name: Cache node_modules
+      uses: actions/cache@v4
+      id: cache-node-modules
+      with:
+        path: "node_modules"
+        key: node-modules-${{ runner.os }}-${{ steps.setup-node.outputs.node-version }}-${{ hashFiles('package-lock.json') }}
+
     # since npm ci installs only dependencies in package-lock.json, it may be that the package-lock.json pushed
     # has been generated on non-linux, making the installed node_modules lack packages needed by the linux runner
     - name: Ensure lefthook-linux-x64 & @rollup/rollup-linux-x64-gnu are installed
-      if: steps.setup-node.outputs.cache-hit != 'true'
+      if: steps.cache-node-modules.outputs.cache-hit != 'true'
       shell: bash
       run: npm i lefthook-linux-x64 @rollup/rollup-linux-x64-gnu
 
     - name: Install npm dependencies
-      if: steps.setup-node.outputs.cache-hit != 'true'
+      if: steps.cache-node-modules.outputs.cache-hit != 'true'
       shell: bash
       run: npm ci
