@@ -33,12 +33,15 @@ export function dragEndCallback<TType extends ChartType>(
 		chartInstance.update("none");
 	}
 
-	if (typeof callback === "function" && state.element) {
-		const datasetIndex = state.element.datasetIndex;
-		const index = state.element.index;
+	if (!state.element) {
+		return;
+	}
 
-		let value = applyMagnet(chartInstance, datasetIndex, index);
+	const datasetIndex = state.element.datasetIndex;
+	const index = state.element.index;
+	const value = applyMagnet(chartInstance, datasetIndex, index);
 
+	if (typeof callback === "function") {
 		return callback(event, datasetIndex, index, value);
 	}
 }
